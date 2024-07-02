@@ -20,14 +20,15 @@
 
   xdg.configFile = {
     "alacritty".source = ../../alacritty;
-    "alacritty/theme".source = config.lib.file.mkOutOfStoreSymlink ../../dracula.toml;
-    "fish/config.fish".source = config.lib.file.mkOutOfStoreSymlink ../../fish/config.fish;
+    #"alacritty/theme".source = config.lib.file.mkOutOfStoreSymlink ../../dracula.toml;
+    
+    #"fish/config.fish".source = config.lib.file.mkOutOfStoreSymlink ../../fish/config.fish;
 
     "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
   };
 
   home.file = {
-    ".tmux.conf".source = ../../.tmux.conf;
+    #".tmux.conf".source = ../../.tmux.conf;
 
     # # You can also set the file content immediately.
     # ".gradle/gradle.properties".text = ''
@@ -42,7 +43,7 @@
 
   programs.fish = {
     enable = true;
-    shellInit = builtins.readFile ../../.config/fish/config.fish;
+    shellInit = builtins.readFile ../../fish/config.fish;
     interactiveShellInit = ''
       function __get_program_names
           ps aux | choose 10 | sort | uniq
@@ -117,7 +118,7 @@
   programs.tmux = {
     enable = true;
     extraConfig = builtins.readFile ../../.tmux.conf;
-    plugins = with pkgs.tmuxPlugins; [
+    #plugins = with pkgs.tmuxPlugins; [
       #sensible
       #tmux-colors-solarized
       # tokyo-night-tmux
@@ -130,7 +131,7 @@
       # set -g @plugin 'catppuccin/tmux'
       # set -g @plugin 'tmux-plugins/tmux-battery'
       # set -g @plugin 'christoomey/vim-tmux-navigator'
-    ];
+    #];
   };
 
 

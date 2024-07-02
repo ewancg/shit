@@ -1,4 +1,5 @@
 nixos/result/
 result/
+*.qcow2
 
 fish/secrets.fish

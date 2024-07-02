@@ -21,7 +21,7 @@
     ];
 
   #  services.udev.extraRules = udevAllRulesAsString;
-  services.udev.extraRules = builtins.readFile ./udev/openrgb.rules;
+  # services.udev.extraRules = builtins.readFile ./udev/openrgb.rules;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   home-manager = {
@@ -116,6 +116,27 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    gnome.dconf-editor
+    gnome.gnome-tweaks
+    yaru-theme
+    xdg-desktop-portal
+    
+    alacritty
+    gimp
+    git
+    #home-manager-path
+    lshw
+    nil
+    nixpkgs-fmt
+    normcap
+    openrgb
+    qpwgraph
+    teamspeak_client
+    tmux
+    vesktop
+    wl-clipboard
+    wofi
+    xsel
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
   ];
