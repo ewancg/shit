@@ -201,19 +201,11 @@ wget
       ];
 
       postBuild = ''
-        rm $out/share/icons/hicolor/32x32/apps/vesktop.png
-        rm $out/share/icons/hicolor/64x64/apps/vesktop.png
-        rm $out/share/icons/hicolor/128x128/apps/vesktop.png
-        rm $out/share/icons/hicolor/256x256/apps/vesktop.png
-        rm $out/share/icons/hicolor/512x512/apps/vesktop.png
-        rm $out/share/icons/hicolor/1024x1024/apps/vesktop.png
-
-        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 32x32 $out/share/icons/hicolor/32x32/apps/vesktop.png
-        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 64x64 $out/share/icons/hicolor/64x64/apps/vesktop.png
-        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 128x128 $out/share/icons/hicolor/128x128/apps/vesktop.png
-        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 256x256 $out/share/icons/hicolor/256x256/apps/vesktop.png
-        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 512x512 $out/share/icons/hicolor/512x512/apps/vesktop.png
-        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 1024x1024 $out/share/icons/hicolor/1024x1024/apps/vesktop.png
+        for size in 32 64 128 256 512 1024; do
+          dim="$size"x"$size"
+          rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+          ${lib.getExe imagemagick} ${../misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+        done
 
         rm $out/share/applications/vesktop.desktop
         cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
