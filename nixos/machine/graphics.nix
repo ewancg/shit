@@ -1,11 +1,11 @@
-﻿# Graphics configuration to run Optimus with an RTX 3060 (nvidia) behind AMD integrated graphics (amdgpu)
-# https://nixos.wiki/wiki/Nvidia
-
-{ config, lib, pkgs, ... }:
+{ config, ... }:
 
 {
+  # Graphics configuration to run Optimus with an RTX 3060 (nvidia) behind AMD integrated graphics (amdgpu)
+  # https://nixos.wiki/wiki/Nvidia
+
   # Enable OpenGL
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
   };
 
@@ -25,7 +25,7 @@
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
-    powerManagement.finegrained = true;
+    powerManagement.finegrained = false;
 
     # Use the NVidia open source kernel module (not to be confused with the
     # independent third-party "nouveau" open source driver).

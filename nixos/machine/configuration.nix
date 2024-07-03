@@ -2,13 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
-
-#let
-#  udevRules = builtins.readDir "./udev";
-#  udevAllRulesAsString = builtins.concatStringsSep "\n" (mapGlobals (path: readFile path) (builtins.attrValues udevRules));
-#in
-#udevAllRulesAsString
+{ pkgs, ... }:
 
 {
   imports =
@@ -16,12 +10,19 @@
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
 
+      # GPU
+      ./graphics.nix
+
       # Audio configuration
       ./audio.nix
     ];
 
-  #  services.udev.extraRules = udevAllRulesAsString;
-  # services.udev.extraRules = builtins.readFile ./udev/openrgb.rules;
+  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+
+  services.udev.extraRules =
+    builtins.replaceStrings ["/bin/chmod"] ["${pkgs.coreutils}/bin/chmod"] ''
+    ${builtins.readFile ./udev/60-openrgb.rules}
+    '';
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   home-manager = {
@@ -64,13 +65,23 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
-  #  home-manager.users.gdm = { lib, ... }: {
-  #    dconf.settings = {
-  #      "org/gnome/desktop/interface" = {
-  #        scaling-factor = lib.hm.gvariant.mkUint32 2;
-  #      };
-  #    };
-  #  };
+    nixpkgs.overlays = [
+    # GNOME 46: triple-buffering-v4-46
+    (final: prev: {
+      gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
+        mutter = gnomePrev.mutter.overrideAttrs (old: {
+          src = pkgs.fetchFromGitLab  {
+            domain = "gitlab.gnome.org";
+            owner = "vanvugt";
+            repo = "mutter";
+            rev = "triple-buffering-v4-46";
+            hash = "sha256-fkPjB/5DPBX06t7yj0Rb3UEuu5b9mu3aS+jhH18+lpI=";
+          };
+        });
+      });
+    })
+  ];
+  nixpkgs.config.allowAliases = false;
 
   # GNOME settings
   services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
@@ -81,9 +92,9 @@
   '';
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "us";
-    xkbVariant = "colemak";
+    variant = "colemak";
   };
 
   # Enable CUPS to print documents.
@@ -98,9 +109,9 @@
     initialPassword = "ewan";
     description = "Ewan Green";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
+    #packages = with pkgs; [
       #  thunderbird
-    ];
+    #];
   };
 
   # Fishy 
@@ -115,12 +126,57 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+  environment.variables = {
+    QT_QPA_PLATFORM = "wayland";
+    QT_QPA_PLATFORMTHEME = "gnome";
+};
+
+environment.gnome.excludePackages = (with pkgs; [
+  gnome-photos
+  gnome-tour
+]) ++ (with pkgs.gnome; [
+  cheese # webcam tool
+  gnome-music
+  gnome-terminal
+  #gedit # text editor
+  epiphany # web browser
+  geary # email reader
+  evince # document viewer
+  gnome-characters
+  totem # video player
+  tali # poker game
+  iagno # go game
+  hitori # sudoku game
+  atomix # puzzle game
+]);
+
   environment.systemPackages = with pkgs; [
+    
+    # GNOME & desktop integration
     gnome.dconf-editor
     gnome.gnome-tweaks
     yaru-theme
+
+    qgnomeplatform
+    qgnomeplatform-qt6
     xdg-desktop-portal
+
+    # Theming
+    gradience 
+    adw-gtk3
+
+    # "Task manager"
+    mission-center
     
+    # Dev C/C++
+    cmake
+    gcc
+    clang
+    ninja
+    mold
+
+nix-index
+wget
     alacritty
     gimp
     git
@@ -133,13 +189,56 @@
     qpwgraph
     teamspeak_client
     tmux
-    vesktop
+    
+    #vesktop
+    imagemagick
+
+    (symlinkJoin {
+      name = "my-discord";
+
+      paths = [
+        vesktop
+      ];
+
+      postBuild = ''
+        rm $out/share/icons/hicolor/32x32/apps/vesktop.png
+        rm $out/share/icons/hicolor/64x64/apps/vesktop.png
+        rm $out/share/icons/hicolor/128x128/apps/vesktop.png
+        rm $out/share/icons/hicolor/256x256/apps/vesktop.png
+        rm $out/share/icons/hicolor/512x512/apps/vesktop.png
+        rm $out/share/icons/hicolor/1024x1024/apps/vesktop.png
+
+        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 32x32 $out/share/icons/hicolor/32x32/apps/vesktop.png
+        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 64x64 $out/share/icons/hicolor/64x64/apps/vesktop.png
+        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 128x128 $out/share/icons/hicolor/128x128/apps/vesktop.png
+        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 256x256 $out/share/icons/hicolor/256x256/apps/vesktop.png
+        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 512x512 $out/share/icons/hicolor/512x512/apps/vesktop.png
+        ${pkgs.imagemagick}/bin/magick ${../misc/discord.png} -resize 1024x1024 $out/share/icons/hicolor/1024x1024/apps/vesktop.png
+
+        rm $out/share/applications/vesktop.desktop
+        cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
+      '';
+    })
     wl-clipboard
     wofi
     xsel
+
+
+
+    prismlauncher
+
+   # graalvm-ce
+
+    steam
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
   ];
+
+
+ programs.steam = {
+    enable = true;
+    package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -148,6 +247,7 @@
     enable = true;
     enableSSHSupport = true;
   };
+
 
   # List services that you want to enable:
 

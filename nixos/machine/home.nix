@@ -27,6 +27,33 @@
     "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
   };
 
+
+  #home-manager.users.gdm = { lib, ... }: {
+  #  dconf.settings = {
+  #    "org/gnome/desktop/interface" = {
+  #      scaling-factor = lib.hm.gvariant.mkUint32 2;
+  #    };
+  #};
+  #};
+
+  #home-manager.users.ewan = {
+    dconf = {
+      enable = true;
+      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+      settings."org/gnome/shell" = {
+        disable-user-extensions = false;
+        enabled-extensions = with pkgs.gnomeExtensions; [
+          gsconnect.extensionUuid
+          tiling-assistant.extensionUuid
+          window-calls.extensionUuid
+          window-calls-extended.extensionUuid
+          ddnet-friends-panel.extensionUuid
+          user-themes.extensionUuid
+        ];
+      };
+    };
+  #};
+
   home.file = {
     #".tmux.conf".source = ../../.tmux.conf;
 
