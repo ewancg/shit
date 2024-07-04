@@ -129,6 +129,7 @@
   environment.variables = {
     QT_QPA_PLATFORM = "wayland";
     QT_QPA_PLATFORMTHEME = "gnome";
+    QT_STYLE_OVERRIDE = "kvantum";
 };
 
 environment.gnome.excludePackages = (with pkgs; [
@@ -164,6 +165,7 @@ environment.gnome.excludePackages = (with pkgs; [
     # Theming
     gradience 
     adw-gtk3
+    libsForQt5.qtstyleplugin-kvantum
 
     # "Task manager"
     mission-center
@@ -175,8 +177,11 @@ environment.gnome.excludePackages = (with pkgs; [
     ninja
     mold
 
-nix-index
-wget
+    nix-index
+    nixpkgs-fmt
+    nil
+    
+    wget
     alacritty
     gimp
     git
@@ -211,6 +216,11 @@ wget
         cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
       '';
     })
+
+    spotify
+    vlc
+
+    fd
     wl-clipboard
     wofi
     xsel

@@ -49,6 +49,8 @@
           window-calls-extended.extensionUuid
           ddnet-friends-panel.extensionUuid
           user-themes.extensionUuid
+          dash-to-panel.extensionUuid
+          tray-icons-reloaded.extensionUuid
         ];
       };
     };
