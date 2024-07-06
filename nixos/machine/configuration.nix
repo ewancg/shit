@@ -15,6 +15,9 @@
 
       # Audio configuration
       ./audio.nix
+
+      # Windows fonts
+      ../misc/segoe-ui-variable.nix
     ];
 
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
@@ -30,6 +33,20 @@
       "ewan" = import ./home.nix;
     };
   };
+
+fonts.packages = with pkgs; [
+  noto-fonts
+  #noto-fonts-cjk
+  #noto-fonts-emoji
+  liberation_ttf
+  fira-code
+  fira-code-symbols
+  mplus-outline-fonts.githubRelease
+  dina-font
+  proggyfonts
+  corefonts
+  vistafonts
+];
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;
@@ -83,6 +100,20 @@
   ];
   nixpkgs.config.allowAliases = false;
 
+
+programs.nautilus-open-any-terminal = {
+  enable = true;
+  terminal = "alacritty";
+};
+
+environment = {
+  #sessionVariables.NAUTILUS_4_EXTENSION_DIR = "${pkgs.gnome.nautilus-python}/lib/nautilus/extensions-4";
+  pathsToLink = [
+    "/share/nautilus-python/extensions"
+  ];
+
+};
+
   # GNOME settings
   services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.nautilus.preferences]
@@ -103,7 +134,20 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # User / Authentication
+  #services.pcscd.enable = true;
+  #hardware.gpgSmartcards.enable = true; # for yubikey
+  services.udev.packages = [ pkgs.yubikey-personalization ];
+  security.pam.u2f.enable = true;
+  security.pam.services = {
+    login.u2fAuth = true;
+    sudo.u2fAuth = true;
+  };
+  #programs.gnupg.agent = {
+  #  enable = true;
+  #  enableSSHSupport = true;
+  #};
+
   users.users.ewan = {
     isNormalUser = true;
     initialPassword = "ewan";
@@ -114,6 +158,30 @@
     #];
   };
 
+  environment.shellInit = ''
+    gpg-connect-agent /bye
+    export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+  '';
+
+  systemd.user.timers."restart-gpg-agent" = {
+    enable = true;
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "*:0/5";
+      Unit = "restart-gpg-agent.service";
+    };
+  };
+
+  systemd.user.services."restart-gpg-agent" = {
+    enable = true;
+    script = ''
+      ${pkgs.gnupg}/bin/gpgconf --kill gpg-agent
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+  # Apps
   # Fishy 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
@@ -131,6 +199,9 @@
     QT_QPA_PLATFORMTHEME = "gnome";
     QT_STYLE_OVERRIDE = "kvantum";
 };
+
+services.flatpak.enable = true;
+# over
 
 environment.gnome.excludePackages = (with pkgs; [
   gnome-photos
@@ -153,6 +224,9 @@ environment.gnome.excludePackages = (with pkgs; [
 
   environment.systemPackages = with pkgs; [
     
+        gnome.nautilus
+    gnome.nautilus-python
+
     # GNOME & desktop integration
     gnome.dconf-editor
     gnome.gnome-tweaks
@@ -195,6 +269,14 @@ environment.gnome.excludePackages = (with pkgs; [
     teamspeak_client
     tmux
     
+        wine64
+    winetricks
+    wineWowPackages.staging
+    wineWowPackages.waylandFull
+
+    gnupg
+    
+
     #vesktop
     imagemagick
 
@@ -221,6 +303,7 @@ environment.gnome.excludePackages = (with pkgs; [
     vlc
 
     fd
+    
     wl-clipboard
     wofi
     xsel
@@ -242,15 +325,6 @@ environment.gnome.excludePackages = (with pkgs; [
     package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
@@ -270,9 +344,5 @@ environment.gnome.excludePackages = (with pkgs; [
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  services.udev.packages = [ pkgs.yubikey-personalization ];
-  security.pam.services = {
-    login.u2fAuth = true;
-    sudo.u2fAuth = true;
-  };
+
 }

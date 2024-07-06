@@ -50,7 +50,8 @@
           ddnet-friends-panel.extensionUuid
           user-themes.extensionUuid
           dash-to-panel.extensionUuid
-          tray-icons-reloaded.extensionUuid
+         # tray-icons-reloaded.extensionUuid
+          appindicator.extensionUuid
         ];
       };
     };
@@ -81,6 +82,7 @@
       complete -r -c mullvad-split-tunnel -a "(__get_program_names)"
     '';
     functions = {
+      nixbuildconf.body = ''sudo nixos-rebuild --flake ~/shit/nixos#machine switch'';
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
       hostname.body = "/usr/bin/env cat /etc/hostname";
       kc.body = ''
