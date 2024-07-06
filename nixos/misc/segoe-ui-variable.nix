@@ -1,8 +1,4 @@
-{
-  stdenvNoCC,
-  lib,
-  fetchzip,
-}:
+{ stdenvNoCC, lib, fetchzip }:
 
 # Thanks OPNA!!!
 

@@ -17,7 +17,7 @@
       ./audio.nix
 
       # Windows fonts
-      ../misc/segoe-ui-variable.nix
+   #   ../misc/segoe-ui-variable.nix
     ];
 
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
@@ -138,7 +138,13 @@ environment = {
   #services.pcscd.enable = true;
   #hardware.gpgSmartcards.enable = true; # for yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  
   security.pam.u2f.enable = true;
+  #security.pam.u2f.authFile = /etc/u2f_mappings;
+  security.pam.u2f.authFile = "/etc/u2f_mappings";
+  security.pam.u2f.interactive = true;
+  security.pam.u2f.debug = true;
+  
   security.pam.services = {
     login.u2fAuth = true;
     sudo.u2fAuth = true;
