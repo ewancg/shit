@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ pkgs, ... }:
+{ pkgs, stdenvNoCC, lib, fetchzip, ... }:
 
 {
   imports =
@@ -17,8 +17,9 @@
       ./audio.nix
 
       # Windows fonts
-      ../misc/segoe-ui-variable.nix
+      #../misc/segoe-ui-variable.nix
     ];
+
 
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
 
@@ -118,6 +119,7 @@ environment = {
   services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.nautilus.preferences]
     default-folder-viewer='list-view'
+    
     [org.gnome.mutter]
     experimental-features="['scale-monitor-framebuffer']"
   '';
@@ -138,8 +140,17 @@ environment = {
   #services.pcscd.enable = true;
   #hardware.gpgSmartcards.enable = true; # for yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  
   security.pam.u2f.enable = true;
+  #security.pam.u2f.authFile = /etc/u2f_mappings;
+  security.pam.u2f.authFile = "/etc/u2f_mappings";
+  #security.pam.u2f.interactive = true;
+  #security.pam.u2f.debug = true;
+  
+#  security.pam.services.ewan.enableGnomeKeyring = true;
   security.pam.services = {
+    login.enableGnomeKeyring = true;
+    sudo.enableGnomeKeyring = true;
     login.u2fAuth = true;
     sudo.u2fAuth = true;
   };
@@ -277,6 +288,41 @@ environment.gnome.excludePackages = (with pkgs; [
     gnupg
     
 
+stdenvNoCC.mkDerivation (finalAttrs: {
+    name = "segoe-ui-variable";
+    pname = "segoe-ui-variable";
+    version = "0-unstable-2024-06-06";
+
+    src = fetchzip {
+      url = "https://aka.ms/SegoeUIVariable";
+      extension = "zip";
+      stripRoot = false;
+      hash = "sha256-s82pbi3DQzcV9uP1bySzp9yKyPGkmJ9/m1Q6FRFfGxg=";
+    };
+
+    dontConfigure = true;
+    dontBuild = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      mkdir -p $out/share/{fonts/truetype,licenses/segoe-ui-variable}
+      ln -s ${finalAttrs.src}/EULA.txt $out/share/licenses/segoe-ui-variable/LICENSE
+      for font in *.ttf; do
+      ln -s ${finalAttrs.src}/"$font" $out/share/fonts/truetype/"$font"
+      done
+
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "The new system font for Windows";
+      homepage = "https://learn.microsoft.com/en-us/windows/apps/design/downloads/#fonts";
+      license = lib.licenses.unfree; # Guessing, haven't read what EULA allows
+      maintainers = [];
+      platforms = lib.platforms.all;
+    };
+  })
     #vesktop
     imagemagick
 
@@ -285,7 +331,7 @@ environment.gnome.excludePackages = (with pkgs; [
 
       paths = [
         vesktop
-      ];
+      ];   
 
       postBuild = ''
         for size in 32 64 128 256 512 1024; do
@@ -320,7 +366,10 @@ environment.gnome.excludePackages = (with pkgs; [
   ];
 
 
- programs.steam = {
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+
+  programs.steam = {
     enable = true;
     package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
   };

@@ -24,7 +24,7 @@
     
     #"fish/config.fish".source = config.lib.file.mkOutOfStoreSymlink ../../fish/config.fish;
 
-    "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
+ #   "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
   };
 
 
@@ -50,6 +50,7 @@
           ddnet-friends-panel.extensionUuid
           user-themes.extensionUuid
           dash-to-panel.extensionUuid
+          quick-settings-audio-panel.extensionUuid
          # tray-icons-reloaded.extensionUuid
           appindicator.extensionUuid
         ];

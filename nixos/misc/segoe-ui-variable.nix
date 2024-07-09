@@ -1,9 +1,4 @@
-{
-  stdenvNoCC,
-  lib,
-  fetchzip,
-}:
-
+{ stdenvNoCC, lib, fetchzip }:
 # Thanks OPNA!!!
 
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -26,7 +21,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/share/{fonts/truetype,licenses/segoe-ui-variable}
     ln -s ${finalAttrs.src}/EULA.txt $out/share/licenses/segoe-ui-variable/LICENSE
     for font in *.ttf; do
-      ln -s ${finalAttrs.src}/"$font" $out/share/fonts/truetype/"$font"
+    ln -s ${finalAttrs.src}/"$font" $out/share/fonts/truetype/"$font"
     done
 
     runHook postInstall
@@ -39,4 +34,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     maintainers = [];
     platforms = lib.platforms.all;
   };
-})
+})  
