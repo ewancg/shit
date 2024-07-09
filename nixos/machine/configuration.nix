@@ -138,10 +138,11 @@ environment = {
   services.udev.packages = [ pkgs.yubikey-personalization ];
   
   security.pam.u2f.enable = true;
+  #security.pam.u2f.authFile = /etc/u2f_mappings;
   security.pam.u2f.authFile = "/etc/u2f_mappings";
   security.pam.u2f.interactive = true;
+  security.pam.u2f.debug = true;
   
-#  security.pam.services.ewan.enableGnomeKeyring = true;
   security.pam.services = {
     login.enableGnomeKeyring = true;
     sudo.enableGnomeKeyring = true;

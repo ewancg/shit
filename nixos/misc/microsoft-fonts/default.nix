@@ -1,4 +1,8 @@
 { stdenvNoCC, lib, fetchzip }:
+<<<<<<< HEAD:nixos/misc/microsoft-fonts/default.nix
+=======
+
+>>>>>>> ce607d10b5b2d69bb43814565d88602b9cef26c4:nixos/misc/segoe-ui-variable.nix
 # Thanks OPNA!!!
 
 stdenvNoCC.mkDerivation (finalAttrs: {
