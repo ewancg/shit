@@ -139,9 +139,8 @@ environment = {
   
   security.pam.u2f.enable = true;
   #security.pam.u2f.authFile = /etc/u2f_mappings;
-  security.pam.u2f.authFile = "/etc/u2f_mappings";
-  security.pam.u2f.interactive = true;
-  security.pam.u2f.debug = true;
+  security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
+  #security.pam.u2f.interactive = true;
   
   security.pam.services = {
     login.enableGnomeKeyring = true;
@@ -212,31 +211,32 @@ services.flatpak.enable = true;
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos
     gnome-tour
-  ]) ++ (with pkgs.gnome; [
+  ]) ++ (with pkgs; [
     cheese # webcam tool
-    gnome-music
     gnome-terminal
     gedit # text editor
     epiphany # web browser
     geary # email reader
     evince # document viewer
-    gnome-characters
     totem # video player
-    tali # poker game
-    iagno # go game
-    hitori # sudoku game
-    atomix # puzzle game
+    
+    gnome.gnome-music
+    gnome.gnome-characters
+    gnome.tali # poker game
+    gnome.iagno # go game
+    gnome.hitori # sudoku game
+    gnome.atomix # puzzle game
   ]);
 
   environment.systemPackages = with pkgs; [
-    #(import ../misc/segoe-ui-variable.nix)
+    (callPackage ../misc/microsoft-fonts.nix {})
     
-    gnome.nautilus
-    gnome.nautilus-python
+    nautilus
+    nautilus-python
 
     # GNOME & desktop integration
-    gnome.dconf-editor
-    gnome.gnome-tweaks
+    dconf-editor
+    gnome-tweaks
     yaru-theme
 
     qgnomeplatform

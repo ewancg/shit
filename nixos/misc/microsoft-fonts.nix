@@ -1,12 +1,11 @@
-{ stdenvNoCC, lib, fetchzip }:
-<<<<<<< HEAD:nixos/misc/microsoft-fonts/default.nix
-=======
-
->>>>>>> ce607d10b5b2d69bb43814565d88602b9cef26c4:nixos/misc/segoe-ui-variable.nix
-# Thanks OPNA!!!
+{
+  stdenvNoCC,
+  lib,
+  fetchzip,
+}:
 
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "segoe-ui-variable";
+  pname = "microsoft-fonts";
   version = "0-unstable-2024-06-06";
 
   src = fetchzip {
@@ -25,7 +24,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/share/{fonts/truetype,licenses/segoe-ui-variable}
     ln -s ${finalAttrs.src}/EULA.txt $out/share/licenses/segoe-ui-variable/LICENSE
     for font in *.ttf; do
-    ln -s ${finalAttrs.src}/"$font" $out/share/fonts/truetype/"$font"
+      ln -s ${finalAttrs.src}/"$font" $out/share/fonts/truetype/"$font"
     done
 
     runHook postInstall
@@ -38,4 +37,4 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     maintainers = [];
     platforms = lib.platforms.all;
   };
-})  
+})
