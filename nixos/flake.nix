@@ -6,6 +6,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    #microsoft-fonts = {
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #  url = "path:./misc/microsoft-fonts/";
+    #};
   };
 
   outputs = { self, nixpkgs, ... }@inputs:

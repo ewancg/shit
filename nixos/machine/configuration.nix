@@ -1,8 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ pkgs, stdenvNoCC, lib, fetchzip, ... }:
+{ pkgs, ... }:
 
 {
   imports =
@@ -15,9 +14,6 @@
 
       # Audio configuration
       ./audio.nix
-
-      # Windows fonts
-      #../misc/segoe-ui-variable.nix
     ];
 
 
@@ -83,7 +79,7 @@ fonts.packages = with pkgs; [
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
-    nixpkgs.overlays = [
+  nixpkgs.overlays = [
     # GNOME 46: triple-buffering-v4-46
     (final: prev: {
       gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
@@ -93,7 +89,7 @@ fonts.packages = with pkgs; [
             owner = "vanvugt";
             repo = "mutter";
             rev = "triple-buffering-v4-46";
-            hash = "sha256-fkPjB/5DPBX06t7yj0Rb3UEuu5b9mu3aS+jhH18+lpI=";
+            hash = "sha256-nz1Enw1NjxLEF3JUG0qknJgf4328W/VvdMjJmoOEMYs=";
           };
         });
       });
@@ -142,10 +138,8 @@ environment = {
   services.udev.packages = [ pkgs.yubikey-personalization ];
   
   security.pam.u2f.enable = true;
-  #security.pam.u2f.authFile = /etc/u2f_mappings;
   security.pam.u2f.authFile = "/etc/u2f_mappings";
-  #security.pam.u2f.interactive = true;
-  #security.pam.u2f.debug = true;
+  security.pam.u2f.interactive = true;
   
 #  security.pam.services.ewan.enableGnomeKeyring = true;
   security.pam.services = {
@@ -214,28 +208,29 @@ environment = {
 services.flatpak.enable = true;
 # over
 
-environment.gnome.excludePackages = (with pkgs; [
-  gnome-photos
-  gnome-tour
-]) ++ (with pkgs.gnome; [
-  cheese # webcam tool
-  gnome-music
-  gnome-terminal
-  #gedit # text editor
-  epiphany # web browser
-  geary # email reader
-  evince # document viewer
-  gnome-characters
-  totem # video player
-  tali # poker game
-  iagno # go game
-  hitori # sudoku game
-  atomix # puzzle game
-]);
+  environment.gnome.excludePackages = (with pkgs; [
+    gnome-photos
+    gnome-tour
+  ]) ++ (with pkgs.gnome; [
+    cheese # webcam tool
+    gnome-music
+    gnome-terminal
+    gedit # text editor
+    epiphany # web browser
+    geary # email reader
+    evince # document viewer
+    gnome-characters
+    totem # video player
+    tali # poker game
+    iagno # go game
+    hitori # sudoku game
+    atomix # puzzle game
+  ]);
 
   environment.systemPackages = with pkgs; [
+    #(import ../misc/segoe-ui-variable.nix)
     
-        gnome.nautilus
+    gnome.nautilus
     gnome.nautilus-python
 
     # GNOME & desktop integration
@@ -287,42 +282,6 @@ environment.gnome.excludePackages = (with pkgs; [
 
     gnupg
     
-
-stdenvNoCC.mkDerivation (finalAttrs: {
-    name = "segoe-ui-variable";
-    pname = "segoe-ui-variable";
-    version = "0-unstable-2024-06-06";
-
-    src = fetchzip {
-      url = "https://aka.ms/SegoeUIVariable";
-      extension = "zip";
-      stripRoot = false;
-      hash = "sha256-s82pbi3DQzcV9uP1bySzp9yKyPGkmJ9/m1Q6FRFfGxg=";
-    };
-
-    dontConfigure = true;
-    dontBuild = true;
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out/share/{fonts/truetype,licenses/segoe-ui-variable}
-      ln -s ${finalAttrs.src}/EULA.txt $out/share/licenses/segoe-ui-variable/LICENSE
-      for font in *.ttf; do
-      ln -s ${finalAttrs.src}/"$font" $out/share/fonts/truetype/"$font"
-      done
-
-      runHook postInstall
-    '';
-
-    meta = {
-      description = "The new system font for Windows";
-      homepage = "https://learn.microsoft.com/en-us/windows/apps/design/downloads/#fonts";
-      license = lib.licenses.unfree; # Guessing, haven't read what EULA allows
-      maintainers = [];
-      platforms = lib.platforms.all;
-    };
-  })
     #vesktop
     imagemagick
 
