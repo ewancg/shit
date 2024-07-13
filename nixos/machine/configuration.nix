@@ -31,6 +31,17 @@
     };
   };
 
+  fileSystems."/mnt/music" = {
+  device = "ewan@slave:/mnt/music";
+  fsType = "sshfs";
+  options = [
+    "nodev"
+    "noatime"
+    "allow_other"
+    "IdentityFile=/home/ewan/.ssh/id_rsa"
+  ];
+};
+
 fonts.packages = with pkgs; [
   noto-fonts
   #noto-fonts-cjk
@@ -148,10 +159,10 @@ environment = {
     login.u2fAuth = true;
     sudo.u2fAuth = true;
   };
-  #programs.gnupg.agent = {
-  #  enable = true;
-  #  enableSSHSupport = true;
-  #};
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   users.users.ewan = {
     isNormalUser = true;
@@ -162,6 +173,15 @@ environment = {
       #  thunderbird
     #];
   };
+
+  networking.firewall.allowedTCPPortRanges = [
+  # KDE Connect
+  { from = 1714; to = 1764; }
+];
+networking.firewall.allowedUDPPortRanges = [
+  # KDE Connect
+  { from = 1714; to = 1764; }
+];
 
   environment.shellInit = ''
     gpg-connect-agent /bye
@@ -243,6 +263,8 @@ services.flatpak.enable = true;
     qgnomeplatform-qt6
     xdg-desktop-portal
 
+    openssl
+
     # Theming
     gradience 
     adw-gtk3
@@ -276,7 +298,7 @@ services.flatpak.enable = true;
     teamspeak_client
     tmux
     
-        wine64
+    wine64
     winetricks
     wineWowPackages.staging
     wineWowPackages.waylandFull
