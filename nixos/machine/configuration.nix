@@ -6,23 +6,15 @@
 {
   imports =
     [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+      # All hardware, network and miscellaneous system-level declarations
+      ./system.nix
 
-      # GPU
-      ./graphics.nix
+      # GNOME
+      ./desktop/gnome.nix
 
-      # Audio configuration
-      ./audio.nix
+      # System-wide packages
+      ./packages.nix
     ];
-
-
-  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
-
-  services.udev.extraRules =
-    builtins.replaceStrings ["/bin/chmod"] ["${pkgs.coreutils}/bin/chmod"] ''
-    ${builtins.readFile ./udev/60-openrgb.rules}
-    '';
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   home-manager = {
@@ -32,114 +24,18 @@
   };
 
   fileSystems."/mnt/music" = {
-  device = "ewan@slave:/mnt/music";
-  fsType = "sshfs";
-  options = [
-    "nodev"
-    "noatime"
-    "allow_other"
-    "IdentityFile=/home/ewan/.ssh/id_rsa"
-  ];
-};
-
-fonts.packages = with pkgs; [
-  noto-fonts
-  #noto-fonts-cjk
-  #noto-fonts-emoji
-  liberation_ttf
-  fira-code
-  fira-code-symbols
-  mplus-outline-fonts.githubRelease
-  dina-font
-  proggyfonts
-  corefonts
-  vistafonts
-];
-
-  # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.supportedFilesystems = [ "ntfs" ];
-
-  networking.hostName = "machine"; # Define your hostname.
-  networking.networkmanager.enable = true;
-  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Set your time zone.
-  time.timeZone = "America/Denver";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
+    device = "ewan@slave:/mnt/music";
+    fsType = "sshfs";
+    options = [
+      "nodev"
+      "noatime"
+      "allow_other"
+      "transform_symlinks"
+      "Compression=no" # Required, for some reason
+      "IdentityFile=/home/ewan/.ssh/id_ed25519"
+    ];
   };
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  nixpkgs.overlays = [
-    # GNOME 46: triple-buffering-v4-46
-    (final: prev: {
-      gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
-        mutter = gnomePrev.mutter.overrideAttrs (old: {
-          src = pkgs.fetchFromGitLab  {
-            domain = "gitlab.gnome.org";
-            owner = "vanvugt";
-            repo = "mutter";
-            rev = "triple-buffering-v4-46";
-            hash = "sha256-nz1Enw1NjxLEF3JUG0qknJgf4328W/VvdMjJmoOEMYs=";
-          };
-        });
-      });
-    })
-  ];
-  nixpkgs.config.allowAliases = false;
-
-
-programs.nautilus-open-any-terminal = {
-  enable = true;
-  terminal = "alacritty";
-};
-
-environment = {
-  #sessionVariables.NAUTILUS_4_EXTENSION_DIR = "${pkgs.gnome.nautilus-python}/lib/nautilus/extensions-4";
-  pathsToLink = [
-    "/share/nautilus-python/extensions"
-  ];
-
-};
-
-  # GNOME settings
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
-    [org.gnome.nautilus.preferences]
-    default-folder-viewer='list-view'
-    
-    [org.gnome.mutter]
-    experimental-features="['scale-monitor-framebuffer']"
-  '';
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "colemak";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
+  
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -169,19 +65,7 @@ environment = {
     initialPassword = "ewan";
     description = "Ewan Green";
     extraGroups = [ "networkmanager" "wheel" ];
-    #packages = with pkgs; [
-      #  thunderbird
-    #];
   };
-
-  networking.firewall.allowedTCPPortRanges = [
-  # KDE Connect
-  { from = 1714; to = 1764; }
-];
-networking.firewall.allowedUDPPortRanges = [
-  # KDE Connect
-  { from = 1714; to = 1764; }
-];
 
   environment.shellInit = ''
     gpg-connect-agent /bye
@@ -228,124 +112,9 @@ networking.firewall.allowedUDPPortRanges = [
 services.flatpak.enable = true;
 # over
 
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-photos
-    gnome-tour
-  ]) ++ (with pkgs; [
-    cheese # webcam tool
-    gnome-terminal
-    gedit # text editor
-    epiphany # web browser
-    geary # email reader
-    evince # document viewer
-    totem # video player
-    
-    gnome.gnome-music
-    gnome.gnome-characters
-    gnome.tali # poker game
-    gnome.iagno # go game
-    gnome.hitori # sudoku game
-    gnome.atomix # puzzle game
-  ]);
-
-  environment.systemPackages = with pkgs; [
-    (callPackage ../misc/microsoft-fonts.nix {})
-    
-    nautilus
-    nautilus-python
-
-    # GNOME & desktop integration
-    dconf-editor
-    gnome-tweaks
-    yaru-theme
-
-    qgnomeplatform
-    qgnomeplatform-qt6
-    xdg-desktop-portal
-
-    openssl
-
-    # Theming
-    gradience 
-    adw-gtk3
-    libsForQt5.qtstyleplugin-kvantum
-
-    # "Task manager"
-    mission-center
-    
-    # Dev C/C++
-    cmake
-    gcc
-    clang
-    ninja
-    mold
-
-    nix-index
-    nixpkgs-fmt
-    nil
-    
-    wget
-    alacritty
-    gimp
-    git
-    #home-manager-path
-    lshw
-    nil
-    nixpkgs-fmt
-    normcap
-    openrgb
-    qpwgraph
-    teamspeak_client
-    tmux
-    
-    wine64
-    winetricks
-    wineWowPackages.staging
-    wineWowPackages.waylandFull
-
-    gnupg
-    
-    #vesktop
-    imagemagick
-
-    (symlinkJoin {
-      name = "my-discord";
-
-      paths = [
-        vesktop
-      ];   
-
-      postBuild = ''
-        for size in 32 64 128 256 512 1024; do
-          dim="$size"x"$size"
-          rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-          ${lib.getExe imagemagick} ${../misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-        done
-
-        rm $out/share/applications/vesktop.desktop
-        cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
-      '';
-    })
-
-    spotify
-    vlc
-
-    fd
-    
-    wl-clipboard
-    wofi
-    xsel
-
-
-
-    prismlauncher
-
-   # graalvm-ce
-
-    steam
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-  ];
+  #services.desktopManager.lomiri.enable = true;
+  #xdg.portal.enable = true;
+  #xdg.portal.extraPortals = (with pkgs;[ xdg-desktop-portal-gtk ]);
 
 
   virtualisation.libvirtd.enable = true;

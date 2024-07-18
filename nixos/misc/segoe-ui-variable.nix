@@ -1,11 +1,11 @@
-{
-  stdenvNoCC,
-  lib,
-  fetchzip,
+{ stdenvNoCC
+, lib
+, fetchzip
+,
 }:
 
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "microsoft-fonts";
+  pname = "segoe-ui-variable";
   version = "0-unstable-2024-06-06";
 
   src = fetchzip {
@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     description = "The new system font for Windows";
     homepage = "https://learn.microsoft.com/en-us/windows/apps/design/downloads/#fonts";
     license = lib.licenses.unfree; # Guessing, haven't read what EULA allows
-    maintainers = [];
+    maintainers = [ ];
     platforms = lib.platforms.all;
   };
 })

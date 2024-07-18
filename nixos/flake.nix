@@ -27,14 +27,14 @@
           ./machine/configuration.nix
         ];
       };
-#      nixosConfigurations.slave = nixpkgs.lib.nixosSystem {
-#        system = "${system}";
-#        # extraSpecialArgs = {inherit inputs;};
-#        modules = [
-#          inputs.home-manager.nixosModules.default
-#          ./slave/configuration.nix
-#        ];
-#      };
+      #      nixosConfigurations.slave = nixpkgs.lib.nixosSystem {
+      #        system = "${system}";
+      #        # extraSpecialArgs = {inherit inputs;};
+      #        modules = [
+      #          inputs.home-manager.nixosModules.default
+      #          ./slave/configuration.nix
+      #        ];
+      #      };
 
     };
 }

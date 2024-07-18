@@ -21,10 +21,10 @@
   xdg.configFile = {
     "alacritty".source = ../../alacritty;
     #"alacritty/theme".source = config.lib.file.mkOutOfStoreSymlink ../../dracula.toml;
-    
+
     #"fish/config.fish".source = config.lib.file.mkOutOfStoreSymlink ../../fish/config.fish;
 
- #   "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
+    #   "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
   };
 
 
@@ -37,25 +37,25 @@
   #};
 
   #home-manager.users.ewan = {
-    dconf = {
-      enable = true;
-      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
-      settings."org/gnome/shell" = {
-        disable-user-extensions = false;
-        enabled-extensions = with pkgs.gnomeExtensions; [
-          gsconnect.extensionUuid
-          tiling-assistant.extensionUuid
-          window-calls.extensionUuid
-          window-calls-extended.extensionUuid
-          ddnet-friends-panel.extensionUuid
-          user-themes.extensionUuid
-          dash-to-panel.extensionUuid
-          quick-settings-audio-panel.extensionUuid
-         # tray-icons-reloaded.extensionUuid
-          appindicator.extensionUuid
-        ];
-      };
+  dconf = {
+    enable = true;
+    settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+    settings."org/gnome/shell" = {
+      disable-user-extensions = false;
+      enabled-extensions = with pkgs.gnomeExtensions; [
+        gsconnect.extensionUuid
+        tiling-assistant.extensionUuid
+        window-calls.extensionUuid
+        window-calls-extended.extensionUuid
+        ddnet-friends-panel.extensionUuid
+        user-themes.extensionUuid
+        dash-to-panel.extensionUuid
+        quick-settings-audio-panel.extensionUuid
+        # tray-icons-reloaded.extensionUuid
+        appindicator.extensionUuid
+      ];
     };
+  };
   #};
 
   home.file = {
@@ -84,6 +84,7 @@
     '';
     functions = {
       nixbuildconf.body = ''sudo nixos-rebuild --flake ~/shit/nixos#machine switch'';
+      start.body = ''xdg-open $@'';
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
       hostname.body = "/usr/bin/env cat /etc/hostname";
       kc.body = ''
@@ -151,18 +152,18 @@
     enable = true;
     extraConfig = builtins.readFile ../../.tmux.conf;
     #plugins = with pkgs.tmuxPlugins; [
-      #sensible
-      #tmux-colors-solarized
-      # tokyo-night-tmux
-      #catppuccin
-      # tmux-battery
-      #vim-tmux-navigator
-      # set -g @plugin 'tmux-plugins/tmux-sensible'
-      # set -g @plugin 'seebi/tmux-colors-solarized'
-      # #set -g @plugin 'janoamaral/tokyo-night-tmux'
-      # set -g @plugin 'catppuccin/tmux'
-      # set -g @plugin 'tmux-plugins/tmux-battery'
-      # set -g @plugin 'christoomey/vim-tmux-navigator'
+    #sensible
+    #tmux-colors-solarized
+    # tokyo-night-tmux
+    #catppuccin
+    # tmux-battery
+    #vim-tmux-navigator
+    # set -g @plugin 'tmux-plugins/tmux-sensible'
+    # set -g @plugin 'seebi/tmux-colors-solarized'
+    # #set -g @plugin 'janoamaral/tokyo-night-tmux'
+    # set -g @plugin 'catppuccin/tmux'
+    # set -g @plugin 'tmux-plugins/tmux-battery'
+    # set -g @plugin 'christoomey/vim-tmux-navigator'
     #];
   };
 
