@@ -27,15 +27,17 @@
     device = "ewan@slave:/mnt/music";
     fsType = "sshfs";
     options = [
+      "reconnect"
       "nodev"
       "noatime"
       "allow_other"
       "transform_symlinks"
+      "ServerAliveInterval=1"
       "Compression=no" # Required, for some reason
       "IdentityFile=/home/ewan/.ssh/id_ed25519"
     ];
   };
-  
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -43,12 +45,12 @@
   #services.pcscd.enable = true;
   #hardware.gpgSmartcards.enable = true; # for yubikey
   services.udev.packages = [ pkgs.yubikey-personalization ];
-  
+
   security.pam.u2f.enable = true;
   #security.pam.u2f.authFile = /etc/u2f_mappings;
   security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
   #security.pam.u2f.interactive = true;
-  
+
   security.pam.services = {
     login.enableGnomeKeyring = true;
     sudo.enableGnomeKeyring = true;
@@ -107,10 +109,10 @@
     QT_QPA_PLATFORM = "wayland";
     QT_QPA_PLATFORMTHEME = "gnome";
     QT_STYLE_OVERRIDE = "kvantum";
-};
+  };
 
-services.flatpak.enable = true;
-# over
+  services.flatpak.enable = true;
+  # over
 
   #services.desktopManager.lomiri.enable = true;
   #xdg.portal.enable = true;

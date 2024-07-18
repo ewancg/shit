@@ -1,4 +1,4 @@
-{pkgs, lib, ...}:
+{ pkgs, lib, ... }:
 {
   imports = [
     # Include the results of the hardware scan.
@@ -17,17 +17,17 @@
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.supportedFilesystems = [ "ntfs" "nfs" ];
+  boot.supportedFilesystems = [ "ntfs" "sshfs" ];
 
   # Extra kernel modules
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
 
   # OpenRGB udev rules
   services.hardware.openrgb.enable = true;
-#  services.udev.extraRules =
-#    builtins.replaceStrings ["/bin/chmod"] ["${lib.getExe' pkgs.coreutils "chmod"}"] ''
-#    ${builtins.readFile ./udev/60-openrgb.rules}
-#    '';
+  #  services.udev.extraRules =
+  #    builtins.replaceStrings ["/bin/chmod"] ["${lib.getExe' pkgs.coreutils "chmod"}"] ''
+  #    ${builtins.readFile ./udev/60-openrgb.rules}
+  #    '';
 
   # Set your time zone.
   time.timeZone = "America/Denver";

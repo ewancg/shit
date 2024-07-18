@@ -2,7 +2,7 @@
 with pkgs;
 let
   # System packages
-  system =  [
+  system = [
     # Nix
     nix-index
     nixpkgs-fmt
@@ -82,7 +82,8 @@ let
     qpwgraph
     obsidian
   ];
-in {
+in
+{
   # Fonts
   fonts.packages = with pkgs; [
     (callPackage ../misc/segoe-ui-variable.nix { })
@@ -95,7 +96,7 @@ in {
     proggyfonts
     corefonts
     vistafonts
-  ];  
+  ];
 
   # Other
   environment.systemPackages = with pkgs; [

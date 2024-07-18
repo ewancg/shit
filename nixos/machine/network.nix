@@ -16,7 +16,7 @@
 
     hostName = "machine";
     enableIPv6 = true;
-  #  useDHCP = true;
+    #  useDHCP = true;
 
     dhcpcd = {
       enable = true;
@@ -83,7 +83,7 @@
 
   environment.etc."nixos/services/forwarding-rules.txt" = {
     mode = "0777";
-    text =''
+    text = ''
       local            192.168.1.1
     '';
   };
