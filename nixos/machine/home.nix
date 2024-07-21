@@ -15,28 +15,13 @@
   };
 
   home.packages = with pkgs; [
-
   ];
 
   xdg.configFile = {
     "alacritty".source = ../../alacritty;
-    #"alacritty/theme".source = config.lib.file.mkOutOfStoreSymlink ../../dracula.toml;
-
-    #"fish/config.fish".source = config.lib.file.mkOutOfStoreSymlink ../../fish/config.fish;
-
-    #   "Yubico/u2f_keys".source = config.lib.file.mkOutOfStoreSymlink /etc/u2f_mappings;
+    "hypr".source = ../../hypr;
   };
 
-
-  #home-manager.users.gdm = { lib, ... }: {
-  #  dconf.settings = {
-  #    "org/gnome/desktop/interface" = {
-  #      scaling-factor = lib.hm.gvariant.mkUint32 2;
-  #    };
-  #};
-  #};
-
-  #home-manager.users.ewan = {
   dconf = {
     enable = true;
     settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
@@ -60,11 +45,6 @@
 
   home.file = {
     #".tmux.conf".source = ../../.tmux.conf;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
     # '';
   };
 
@@ -151,20 +131,22 @@
   programs.tmux = {
     enable = true;
     extraConfig = builtins.readFile ../../.tmux.conf;
-    #plugins = with pkgs.tmuxPlugins; [
-    #sensible
-    #tmux-colors-solarized
-    # tokyo-night-tmux
-    #catppuccin
-    # tmux-battery
-    #vim-tmux-navigator
-    # set -g @plugin 'tmux-plugins/tmux-sensible'
-    # set -g @plugin 'seebi/tmux-colors-solarized'
-    # #set -g @plugin 'janoamaral/tokyo-night-tmux'
-    # set -g @plugin 'catppuccin/tmux'
-    # set -g @plugin 'tmux-plugins/tmux-battery'
-    # set -g @plugin 'christoomey/vim-tmux-navigator'
-    #];
+    plugins = with pkgs.tmuxPlugins; [
+    sensible
+    tmux-colors-solarized
+     tokyo-night-tmux
+    catppuccin
+   #  tmux-battery
+    vim-tmux-navigator
+    ''
+     set -g @plugin 'tmux-plugins/tmux-sensible'
+     set -g @plugin 'seebi/tmux-colors-solarized'
+     set -g @plugin 'janoamaral/tokyo-night-tmux'
+     set -g @plugin 'catppuccin/tmux'
+     set -g @plugin 'tmux-plugins/tmux-battery'
+     set -g @plugin 'christoomey/vim-tmux-navigator'
+    ''
+    ];
   };
 
 

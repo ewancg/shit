@@ -24,6 +24,16 @@
     AllowHibernation=no
     AllowSuspendThenHibernate=no
   '';
+
+  home-manager.users.gdm = { lib, ... }: {
+    home.stateVersion = "18.09";
+    dconf.settings = {
+      "org/gnome/desktop/interface" = {
+        scaling-factor = lib.hm.gvariant.mkUint32 2;
+      };
+  };
+  };
+
   # Causing periodic I/O freezes?
   powerManagement.cpuFreqGovernor = "performance";
   powerManagement.powertop.enable = true;

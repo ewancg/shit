@@ -41,8 +41,8 @@ let
 
     imagemagick
 
-    # rust
-    (callPackage ../misc/rustup.nix {})
+    # system wide rust... one day
+    # (callPackage ../misc/rustup.nix {})
   ];
 
   # Apps (move to home.nix?)
