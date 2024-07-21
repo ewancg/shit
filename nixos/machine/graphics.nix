@@ -6,6 +6,7 @@
 
   # Enable OpenGL
   hardware.graphics = {
+    enable32Bit = true;
     enable = true;
   };
 
@@ -26,6 +27,7 @@
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
+    # False because it requires PRIME offload mode
 
     # Use the NVidia open source kernel module (not to be confused with the
     # independent third-party "nouveau" open source driver).
@@ -45,7 +47,13 @@
   };
 
   hardware.nvidia.prime = {
-    sync.enable = true;
+    # Offload mode
+    offload = {
+			enable = true;
+			enableOffloadCmd = true;
+		};
+    # Sync mode 
+    # sync.enable = true;
 
     # Getting PCI IDs of GPUs
     # sudo lshw -c display; "bus info"
@@ -62,4 +70,22 @@
     amdgpuBusId = "PCI:13:00:0";
     nvidiaBusId = "PCI:01:00:0";
   };
+
+  # 
+  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_drm" "nvidia_uvm" ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    nvidia_x11
+  ];
+
+  environment.variables = {
+    VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
+  };
+  boot.blacklistedKernelModules = [
+    "nouveau"
+  ];
+
+  boot.extraModprobeConfig = ''
+  options nvidia_drm modeset=1 fbdev=1
+  options nouveau modeset=0
+  '';
 }

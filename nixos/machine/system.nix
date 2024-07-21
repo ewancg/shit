@@ -14,10 +14,29 @@
     ./audio.nix
   ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  #boot.zfs.forceImportRoot = false;
+  networking.hostId = "c71d4fae";
+
+  systemd.sleep.extraConfig = ''
+    AllowSuspend=yes
+    AllowHybridSleep=yes
+    AllowHibernation=no
+    AllowSuspendThenHibernate=no
+  '';
+  # Causing periodic I/O freezes?
+  powerManagement.cpuFreqGovernor = "performance";
+  powerManagement.powertop.enable = true;
+
+  programs.gamemode.enable = true;
+  programs.gamemode.enableRenice = true;
+
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  
   boot.supportedFilesystems = [ "ntfs" "sshfs" ];
+  # boot.supportedFilesystems = [ "ntfs" "sshfs" "zfs" ];
 
   # Extra kernel modules
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];

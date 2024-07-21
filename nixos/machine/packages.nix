@@ -14,6 +14,8 @@ let
     wget
     git
     lshw
+    pciutils
+    udisks
 
     # Wine
     wine64
@@ -23,6 +25,7 @@ let
 
     # Other
     openrgb
+    solaar
   ];
 
   # Packages involved/integrated in my terminal workflow
@@ -37,6 +40,9 @@ let
     neovim
 
     imagemagick
+
+    # rust
+    (callPackage ../misc/rustup.nix {})
   ];
 
   # Apps (move to home.nix?)
@@ -66,7 +72,7 @@ let
     mission-center
 
     # Gaming
-    prismlauncher
+    (prismlauncher.override { withWaylandGLFW=true; })
     # Steam - Fix NVIDIA Vulkan driver bug on 555.58
     (steam.override {
       extraProfile = ''
@@ -81,6 +87,8 @@ let
     # Productivity, misc.
     qpwgraph
     obsidian
+    gnome.gnome-disk-utility
+    thunar
   ];
 in
 {
@@ -97,6 +105,10 @@ in
     corefonts
     vistafonts
   ];
+
+  # Run non-Nix binaries
+  programs.nix-ld.enable = true;
+  programs.nix-ld.package = pkgs.nix-ld-rs;
 
   # Other
   environment.systemPackages = with pkgs; [

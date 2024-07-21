@@ -10,7 +10,10 @@
       ./system.nix
 
       # GNOME
-      ./desktop/gnome.nix
+#      ./desktop/gnome.nix
+
+      # Hyprland
+      ./desktop/hyprland.nix
 
       # System-wide packages
       ./packages.nix
@@ -23,7 +26,20 @@
     };
   };
 
+  fileSystems."/mnt/work" = {
+    label = "Projects";
+    device = "/dev/disk/by-uuid/0A10902A10901F2F";
+    options = [
+      "defaults"
+      "nodev"
+      "noatime"
+      "discardz"
+      "data=ordered"
+    ];
+  };
+
   fileSystems."/mnt/music" = {
+    label = "Music (@slave)";
     device = "ewan@slave:/mnt/music";
     fsType = "sshfs";
     options = [
@@ -106,7 +122,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.variables = {
-    QT_QPA_PLATFORM = "wayland";
+  #  QT_QPA_PLATFORM = "wayland";
+    QT_WAYLAND_DECORATION="adwaita";
     QT_QPA_PLATFORMTHEME = "gnome";
     QT_STYLE_OVERRIDE = "kvantum";
   };
