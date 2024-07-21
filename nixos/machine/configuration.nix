@@ -21,6 +21,7 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   home-manager = {
+    useGlobalPkgs = true;
     users = {
       "ewan" = import ./home.nix;
     };
@@ -122,7 +123,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.variables = {
-  #  QT_QPA_PLATFORM = "wayland";
     QT_WAYLAND_DECORATION="adwaita";
     QT_QPA_PLATFORMTHEME = "gnome";
     QT_STYLE_OVERRIDE = "kvantum";
