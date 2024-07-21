@@ -130,24 +130,15 @@
 
   programs.tmux = {
     enable = true;
-    extraConfig = ''
-    ${builtins.readFile ../../.tmux.conf};
-
-     set -g @plugin 'tmux-plugins/tmux-sensible'
-     set -g @plugin 'seebi/tmux-colors-solarized'
-     set -g @plugin 'janoamaral/tokyo-night-tmux'
-     set -g @plugin 'catppuccin/tmux'
-     set -g @plugin 'tmux-plugins/tmux-battery'
-     set -g @plugin 'christoomey/vim-tmux-navigator'
-    '';
-    plugins = with pkgs.tmuxPlugins; [
-    sensible
-    tmux-colors-solarized
+    extraConfig = builtins.readFile ../../.tmux.conf;
+   plugins = with pkgs.tmuxPlugins; [
+     sensible
+     tmux-colors-solarized
      tokyo-night-tmux
-    catppuccin
-   #  tmux-battery
-    vim-tmux-navigator
-    ];
+     catppuccin
+     #  tmux-battery
+     vim-tmux-navigator
+   ];
   };
 
 

@@ -49,9 +49,9 @@
   hardware.nvidia.prime = {
     # Offload mode
     offload = {
-			enable = true;
-			enableOffloadCmd = true;
-		};
+      enable = true;
+      enableOffloadCmd = true;
+    };
     # Sync mode 
     # sync.enable = true;
 
@@ -78,14 +78,14 @@
   ];
 
   environment.variables = {
-    VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
+    VK_DRIVER_FILES = /run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
   };
   boot.blacklistedKernelModules = [
     "nouveau"
   ];
 
   boot.extraModprobeConfig = ''
-  options nvidia_drm modeset=1 fbdev=1
-  options nouveau modeset=0
+    options nvidia_drm modeset=1 fbdev=1
+    options nouveau modeset=0
   '';
 }

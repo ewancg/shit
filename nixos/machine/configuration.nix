@@ -10,7 +10,7 @@
       ./system.nix
 
       # GNOME
-#      ./desktop/gnome.nix
+      #      ./desktop/gnome.nix
 
       # Hyprland
       ./desktop/hyprland.nix
@@ -24,6 +24,14 @@
     useGlobalPkgs = true;
     users = {
       "ewan" = import ./home.nix;
+      "gdm" = { lib, ... }: {
+        home.stateVersion = "24.05";
+        dconf.settings = {
+          "org/gnome/desktop/interface" = {
+            scaling-factor = lib.hm.gvariant.mkUint32 2;
+          };
+        };
+      };
     };
   };
 
@@ -123,7 +131,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.variables = {
-    QT_WAYLAND_DECORATION="adwaita";
+    QT_WAYLAND_DECORATION = "adwaita";
     QT_QPA_PLATFORMTHEME = "gnome";
     QT_STYLE_OVERRIDE = "kvantum";
   };

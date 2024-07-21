@@ -25,7 +25,8 @@ let
 
     # Other
     openrgb
-    solaar
+    # solaar # broken on 7 21 24
+    logiops
   ];
 
   # Packages involved/integrated in my terminal workflow
@@ -72,7 +73,7 @@ let
     mission-center
 
     # Gaming
-    (prismlauncher.override { withWaylandGLFW=true; })
+    (prismlauncher.override { withWaylandGLFW = true; })
     # Steam - Fix NVIDIA Vulkan driver bug on 555.58
     (steam.override {
       extraProfile = ''
@@ -86,9 +87,10 @@ let
 
     # Productivity, misc.
     qpwgraph
+    pwvucontrol
     obsidian
-    gnome.gnome-disk-utility
-    thunar
+    gnome-disk-utility
+    xfce.thunar
   ];
 in
 {

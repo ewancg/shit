@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 {
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
@@ -9,7 +9,7 @@
     # systemd.enable = true;
   };
   services.hypridle.enable = true;
-  
+
   environment.sessionVariables = {
     XCURSOR_SIZE = "64";
     HYPRCURSOR_SIZE = "64";
@@ -22,15 +22,15 @@
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
   };
-  
+
   # wayland.windowManager.hyprland.settings = {
   #decoration = {
   #  shadow_offset = "0 5";
   #  "col.shadow" = "rgba(00000099)";
   #};
-#
+  #
   #"$mod" = "SUPER";
-#
+  #
   #bindm = [
   #  # mouse movements
   #  "$mod, mouse:272, movewindow"
@@ -52,10 +52,13 @@
 
   environment.systemPackages = (with pkgs; [
     hyprlock
+    hypridle
+    waybar
+    #hyprbar
 
-      nautilus
-      nautilus-python
-      
-      yaru-theme
+#    nautilus
+#    nautilus-python
+
+    yaru-theme
   ]);
 }
