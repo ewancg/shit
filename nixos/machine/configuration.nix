@@ -19,7 +19,15 @@
       ./packages.nix
     ];
 
+  nix.optimise.automatic = true;
+  nix.optimise.dates = [ "03:45" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 10d";
+  };
+
   home-manager = {
     useGlobalPkgs = true;
     users = {
@@ -35,6 +43,32 @@
     };
   };
 
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-uuid/8d82561f-b4a6-41fb-a200-3e4039a995de";
+    fsType = "btrfs";
+    neededForBoot = true;
+    options = [
+      "defaults"
+      "nodev"
+      "noatime"
+      "compress=zstd"
+    ];
+  };
+
+    fileSystems."/mnt/data" = {
+    device = "/dev/disk/by-uuid/71331833-459a-4a50-afab-b07a1800bb63";
+    label = "Data";
+    fsType = "ext4";
+    neededForBoot = true;
+    options = [
+      "defaults"
+      "nodev"
+      "noatime"
+      "discard"
+      "data=ordered"
+    ];
+  };
+
   fileSystems."/mnt/work" = {
     label = "Projects";
     device = "/dev/disk/by-uuid/0A10902A10901F2F";
@@ -42,7 +76,7 @@
       "defaults"
       "nodev"
       "noatime"
-      "discardz"
+      "discard"
       "data=ordered"
     ];
   };
@@ -54,6 +88,7 @@
     options = [
       "reconnect"
       "nodev"
+      "nofail"
       "noatime"
       "allow_other"
       "transform_symlinks"
@@ -130,11 +165,9 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.variables = {
-    QT_WAYLAND_DECORATION = "adwaita";
-    QT_QPA_PLATFORMTHEME = "gnome";
-    QT_STYLE_OVERRIDE = "kvantum";
-  };
+  # environment.variables = {
+# 
+  # };
 
   services.flatpak.enable = true;
   # over

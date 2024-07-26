@@ -6,16 +6,16 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    #microsoft-fonts = {
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #  url = "path:./misc/microsoft-fonts/";
-    #};
-  };
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+};
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
       system = "x86_64-linux";
+      specialArgs = {inherit inputs;};
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {

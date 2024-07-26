@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.username = "ewan";
@@ -15,11 +15,31 @@
   };
 
   home.packages = with pkgs; [
+    yaru-theme
+
+    libsForQt5.qtstyleplugin-kvantum
+    catppuccin-kvantum
+    catppuccin-gtk
   ];
 
+  # xdg.configFile = {
+  #   "alacritty".source = ../../alacritty;
+  #   "hypr".source =       ../../hypr;
+  #   "eww".source =        ../../eww;
+  #   "waybar".source = ../../waybar;
+  # };
+
+  # symlinks for debug
   xdg.configFile = {
-    "alacritty".source = ../../alacritty;
-    "hypr".source = ../../hypr;
+    "alacritty".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/alacritty";
+    "Kvantum".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/Kvantum";
+
+    "wofi".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/wofi";
+    "hypr".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/hypr";
+    "eww".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/eww";
+    "waybar".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/waybar";
+
+    "QtProject/qtcreator".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qtcreator";
   };
 
   dconf = {
@@ -45,6 +65,7 @@
 
   home.file = {
     #".tmux.conf".source = ../../.tmux.conf;
+    "dev".source = ../shells;
     # '';
   };
 
@@ -131,15 +152,13 @@
   programs.tmux = {
     enable = true;
     extraConfig = builtins.readFile ../../.tmux.conf;
-   plugins = with pkgs.tmuxPlugins; [
-     sensible
-     tmux-colors-solarized
-     tokyo-night-tmux
-     catppuccin
-     #  tmux-battery
-     vim-tmux-navigator
-   ];
+    plugins = with pkgs.tmuxPlugins; [
+      sensible
+      tmux-colors-solarized
+      tokyo-night-tmux
+      catppuccin
+      #  tmux-battery
+      vim-tmux-navigator
+    ];
   };
-
-
 }

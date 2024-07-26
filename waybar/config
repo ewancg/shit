@@ -1,0 +1,34 @@
+﻿[{
+    "height": 24,
+    "layer": "top",
+    "output": "DP-4",
+    "modules-left": ["hyprland/workspaces", "hyprland/mode"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["battery", "tray", "clock"],
+    "hyprland/workspaces": {
+     "format": "{icon}",
+     "on-scroll-up": "hyprctl dispatch workspace e+1",
+     "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+    "hyprland/window": {
+        
+    "max-length": 200,
+    "separate-outputs": true
+    },
+    "battery": {
+        "format": "{capacity}% {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "clock": {
+        "format": "{:%I:%M %p}",
+        "format-alt": "{:%A, %B %d   %I:%M %p}"
+    },
+    "tray": {
+        "icon-size": 16,
+        "spacing": 4
+    }
+}, {
+    "layer": "top",
+    "output": "HDMI-A-2",
+    "modules-right": ["clock"]
+}]

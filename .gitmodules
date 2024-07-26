@@ -1,0 +1,3 @@
+[submodule "catppuccin-kvantum"]
+	path = catppuccin-kvantum
+	url = https://github.com/catppuccin/Kvantum/tree/main

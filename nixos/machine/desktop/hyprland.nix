@@ -11,16 +11,41 @@
   services.hypridle.enable = true;
 
   environment.sessionVariables = {
-    XCURSOR_SIZE = "64";
-    HYPRCURSOR_SIZE = "64";
-    NIXOS_OZONE_WL = "1";
-    # Using latest kernel; needed on < 6.8
-    #WLR_DRM_NO_ATOMIC = "1";
-    XDG_SESSION_TYPE = "wayland";
-    QT_QPA_PLATFORM = "wayland;xcb";
-    SDL_VIDEODRIVER = "wayland,x11";
+    # XWayland scaling is disabled
+    XCURSOR_SIZE = "240";
+    HYPRCURSOR_SIZE = "192";
+
+# How to do these only on XWayland?
+    # QT_SCALE_FACTOR,1.5
+    # GDK_SCALE,1.5
+
+# Allow tearing on kernels < 6.8
+    # WLR_DRM_NO_ATOMIC = 1;
+
+# Nvidia
+    NVD_BACKEND ="direct";
+    LIBVA_DRIVER_NAME="nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+
+# Wayland
+    XDG_SESSION_TYPE = "wayland";
+    SDL_VIDEODRIVER = "wayland,x11";
+    GDK_BACKEND="wayland,x11,*";
+
+    CLUTTER_BACKEND = "wayland";
+    NIXOS_OZONE_WL = "1";
+
+# Hyprland
+    XDG_CURRENT_DESKTOP="Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
+
+# Qt
+    QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+    QT_QPA_PLATFORM = "wayland;xcb";
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
+    QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
+    QT_STYLE_OVERRIDE = "kvantum";
   };
 
   # wayland.windowManager.hyprland.settings = {
@@ -45,6 +70,23 @@
     default-folder-viewer='list-view'
   '';
 
+  systemd = {
+    user.services.polkit-gnome-authentication-agent-1 = {
+      description = "polkit-gnome-authentication-agent-1";
+      wantedBy = [ "graphical-session.target" ];
+      wants = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
+    };
+  };
+  security.polkit.enable = true;
+
   programs.nautilus-open-any-terminal = {
     enable = true;
     terminal = "alacritty";
@@ -53,12 +95,18 @@
   environment.systemPackages = (with pkgs; [
     hyprlock
     hypridle
+
+    # need for gui auth
+    polkit_gnome
+
+    # unsure which atm
     waybar
-    #hyprbar
+    eww
 
-#    nautilus
-#    nautilus-python
-
-    yaru-theme
+    wl-clipboard
+    wofi
+    xsel
+    
+    xdg-desktop-portal-hyprland
   ]);
 }

@@ -12,6 +12,9 @@
 
     # Audio server configuration
     ./audio.nix
+
+    # Mouse configuration
+    ./logitech.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -36,7 +39,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.supportedFilesystems = [ "ntfs" "sshfs" ];
+  boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
   # boot.supportedFilesystems = [ "ntfs" "sshfs" "zfs" ];
 
   # Extra kernel modules

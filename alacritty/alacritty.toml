@@ -1,5 +1,5 @@
 import = [
-	"~/.config/alacritty/dracula.toml"
+	"~/.config/alacritty/catpuccin_mocha.toml"
 ]
 
 shell = "tmux"

@@ -23,6 +23,9 @@ let
     wineWowPackages.staging
     wineWowPackages.waylandFull
 
+    wine-wayland
+    vkd3d-proton
+
     # Other
     openrgb
     # solaar # broken on 7 21 24
@@ -90,20 +93,45 @@ let
     pwvucontrol
     obsidian
     gnome-disk-utility
+    fsearch
     xfce.thunar
   ];
 in
 {
+# programs.spicetify =
+#    let
+#      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+#    in import (<nixpkgs/nixos/lib/eval-config.nix>)
+#    {
+#      enable = true;
+#      enabledExtensions = with spicePkgs.extensions; [
+#        #adblock
+#        hidePodcasts
+#        #shuffle # shuffle+ (special characters are sanitized out of extension names)
+#      ];
+#      theme = spicePkgs.themes.catppuccin;
+#      colorScheme = "mocha";
+#    };
+  
   # Fonts
   fonts.packages = with pkgs; [
     (callPackage ../misc/segoe-ui-variable.nix { })
+    wineWowPackages.fonts
+    wineWow64Packages.fonts
+    winePackages.fonts
+    wine64Packages.fonts
+
+    cantarell-fonts
     noto-fonts
+    open-sans
     liberation_ttf
     fira-code
     fira-code-symbols
     mplus-outline-fonts.githubRelease
     dina-font
     proggyfonts
+    zilla-slab
+    ucs-fonts
     corefonts
     vistafonts
   ];
@@ -112,17 +140,25 @@ in
   programs.nix-ld.enable = true;
   programs.nix-ld.package = pkgs.nix-ld-rs;
 
+  # File manager
+  programs.thunar.enable = true;
+
+  programs.thunar.plugins = with pkgs.xfce; [
+    thunar-archive-plugin
+    thunar-volman
+  ];
+
+  programs.xfconf.enable = true; # Required for Thunar to save its config
+  services.gvfs.enable = true; # Mount, trash, and other functionalities
+  services.tumbler.enable = true; # Thumbnail support for image
+
+  # Disks
+  programs.gnome-disks.enable = true;
+  services.udisks2.enable = true;
+
   # Other
   environment.systemPackages = with pkgs; [
     # Theming
-    gradience
-    adw-gtk3
-    libsForQt5.qtstyleplugin-kvantum
-
     normcap
-
-    wl-clipboard
-    wofi
-    xsel
   ] ++ system ++ termish ++ apps;
 }
