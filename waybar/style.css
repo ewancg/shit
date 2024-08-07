@@ -1,14 +1,65 @@
-﻿* {
+﻿/*
+@import "mocha.css";
+*/
+
+* {
     border: none;
     border-radius: 0;
-    font-family: Unifont, sans-serif;
-    font-size: 11px;
+    font-family: Cantarell, "Font Awesome 6 Free", sans-serif;
+    font-size: 5px;
     min-height: 0;
 }
 
+.modules-left, #cpu, # {
+    font-family: Ubuntu Mono, "Font Awesome 6 Free";
+}
+label.module, #tray {
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    padding: 0 10px;
+    margin: 0 2px;
+}
+
+#tray > * {
+    min-width: 16px;
+    padding: 10px 10px;
+}
+label.module:hover, #tray > *:hover {
+    background-color: rgb(49, 50, 68);
+}
+
+#pulseaudio-slider slider {
+    min-height: 16px;
+    min-width: 16px;
+    opacity: 0;
+    background-color: #7f849c;
+    border-radius: 50%;
+    border: 1px solid #6c7086;
+    box-shadow: none;
+}
+
+#pulseaudio-slider slider:hover {
+    background-color: #9399b2;
+    border-color: #7f849c;
+}
+
+#pulseaudio-slider trough {
+    min-height: 8px;
+    min-width: 100px;
+    border-radius: 4px;
+    border: 1px solid #313244;
+    background-color: #1e1e2e;
+}
+#pulseaudio-slider highlight {
+    min-width: 0px;
+    border-radius: 4px;
+    background-color: #b4befe;
+}
+
 window#waybar {
-    background: rgba(43, 48, 59, 0.5);
-    border-bottom: 2px solid rgba(136, 221, 136, 128);
+    background: rgb(17, 17, 27);
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(69, 71, 90, 128);
     color: rgb(221, 255, 221);
 }
 
@@ -16,6 +67,7 @@ tooltip {
   background: rgba(43, 48, 59, 0.5);
   border: 1px solid rgba(100, 114, 125, 0.5);
 }
+
 tooltip label {
   color: white;
 }
@@ -32,17 +84,55 @@ tooltip label {
     border-bottom: 3px solid white;
 }
 
-#tray, #mode, #clock, #battery {
-    padding: 0 10px;
-}
-
 #mode {
     background: #64727D;
     border-bottom: 3px solid white;
 }
 
-#clock {
-    background-color: #64727D;
+.modules-right > :nth-last-child(7) {
+    border-bottom-color: rgba(148, 226, 213, 0.66);
+    color: rgb(148, 226, 213);
+}
+.modules-right > :nth-last-child(6) {
+    border-bottom-color: rgba(180, 190, 254, 0.66);
+    color: rgb(180, 190, 254);
+}
+.modules-right > :nth-last-child(5) {
+    border-bottom-color: rgba(137, 180, 250, 0.66);
+    color: rgb(137, 180, 250);
+}
+.modules-right > :nth-last-child(4) {
+    border-bottom-color: rgba(116, 199, 236, 0.66);
+    color: rgb(116, 199, 236);
+}
+.modules-right > :nth-last-child(3) {
+    border-bottom-color: rgba(137, 220, 235, 0.66);
+    color: rgb(137, 220, 235);
+}
+/*.modules-right > :nth-last-child(2)*/ #tray > * {
+    border-bottom-color: rgba(148, 226, 213, 0.66);
+    color: rgb(148, 226, 213);
+}
+.modules-right > :last-child {
+    border-bottom-color: rgba(166, 227, 161, 0.66);
+    color: rgb(166, 227, 161);
+}
+
+.modules-left > :last-child {
+    border-bottom-color: rgba(229, 200, 144, 0.66);
+    color: rgb(229, 200, 144);
+}
+.modules-left > :nth-last-child(2) {
+    border-bottom-color: rgba(239, 159, 118, 0.66);
+    color: rgb(239, 159, 118);
+}
+.modules-left > :nth-last-child(3) {
+    border-bottom-color: rgba(234, 153, 156, 0.66);
+    color: rgb(234, 153, 156);
+}
+.modules-left > :nth-last-child(4) {
+    border-bottom-color: rgba(231, 130, 132, 0.66);
+    color: rgb(231, 130, 132);
 }
 
 #battery {

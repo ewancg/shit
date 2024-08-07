@@ -70,8 +70,12 @@
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
 #    QT_QPA_PLATFORMTHEME = "gnome";
-    QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
-    QT_STYLE_OVERRIDE = "kvantum";
+    QT_QPA_PLATFORMTHEME = "qt5ct";
+    #QT_STYLE_OVERRIDE = "kvantum";
+
+# GTK
+    GTK_THEME="adw-gtk3";
+
 
     };
     pathsToLink = [
@@ -106,9 +110,11 @@
       gnome-tweaks
       yaru-theme
 
+      qadwaitadecorations
+      qadwaitadecorations-qt6
       qgnomeplatform
       qgnomeplatform-qt6
-      xdg-desktop-portal
+      xdg-desktop-portal-gnome
     ]);
   };
 }

@@ -1,8 +1,17 @@
-result/
-result
-
-*.qcow2
-
+# Secrets
 secret/
 
-fish/secrets.fish
+# NixOS (nixos-rebuild)
+result/
+result
+*.qcow2
+
+# Qt Creator
+.qtc_clangd/
+*.cflags
+*.config
+*.creator
+*.creator.user
+*.cxxflags
+*.files
+*.includes

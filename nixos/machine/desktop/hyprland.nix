@@ -12,8 +12,9 @@
 
   environment.sessionVariables = {
     # XWayland scaling is disabled
-    XCURSOR_SIZE = "240";
-    HYPRCURSOR_SIZE = "192";
+    XCURSOR_SIZE = "96";
+    HYPRCURSOR_SIZE = "96";
+    #HYPRCURSOR_SIZE = "192";
 
 # How to do these only on XWayland?
     # QT_SCALE_FACTOR,1.5
@@ -27,10 +28,13 @@
     LIBVA_DRIVER_NAME="nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    __GL_GSYNC_ALLOWED = 1;
+    __GL_VRR_ALLOWED = 1; # Change if problematic; should work on 555
 
 # Wayland
     XDG_SESSION_TYPE = "wayland";
-    SDL_VIDEODRIVER = "wayland,x11";
+    # https://www.reddit.com/r/linux_gaming/comments/1cvrvyg/psa_easy_anticheat_eac_failed_to_initialize/
+    SDL_VIDEODRIVER = "wayland,x11,windows";
     GDK_BACKEND="wayland,x11,*";
 
     CLUTTER_BACKEND = "wayland";
@@ -44,8 +48,12 @@
     QT_AUTO_SCREEN_SCALE_FACTOR = 1;
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
-    QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
+    QT_QPA_PLATFORMTHEME = "qt5ct";
     QT_STYLE_OVERRIDE = "kvantum";
+
+# GTK
+    GTK_THEME="adw-gtk3";
+
   };
 
   # wayland.windowManager.hyprland.settings = {
@@ -106,7 +114,12 @@
     wl-clipboard
     wofi
     xsel
+
+    fnott
     
+
+    playerctl
+    pwvucontrol
     xdg-desktop-portal-hyprland
   ]);
 }

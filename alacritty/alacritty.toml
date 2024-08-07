@@ -1,3 +1,4 @@
+
 import = [
 	"~/.config/alacritty/catpuccin_mocha.toml"
 ]
@@ -6,7 +7,8 @@ shell = "tmux"
 live_config_reload = true
 
 [window]
-dimensions = { columns = 120, lines = 28 }
+dynamic_title = true
+dimensions = { columns = 130, lines = 28 }
 decorations = "Full"
 
 opacity = 0.86

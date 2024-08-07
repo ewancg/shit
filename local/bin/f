@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+fd . ${1:-/} | fzf -i -x

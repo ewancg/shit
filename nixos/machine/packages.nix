@@ -20,7 +20,8 @@ let
     # Wine
     wine64
     winetricks
-    wineWowPackages.staging
+#    wineWowPackages.staging
+    wineWowPackages.stable
     wineWowPackages.waylandFull
 
     wine-wayland
@@ -30,6 +31,7 @@ let
     openrgb
     # solaar # broken on 7 21 24
     logiops
+    headsetcontrol
   ];
 
   # Packages involved/integrated in my terminal workflow
@@ -76,7 +78,14 @@ let
     mission-center
 
     # Gaming
-    (prismlauncher.override { withWaylandGLFW = true; })
+    (prismlauncher.override { 
+      withWaylandGLFW = true;
+      jdks = [
+        temurin-bin-21
+        temurin-bin-8
+        temurin-bin-17
+      ];
+    })
     # Steam - Fix NVIDIA Vulkan driver bug on 555.58
     (steam.override {
       extraProfile = ''
@@ -122,6 +131,7 @@ in
     wine64Packages.fonts
 
     cantarell-fonts
+    ubuntu_font_family
     noto-fonts
     open-sans
     liberation_ttf
@@ -134,6 +144,7 @@ in
     ucs-fonts
     corefonts
     vistafonts
+    font-awesome
   ];
 
   # Run non-Nix binaries
@@ -148,6 +159,11 @@ in
     thunar-volman
   ];
 
+  qt = {
+    enable = true;
+    platformTheme = "qt5ct";
+  };
+
   programs.xfconf.enable = true; # Required for Thunar to save its config
   services.gvfs.enable = true; # Mount, trash, and other functionalities
   services.tumbler.enable = true; # Thumbnail support for image
@@ -158,7 +174,6 @@ in
 
   # Other
   environment.systemPackages = with pkgs; [
-    # Theming
     normcap
   ] ++ system ++ termish ++ apps;
 }

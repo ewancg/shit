@@ -12,11 +12,12 @@
     };
 };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, spicetify-nix, ... }@inputs:
     let
       system = "x86_64-linux";
-      specialArgs = {inherit inputs;};
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs { system = "x84_64-linux"; };
+      # specialArgs = {inherit inputs;};
+      #pkgs = nixpkgs.legacyPackages.${system};
     in
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
@@ -25,6 +26,14 @@
         modules = [
           inputs.home-manager.nixosModules.default
           ./machine/configuration.nix
+        ];
+      };
+      homeConfigurations."ewan" = home-manager.lib.homeManagerConfiguration {
+        inherit nixpkgs;
+        extraSpecialArgs = {inherit spicetify-nix;};
+        modules = [
+            ./machine/home.nix
+            ./machine/spicetify.nix # file where you configure spicetify
         ];
       };
       #      nixosConfigurations.slave = nixpkgs.lib.nixosSystem {

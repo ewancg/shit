@@ -15,9 +15,22 @@
   };
 
   home.packages = with pkgs; [
-    yaru-theme
+    arc-icon-theme
 
+    arc-theme
+    yaru-theme
+    ayu-theme-gtk
+    solarc-gtk-theme
+
+    arc-kde-theme
+
+    themechanger
+    kdePackages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum
+    qt5ct
+    gradience
+    adw-gtk3
+
     catppuccin-kvantum
     catppuccin-gtk
   ];
@@ -39,8 +52,26 @@
     "eww".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/eww";
     "waybar".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/waybar";
 
-    "QtProject/qtcreator".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qtcreator";
+    "QtProject/qtcreator/styles".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qtcreator/styles";
+    "QtProject/qtcreator/themes".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qtcreator/themes";
+    "QtProject/qtcreator/.clang-format".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/.clang-format";
+
+    "fnott".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/fnott";
   };
+
+
+  home.file = {
+    ".tmux.conf".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/.tmux.conf";
+    ".local/bin" = {
+      recursive = true;
+      source =  config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/local/bin";
+    };
+
+    #".tmux.conf".source = ../../.tmux.conf;
+    "dev".source = ../shells;
+    # '';
+  };
+
 
   dconf = {
     enable = true;
@@ -62,12 +93,6 @@
     };
   };
   #};
-
-  home.file = {
-    #".tmux.conf".source = ../../.tmux.conf;
-    "dev".source = ../shells;
-    # '';
-  };
 
   home.sessionVariables = {
     EDITOR = "code --wait --new-window";
@@ -151,7 +176,6 @@
 
   programs.tmux = {
     enable = true;
-    extraConfig = builtins.readFile ../../.tmux.conf;
     plugins = with pkgs.tmuxPlugins; [
       sensible
       tmux-colors-solarized
