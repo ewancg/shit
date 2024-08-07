@@ -13,6 +13,6 @@ sudo nixos-rebuild --flake .#HOSTNAME build
 ```    
 
 Hostnames:
-- Desktop (`machine`)
-- Laptop (`elbozo`)
-- Server (`slave`)
+- [x] Desktop (`machine`)
+- [ ] Laptop (`elbozo`)
+- [ ] Server (`slave`)
