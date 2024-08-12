@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# eww-toggle-window
+# $1 = window name, $2 = monitor id (or none for current)
+
+function get_monitor {    
+    if [ ! -z $1 ]; then
+        printf "$1"
+    else
+        hyprctl monitors | grep -A10 "ID $(hyprctl activewindow | grep monitor | head -n 1 | awk '{print $2}')" | grep 'model:' | awk '{print $2}'
+    fi        
+}
+
+eww active-windows | grep "$1"
+if [ $? -eq 0 ]; then 
+    eww close "$1"
+else
+    eww open "$1" --screen="$(get_monitor $2)"
+fi
