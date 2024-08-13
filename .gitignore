@@ -15,3 +15,5 @@ result
 *.cxxflags
 *.files
 *.includes
+!qtcreator/styles
+!qtcreator/themes
