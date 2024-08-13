@@ -16,7 +16,7 @@
     }; 
   };
 
-  outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprland, hy3, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprland, ... }@inputs:
     let
       system = "x86_64-linux";
     in
