@@ -5,7 +5,7 @@
 
   targetPkgs = pkgs: (with pkgs; [
     qtcreator
-    
+
     # General
     fish
     pkg-config
@@ -17,11 +17,11 @@
 
     ffmpeg
     x264
-    
+
     mold
 
     # Rust
-    cargo 
+    cargo
 
     # CPP
     stdenv.cc
@@ -32,7 +32,7 @@
 
     clang-tools
     cmake-format
-    
+
     qt5.qtbase.bin
     qt5.qtbase.dev
     qt5.qttools.bin

@@ -17,21 +17,25 @@
   };
   services.pipewire.wireplumber.enable = true;
   services.pipewire.wireplumber.extraConfig = {
-    alsaUseUCM = { "monitor.alsa.properties" = {
-      # Use ALSA-Card-Profile devices. They use UCM or the profile
-      # configuration to configure the device and mixer settings.
-      # alsa.use-acp = true;
-      # Use UCM instead of profile when available. Can be disabled
-      # to skip trying to use the UCM profile.
-      "alsa.use-ucm" = true;
-    };};
+    alsaUseUCM = {
+      "monitor.alsa.properties" = {
+        # Use ALSA-Card-Profile devices. They use UCM or the profile
+        # configuration to configure the device and mixer settings.
+        # alsa.use-acp = true;
+        # Use UCM instead of profile when available. Can be disabled
+        # to skip trying to use the UCM profile.
+        "alsa.use-ucm" = true;
+      };
+    };
 
-    bluetoothEnhancements = { "monitor.bluez.properties" = {
+    bluetoothEnhancements = {
+      "monitor.bluez.properties" = {
         "bluez5.enable-sbc-xq" = true;
         "bluez5.enable-msbc" = true;
         "bluez5.enable-hw-volume" = true;
         "bluez5.roles" = [ "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
-    };};
+      };
+    };
   };
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/main.lua.d/99-alsa-lowlatency.lua" ''
@@ -47,30 +51,72 @@
         },
       }
     '')
+    (pkgs.writeTextDir "share/wireplumber/main.lua.d/99-stop-microphone-auto-adjust.lua" ''
+      table.insert (default_access.rules,{
+          matches = {
+              {
+                  { "application.process.binary", "=", "electron" }
+              }
+          },
+          default_permissions = "rx",
+      })
+    '')
+    (pkgs.writeTextDir "share/wireplumber/main.lua.d/51-config.lua" ''
+      alsa_monitor.enabled = true
+
+      alsa_monitor.rules = {
+      {
+      matches = {
+                  {
+                      {"device.name", "matches", "alsa_card.usb-Speed_Dragon_USB_Advanced_Audio_Device-00"}
+                  },
+              },
+      
+      apply_properties = {
+                  ["audio.format"] = "s24le",
+              },
+          },
+      },
+      {
+      matches = {
+                  {
+                      {"device.name", "matches", "alsa_card.usb-Focusrite_Scarlett_Solo_USB_Y71ERQT079EC70-00"}
+                  },
+              },
+      
+      apply_properties = {
+                  ["audio.format"] = "s32le",
+              },
+          },
+      }
+    '')
+
   ];
+
   services.pipewire.extraConfig.pipewire."92-low-latency" = {
     context.properties = {
       default.clock.rate = 96000;
-      default.clock.quantum = 32;
-      default.clock.min-quantum = 32;
-      default.clock.max-quantum = 32;
+      default.clock.allowed-rates = [ 44100 48000 88200 96000 192000 ];
+      default.clock.quantum = 24;
+      default.clock.min-quantum = 24;
+      default.clock.max-quantum = 24;
     };
   };
 
-services.pipewire.extraConfig.pipewire."51-alsa-disable" = {
+  services.pipewire.extraConfig.pipewire."51-alsa-disable" = {
     monitor.alsa.rules = [{
-        matches = [
-        {device.name = "alsa_card.pci-0000_0d_00.1";} # onboard audio
-        {device.name = "alsa_card.usb-Generic_USB_Audio-00";} # unsure
-        {device.name = "alsa_card.pci-0000_01_00.1";} # GPU
-        ];
-        actions = {
-          update-props = {
-             device.disabled = true;
-          };
+      matches = [
+        { device.name = "alsa_card.pci-0000_0d_00.1"; } # onboard audio
+        { device.name = "alsa_card.usb-Generic_USB_Audio-00"; } # unsure
+        { device.name = "alsa_card.pci-0000_01_00.1"; } # GPU
+      ];
+      actions = {
+        update-props = {
+          device.disabled = true;
         };
+      };
     }];
-};
+  };
 
   # PulseAudio compatibility
   services.pipewire.extraConfig.pipewire-pulse."92-low-latency" = {

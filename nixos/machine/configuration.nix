@@ -28,8 +28,8 @@
     options = "--delete-older-than 10d";
   };
 
-#  services.spotifyd = {
-#  };
+  #  services.spotifyd = {
+  #  };
 
   #home-manager = {
   #  useGlobalPkgs = true;
@@ -58,7 +58,7 @@
     ];
   };
 
-    fileSystems."/mnt/data" = {
+  fileSystems."/mnt/data" = {
     device = "/dev/disk/by-uuid/71331833-459a-4a50-afab-b07a1800bb63";
     label = "Data";
     fsType = "ext4";
@@ -169,7 +169,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   # environment.variables = {
-# 
+  # 
   # };
 
   services.flatpak.enable = true;

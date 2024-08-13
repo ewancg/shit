@@ -1,130 +1,186 @@
-﻿[{
-    "height": 28,
-
-    "output": "DP-3",
-    "layer": "top",
-    "modules-left": ["hyprland/workspaces", "hyprland/mode",  "cpu", "memory", "disk"],
-    "modules-center": ["hyprland/window"],
-    "modules-right": ["mpris", "wireplumber", "bluetooth", "tray", "battery", "clock"],
-
-"hyprland/workspaces": {
-    "format": "{icon}",
-    "all-outputs": true,
-    "window-rewrite-default": "",
-    "persistent-workspaces": {
-        "*": [ 1, 2, 3, 4 ]
-    },
-    "on-scroll-up": "hyprctl dispatch workspace e+1",
-    "on-scroll-down": "hyprctl dispatch workspace e-1"
-},
-
-    "mpris": {
-        "format": "{dynamic}",
-        "dynamic-len": 50,
-        "dynamic-importance-order": ["title", "artist", "album"]
-    },
-    "hyprland/window": {
-        "max-length": 200,
-        "separate-outputs": true
-    },
-    "cpu": {
-        "interval": 1,
-        "format": " {usage:02d}%",
-        "format-alt": " {usage:02d}%: {avg_frequency:0.2f} / {max_frequency:0.2f} GHz"
-    },
-
-    "memory": {
-        "interval": 30,
-        "format": " {percentage:02d}%",
-        "format-alt": " {percentage:02d}%: {used:0.1f} / {total:0.1f} GB",
-    },
-
-    "disk": {
-        "interval": 30,
-        "format": " {percentage_used:02d}%",
-        "format-alt": " {percentage_used:02d}%: {specific_used:0.1f} / {specific_total:0.1f} GB used ({percentage_free:02d}% free)",
-        "unit": "GB"
-    },
-
-    "battery": {
-        "format": "{capacity}% {icon}",
-        "format-icons": ["", "", "", "", ""]
-    },
-    "clock": {
-        "format": "{:%I:%M %p}",
-        "format-alt": "{:%A, %B %d   %I:%M %p}"
-    },
-    "tray": {
-        "icon-size": 16,
-        "show-passive-items": true,
-        "reverse-direction": true,
-        "spacing": 6
-    },
-
-    "pulseaudio/slider": {
-        "min": 0,
-        "max": 125,
-        "orientation": "horizontal"
-    },
-    "wireplumber": {
-        "format": "{volume}% {icon}",
-        "format-muted": "",
-        "on-click": "pwvucontrol",
-        "format-icons": ["", "", ""]
-    },
-
-    "pulseaudio": {
-        "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}",
-        "format-muted": "",
-        "format-icons": {
-            "alsa_output.pci-0000_00_1f.3.analog-stereo": "",
-            "alsa_output.pci-0000_00_1f.3.analog-stereo-muted": "",
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "phone-muted": "",
-            "portable": "",
-            "car": "",
-            "default": ["", ""]
+﻿[
+    {
+        "height": 28,
+        "output": "Samsung Electric Company LF32TU87 HCPRA08903",
+        "layer": "top",
+        "modules-left": [
+            "custom/power",
+            "hyprland/workspaces"
+        ],
+        "modules-center": [
+            "hyprland/window"
+        ],
+        "modules-right": [
+            "mpris",
+            "wireplumber",
+            "hyprland/language",
+            "tray",
+            "battery",
+            "clock"
+        ],
+        "custom/power": {
+            "format": "ewan",
+            "tooltip": true,
+            "on-click": "eww-toggle-window power-menu"
         },
-        "scroll-step": 1,
-        "on-click": "pwvucontrol",
-        "ignored-sinks": ["Easy Effects Sink"]
-    },
-},
-{
-    "height": 28,
-    "layer": "top",
-    "output": "HDMI-A-1",
-    "modules-left": ["hyprland/workspaces", "hyprland/mode"],
-    "modules-center": ["hyprland/window"],
-    "modules-right": ["cpu", "memory", "disk", "backlight/slider", "battery", "clock"],
-
-    "hyprland/workspaces": {
-        "format": "{icon}",
-        "all-outputs": true,
-        "persistent-workspaces": {
-            "A": [
-                "."
-            ],
-            "B": [
-                "."
-            ],
-            "*": [ "DP-3", "HDMI-A-1", 2, 3, 4 ]
+        "hyprland/workspaces": {
+            "format": "{icon}",
+            "format-icons": {
+                "a": "\uf26c",
+                "b": "\uf26c",
+                "c": "\uf674"
+            },
+            "all-outputs": false,
+            "show-special": true,
+            "special-visible-only": true,
+            "sort-by": "id", 
+            "window-rewrite-default": "",
+            "persistent-workspaces": {
+                "*": 4,
+                "desc: Samsung Electric Company LF32TU87 HCPRA08903": [
+                    "a"
+                ]
+            },
+            "on-scroll-up": "hyprctl dispatch workspace e+1",
+            "on-scroll-down": "hyprctl dispatch workspace e-1"
         },
-        "on-scroll-up": "hyprctl dispatch workspace e+1",
-        "on-scroll-down": "hyprctl dispatch workspace e-1"
+        "hyprland/window": {
+            "format": "{}",
+            "rewrite": {
+                "(.*) — Mozilla Firefox": "",
+                "Alacritty": "[Alacritty]"
+            },
+            "max-length": 250,
+            "separate-outputs": true
+        },
+        "mpris": {
+            "format": "{dynamic}",
+            "dynamic-len": 50,
+            "dynamic-importance-order": [
+                "title",
+                "artist",
+                "album"
+            ]
+        },
+        "battery": {
+            "format": "{capacity}% {icon}",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        "bluetooth": {
+            "format": "{icon}",
+            "format-connected": "{icon} {num_connections}",
+            "format-icons": [
+                ""
+            ],
+            "on-click": "blueman-manager",
+            "tooltip": true
+        },
+        "network": {
+            "format-ethernet": "\uf6ff",
+            "format-wifi": "\uf1eb {essid} {frequency}",
+            "tooltip": true,
+            "tooltip-format-ethernet": "{ifname} ({bandwidthTotalBits})"
+        },
+        "wireplumber": {
+            "format": "{icon} {volume}%",
+            "format-muted": "\uf6a9",
+            "on-click": "pwvucontrol",
+            "format-icons": {
+                "default": [
+                    "\uf027",
+                    "\uf028"
+                ]
+            }
+        },
+        "tray": {
+            "icon-size": 16,
+            "show-passive-items": true,
+            "reverse-direction": true,
+            "spacing": 4
+        },
+        "hyprland/language": {
+            "format": "en {variant}"
+        },
+        "clock": {
+            "format": "{:%I:%M %p}",
+            "format-alt": "{:%A, %B %d %I:%M %p}"
+        }
     },
-
-    "battery": {
-        "format": "{capacity}% {icon}",
-        "format-icons": ["", "", "", "", ""]
-    },
-    "clock": {
-        "format": "{:%I:%M %p}",
-        "format-alt": "{:%A, %B %d   %I:%M %p}"
-    },
-}
+    {
+        "height": 28,
+        "layer": "top",
+        "output": "Acer Technologies B326HK T1NAA0038522",
+        "modules-left": [
+            "hyprland/workspaces"
+        ],
+        "modules-center": [
+            "hyprland/window"
+        ],
+        "modules-right": [
+            "cpu",
+            "memory",
+            "disk",
+            "backlight/slider",
+            "battery",
+            "clock"
+        ],
+        "cpu": {
+            "interval": 1,
+            "format": " {usage:02d}%",
+            "format-alt": " {usage:02d}%: {avg_frequency:0.2f} / {max_frequency:0.2f} GHz"
+        },
+        "memory": {
+            "interval": 15,
+            "format": " {percentage:02d}%",
+            "format-alt": " {percentage:02d}%: {used:0.1f} / {total:0.1f} GB"
+        },
+        "disk": {
+            "interval": 90,
+            "format": " {percentage_used:02d}%",
+            "format-alt": " {percentage_used:02d}%: {specific_used:0.1f} / {specific_total:0.1f} GB used ({percentage_free:02d}% free)",
+            "unit": "GB"
+        },
+        "battery": {
+            "format": "{capacity}% {icon}",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        "hyprland/workspaces": {
+            "format": "{icon}",
+            "format-icons": {
+                "a": "\uf26c",
+                "b": "\uf26c",
+                "c": "\uf674"
+            },
+            "all-outputs": false,
+            "show-special": true,
+            "special-visible-only": true,
+            "sort-by": "id", 
+            "window-rewrite-default": "",
+            "persistent-workspaces": {
+                "*": 3,
+                "desc: Acer Technologies B326HK T1NAA0038522": [
+                    "b",
+                    "c"
+                ]
+            },
+            "on-scroll-up": "hyprctl dispatch workspace e+1",
+            "on-scroll-down": "hyprctl dispatch workspace e-1"
+        },
+        "clock": {
+            "format": "{:%I:%M %p}",
+            "format-alt": "{:%A, %B %d   %I:%M %p}"
+        }
+    }
 ]

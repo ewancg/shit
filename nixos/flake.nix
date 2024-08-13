@@ -10,19 +10,20 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-};
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    }; 
+  };
 
-  outputs = { self, nixpkgs, home-manager, spicetify-nix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprland, hy3, ... }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { system = "x84_64-linux"; };
-      # specialArgs = {inherit inputs;};
-      #pkgs = nixpkgs.legacyPackages.${system};
     in
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "${system}";
-        # extraSpecialArgs = {inherit inputs;};
+        specialArgs = { inherit inputs;} ;
         modules = [
           inputs.home-manager.nixosModules.default
           ./machine/configuration.nix
@@ -30,10 +31,9 @@
       };
       homeConfigurations."ewan" = home-manager.lib.homeManagerConfiguration {
         inherit nixpkgs;
-        extraSpecialArgs = {inherit spicetify-nix;};
+        extraSpecialArgs = { inherit spicetify-nix; };
         modules = [
-            ./machine/home.nix
-            ./machine/spicetify.nix # file where you configure spicetify
+          ./machine/home.nix
         ];
       };
       #      nixosConfigurations.slave = nixpkgs.lib.nixosSystem {

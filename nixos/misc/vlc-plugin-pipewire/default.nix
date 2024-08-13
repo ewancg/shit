@@ -1,47 +1,34 @@
 { lib
-#, autoconf-archive
-#, autoreconfHook
-#, boost
 , pipewire
-# , libtorrent-rasterbar
 , libvlc
-#, openssl
-, pkgs
+, fetchurl
 , pkg-config
 , stdenv
 }:
-
-# VLC does not know where the vlc-bittorrent package is installed.
-# make sure to have something like:
-#   environment.variables.VLC_PLUGIN_PATH = "${pkgs.vlc-plugin-pipewire}";
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "vlc-plugin-pipewire";
   version = "3";
 
-  src = pkgs {
+  src = fetchurl {
     url = "https://www.remlab.net/files/vlc-plugin-pipewire/vlc-plugin-pipewire-v3.tar.xz";
-    hash = "sha256-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=";
+    hash = "sha256-26QQt8EfKVpuoii//u8xz1NPZZreddFecTQwhXcSTns=";
   };
 
   nativeBuildInputs = [
-#    autoconf-archive
-#    autoreconfHook
-    libvlc
-    pipewire
     pkg-config
   ];
 
   buildInputs = [
     libvlc
-#    openssl
+    pipewire
   ];
 
   strictDeps = true;
 
-  # It's a library, should not have a desktop file
-  postFixup = ''
-    rm -r $out/share/
+  installPhase = ''
+    mkdir -p $out/lib
+    cp libaout_pipewire_plugin.so $out/lib
   '';
 
   meta = with lib; {

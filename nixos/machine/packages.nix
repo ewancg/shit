@@ -1,6 +1,7 @@
 { pkgs, config, ... }:
 with pkgs;
 let
+  vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
   # System packages
   system = [
     # Nix
@@ -20,7 +21,7 @@ let
     # Wine
     wine64
     winetricks
-#    wineWowPackages.staging
+    #    wineWowPackages.staging
     wineWowPackages.stable
     wineWowPackages.waylandFull
 
@@ -39,6 +40,7 @@ let
     alacritty
     tmux
     fish
+    fishPlugins.bass
 
     fd
     fzf
@@ -72,13 +74,22 @@ let
         cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
       '';
     })
+    (symlinkJoin {
+      name = "my-teamspeak_client";
+      paths = [ teamspeak_client ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/ts3client \
+          --set QT_SCALE_FACTOR "1.5"
+      '';
+    })
     teamspeak_client
 
     # "Task manager"
     mission-center
 
     # Gaming
-    (prismlauncher.override { 
+    (prismlauncher.override {
       withWaylandGLFW = true;
       jdks = [
         temurin-bin-21
@@ -94,7 +105,20 @@ let
     })
 
     # Multimedia
-    vlc
+
+    # for Wayland
+    (symlinkJoin {
+      name = "my-vlc";
+      paths = [ vlc ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/vlc \
+          --unset DISPLAY
+      '';
+    })
+    vlc-plugin-pipewire
+
+
     gimp
 
     # Productivity, misc.
@@ -107,24 +131,24 @@ let
   ];
 in
 {
-# programs.spicetify =
-#    let
-#      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-#    in import (<nixpkgs/nixos/lib/eval-config.nix>)
-#    {
-#      enable = true;
-#      enabledExtensions = with spicePkgs.extensions; [
-#        #adblock
-#        hidePodcasts
-#        #shuffle # shuffle+ (special characters are sanitized out of extension names)
-#      ];
-#      theme = spicePkgs.themes.catppuccin;
-#      colorScheme = "mocha";
-#    };
-  
+  # programs.spicetify =
+  #    let
+  #      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+  #    in import (<nixpkgs/nixos/lib/eval-config.nix>)
+  #    {
+  #      enable = true;
+  #      enabledExtensions = with spicePkgs.extensions; [
+  #        #adblock
+  #        hidePodcasts
+  #        #shuffle # shuffle+ (special characters are sanitized out of extension names)
+  #      ];
+  #      theme = spicePkgs.themes.catppuccin;
+  #      colorScheme = "mocha";
+  #    };
+
   # Fonts
   fonts.packages = with pkgs; [
-    (callPackage ../misc/segoe-ui-variable.nix { })
+    (callPackage ../misc/segoe-ui-variable/default.nix { })
     wineWowPackages.fonts
     wineWow64Packages.fonts
     winePackages.fonts
@@ -171,6 +195,12 @@ in
   # Disks
   programs.gnome-disks.enable = true;
   services.udisks2.enable = true;
+
+  # for nix-index command not found integration
+  programs.command-not-found.enable = false;
+
+  # VLC plugin path
+  environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
 
   # Other
   environment.systemPackages = with pkgs; [

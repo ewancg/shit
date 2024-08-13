@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SIZE=8
-OUTDIR="`cygpath /d/ewan/Videos`"
-#ENCODER=h264_nvenc
-#ENCODER=libx265
-#ENCODER=hevc_nvenc
-ENCODER=libx264
+OUTDIR="$HOME/Videos"
+ENCODER=hevc_nvenc
+# ENCODER=libx265
+# ENCODER=h264_nvenc
+# ENCODER=libx264
 
 shrink() {
     TARGET_KBPS=$(\
@@ -44,10 +44,7 @@ if [ ! -z "$1" ]
     then
     SIZE=${1//[!0-9]/}
 else
-	while true
-	do
-		printf "\e[1;33;4;41mKill yourself immediately\e[0m\n\n\n\n"
-	done
+    printf "No arguments provided\n"
 	exit
 fi
 

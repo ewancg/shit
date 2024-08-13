@@ -6,53 +6,55 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    # systemd.enable = true;
+    #systemd.enable = true;
+  #  package = hyprland.
   };
   services.hypridle.enable = true;
 
   environment.sessionVariables = {
     # XWayland scaling is disabled
-    XCURSOR_SIZE = "96";
-    HYPRCURSOR_SIZE = "96";
+    XCURSOR_SIZE = "24";
+    HYPRCURSOR_SIZE = "24";
     #HYPRCURSOR_SIZE = "192";
 
-# How to do these only on XWayland?
+    # How to do these only on XWayland?
     # QT_SCALE_FACTOR,1.5
     # GDK_SCALE,1.5
 
-# Allow tearing on kernels < 6.8
+    # Allow tearing on kernels < 6.8
     # WLR_DRM_NO_ATOMIC = 1;
 
-# Nvidia
-    NVD_BACKEND ="direct";
-    LIBVA_DRIVER_NAME="nvidia";
+    # Nvidia
+    NVD_BACKEND = "direct";
+    LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     __GL_GSYNC_ALLOWED = 1;
     __GL_VRR_ALLOWED = 1; # Change if problematic; should work on 555
 
-# Wayland
+    # Wayland
     XDG_SESSION_TYPE = "wayland";
     # https://www.reddit.com/r/linux_gaming/comments/1cvrvyg/psa_easy_anticheat_eac_failed_to_initialize/
     SDL_VIDEODRIVER = "wayland,x11,windows";
-    GDK_BACKEND="wayland,x11,*";
+    SDL2_VIDEO_DRIVER = "wayland,x11,windows";
+    GDK_BACKEND = "wayland,x11,*";
 
     CLUTTER_BACKEND = "wayland";
     NIXOS_OZONE_WL = "1";
 
-# Hyprland
-    XDG_CURRENT_DESKTOP="Hyprland";
+    # Hyprland
+    XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
 
-# Qt
+    # Qt
     QT_AUTO_SCREEN_SCALE_FACTOR = 1;
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
     QT_QPA_PLATFORMTHEME = "qt5ct";
     QT_STYLE_OVERRIDE = "kvantum";
 
-# GTK
-    GTK_THEME="adw-gtk3";
+    # GTK
+    GTK_THEME = "adw-gtk3";
 
   };
 
@@ -100,6 +102,9 @@
     terminal = "alacritty";
   };
 
+  # for blueman-applet/dbus-update-activation-environment
+  #services.dbus.socketActivated = true;
+
   environment.systemPackages = (with pkgs; [
     hyprlock
     hypridle
@@ -115,8 +120,11 @@
     wofi
     xsel
 
-    fnott
-    
+    dunst
+    #  fnott
+
+    blueman
+    networkmanagerapplet
 
     playerctl
     pwvucontrol

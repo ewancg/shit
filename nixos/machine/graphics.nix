@@ -66,7 +66,7 @@
   #   #   13:00:0
   #   # prepend "PCI:"
   #   #   PCI:13:00:0
-  
+
   #   amdgpuBusId = "PCI:13:00:0";
   #   nvidiaBusId = "PCI:01:00:0";
   # };
@@ -78,7 +78,7 @@
   ];
 
   environment.variables = {
-    VK_DRIVER_FILES = /run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
+  #  VK_DRIVER_FILES = /run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
   };
   boot.blacklistedKernelModules = [
     "nouveau"

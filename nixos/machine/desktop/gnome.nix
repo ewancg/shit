@@ -47,34 +47,35 @@
     sessionVariables = {
       NAUTILUS_4_EXTENSION_DIR = "${pkgs.gnome.nautilus-python}/lib/nautilus/extensions-4";
       # Nvidia
-    NVD_BACKEND ="direct";
-    LIBVA_DRIVER_NAME="nvidia";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      NVD_BACKEND = "direct";
+      LIBVA_DRIVER_NAME = "nvidia";
+      GBM_BACKEND = "nvidia-drm";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
 
-# Wayland
-    XDG_SESSION_TYPE = "wayland";
-    SDL_VIDEODRIVER = "wayland,x11";
-    GDK_BACKEND="wayland,x11,*";
+      # Wayland
+      XDG_SESSION_TYPE = "wayland";
+      SDL_VIDEODRIVER = "wayland,x11";
+      GDK_BACKEND = "wayland,x11,*";
 
-    CLUTTER_BACKEND = "wayland";
-    NIXOS_OZONE_WL = "1";
+      CLUTTER_BACKEND = "wayland";
+      NIXOS_OZONE_WL = "1";
 
-# GNOME
-    QT_WAYLAND_DECORATION = "adwaita";
-    XDG_CURRENT_DESKTOP="GNOME";
-    XDG_SESSION_DESKTOP = "GNOME";
+      # GNOME
+      QT_WAYLAND_DECORATION = "adwaita";
+      XDG_CURRENT_DESKTOP = "GNOME";
+      XDG_SESSION_DESKTOP = "GNOME";
 
-# Qt
-    QT_AUTO_SCREEN_SCALE_FACTOR = 1;
-    QT_QPA_PLATFORM = "wayland;xcb";
-    QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
-#    QT_QPA_PLATFORMTHEME = "gnome";
-    QT_QPA_PLATFORMTHEME = "qt5ct";
-    #QT_STYLE_OVERRIDE = "kvantum";
+      # Qt
+      QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+      QT_QPA_PLATFORM = "wayland;xcb";
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
+      #    QT_QPA_PLATFORMTHEME = "gnome";
+      QT_QPA_PLATFORMTHEME = "qt5ct";
+      #QT_STYLE_OVERRIDE = "kvantum";
 
-# GTK
-    GTK_THEME="adw-gtk3";
+      # GTK
+      #GTK_THEME="adw-gtk3";
+      GTK_THEME = "catppuccin-mocha-green";
 
 
     };

@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   imports = [
     # Include the results of the hardware scan.
@@ -15,6 +15,9 @@
 
     # Mouse configuration
     ./logitech.nix
+
+    # VM host configuration
+    ./virtualization.nix
   ];
 
   hardware.bluetooth.enable = true; # enables support for Bluetooth
