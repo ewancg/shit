@@ -25,20 +25,14 @@
         },
         "hyprland/workspaces": {
             "format": "{icon}",
-            "format-icons": {
-                "a": "\uf26c",
-                "b": "\uf26c",
-                "c": "\uf674"
-            },
             "all-outputs": false,
-            "show-special": true,
-            "special-visible-only": true,
-            "sort-by": "id", 
             "window-rewrite-default": "",
+            "sort": "number",
             "persistent-workspaces": {
-                "*": 4,
-                "desc: Samsung Electric Company LF32TU87 HCPRA08903": [
-                    "a"
+                "*": [
+                    1,
+                    2,
+                    3
                 ]
             },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
@@ -47,10 +41,10 @@
         "hyprland/window": {
             "format": "{}",
             "rewrite": {
-                "(.*) — Mozilla Firefox": "",
+                "(.*) — Mozilla Firefox": "Zarb $1",
                 "Alacritty": "[Alacritty]"
             },
-            "max-length": 250,
+            "max-length": 200,
             "separate-outputs": true
         },
         "mpris": {
@@ -158,21 +152,14 @@
         },
         "hyprland/workspaces": {
             "format": "{icon}",
-            "format-icons": {
-                "a": "\uf26c",
-                "b": "\uf26c",
-                "c": "\uf674"
-            },
             "all-outputs": false,
-            "show-special": true,
-            "special-visible-only": true,
-            "sort-by": "id", 
             "window-rewrite-default": "",
+            "sort": "number",
             "persistent-workspaces": {
                 "*": 3,
-                "desc: Acer Technologies B326HK T1NAA0038522": [
-                    "b",
-                    "c"
+                "*": [
+                    "c",
+                    "d"
                 ]
             },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
