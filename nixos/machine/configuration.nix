@@ -31,21 +31,6 @@
   #  services.spotifyd = {
   #  };
 
-  #home-manager = {
-  #  useGlobalPkgs = true;
-  #  users = {
-  #    "ewan" = import ./home.nix ./spicetify.nix;
-  #    "gdm" = { lib, ... }: {
-  #      home.stateVersion = "24.05";
-  #      dconf.settings = {
-  #        "org/gnome/desktop/interface" = {
-  #          scaling-factor = lib.hm.gvariant.mkUint32 2;
-  #        };
-  #      };
-  #    };
-  #  };
-  #};
-
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/8d82561f-b4a6-41fb-a200-3e4039a995de";
     fsType = "btrfs";

@@ -56,7 +56,7 @@
     "hypr".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/hypr";
     "eww".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/eww";
     "waybar".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/waybar";
-    "dunst".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/dunst";
+    "dunst/dunstrc".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/dunst/dunstrc";
 
     "QtProject/qtcreator/styles".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qtcreator/styles";
     "QtProject/qtcreator/themes".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qtcreator/themes";

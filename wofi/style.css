@@ -51,21 +51,85 @@
 @define-color	crust  #11111b;
 @define-color	crust-rgb  rgb(17, 17, 27);
 
+* * {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
 * {
-  font-family: 'Inconsolata Nerd Font', monospace;
+  font-family: 'Cantarell', monospace;
   font-size: 14px;
+  outline: none;
 }
 
 /* Window */
-window {
-  margin: 0px;
-  padding: 10px;
-  border: 0.16em solid @lavender;
-  border-radius: 0.1em;
-  background-color: @base;
-  animation: slideIn 0.5s ease-in-out both;
+window {  
+  background-color: transparent;
+  animation: fadeIn 0.2s ease-in-out;
 }
 
+#outer-box {
+  margin: 2pt;
+  box-shadow: 0 0 0 1pt alpha(@mantle-rgb, 0.5);
+  background-color: @base;
+
+  border: 1.5pt solid @peach;
+  border-radius: 1em;
+
+  padding: 0.25em;
+  animation: colorIn 0.4s ease-in;
+}
+
+
+/* Scroll */
+#scroll {
+  margin: 0.5em 1em;
+  padding: 0;
+  border: none;
+  background-color: @surface0;
+  box-shadow: 0 0 0 1.5pt @surface1;
+  border-radius: 1em;
+}
+
+#input {
+  margin: 0.5em 1em;
+  padding: 0;
+  border: 0;
+  border-radius: 10em;
+  background-color: @crust;
+
+  box-shadow: 0 0 0 1.5pt @surface1;
+}
+:placeholder-text {
+  color: red;
+}
+
+#input image {
+  border: none;
+  color: @text;
+  margin: 0 0.8125em;
+}
+
+* {
+  text-decoration-color: @subtext0;
+  caret-color: mix(@subtext0, @green, 0.4);
+}
+/* Outer Box */
+#inner-box {
+  background-color: transparent;
+  margin: 0.25em;
+}
+/* Color In */
+@keyframes colorIn {
+  0% {
+     border-color: @surface0;
+  }
+
+  100% {
+    border-color: @peach;
+  }
+}
 /* Slide In */
 @keyframes slideIn {
   0% {
@@ -75,15 +139,6 @@ window {
   100% {
      opacity: 1;
   }
-}
-
-/* Inner Box */
-#inner-box {
-  margin: 5px;
-  padding: 10px;
-  border: none;
-  background-color: @base;
-  animation: fadeIn 0.5s ease-in-out both;
 }
 
 /* Fade In */
@@ -97,68 +152,88 @@ window {
   }
 }
 
-/* Outer Box */
-#outer-box {
-  margin: 5px;
-  padding: 10px;
-  border: none;
-  background-color: @base;
-}
-
-/* Scroll */
-#scroll {
-  margin: 0px;
-  padding: 10px;
-  border: none;
-  background-color: @base;
-}
-
-/* Input */
-#input {
-  margin: 5px 20px;
-  padding: 10px;
-  border: none;
-  border-radius: 0.1em;
-  color: @text;
-  background-color: @base;
-  animation: fadeIn 0.5s ease-in-out both;
-}
-
-#input image {
-    border: none;
-    color: @red;
-}
-
-#input * {
-  outline: 4px solid @red!important;
-}
-
-/* Text */
-#text {
-  margin: 5px;
-  border: none;
-  color: @text;
-  animation: fadeIn 0.5s ease-in-out both;
+image {
+  padding: 0.25em;
 }
 
 #entry {
-  background-color: @base;
+  margin: 0;
+  padding: 0;
+  border: 0.0625em solid;
+  border-radius: 0.75em;
+  border-color: transparent;
+  background-color: transparent;
+  color: @subtext1;
+
 }
 
 #entry arrow {
+  margin: 0.25em;
   border: none;
-  color: @lavender;
 }
 
-/* Selected Entry */
-#entry:selected {
-  border: 0.11em solid @lavender;
+#entry *:backdrop  {
+  border-color: @blue;
+}
+
+arrow {
+  margin: 0.25em;
+  border: none;
+}
+
+#entry:selected, #entry:selected arrow {
+  border-color: @green;
+  background-color: @surface2;
 }
 
 #entry:selected #text {
-  color: @mauve;
+  color: @text;
 }
 
-#entry:drop(active) {
-  background-color: @lavender!important;
+#entry #text {
+  margin: 0.5em;
+  color: @text;
 }
+
+#entry #entry {
+  padding-left: 1.625em;
+
+  border: none;
+  border-radius: 0;
+  background-color: @surface0;
+}
+
+#entry #entry:nth-last-child(1) {
+  border-bottom-left-radius: 0.75em;
+  border-bottom-right-radius: 0.75em;
+}
+
+#entry #entry:hover {
+  border: none;
+  background-color: mix(@surface0-rgb, @surface1-rgb, 0.5);
+}
+
+#entry #entry:selected {
+  border: none;
+  background-color: @surface1;
+}
+
+#entry #entry #text {
+  color: @overlay2;
+}
+#entry #entry image {
+  opacity: 0.33;
+}
+#entry #entry:hover image {
+  opacity: 0.66;
+}
+#entry #entry:selected image {
+  opacity: 1;
+}
+#entry #entry:hover #text {
+  color: mix(@subtext0-rgb, @subtext1-rgb, 0.5);;
+}
+#entry #entry:selected #text {
+  color: @subtext1;
+}
+

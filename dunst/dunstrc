@@ -1,16 +1,34 @@
 [global]
-frame_color = "#89b4fa"
-separator_color= frame
+offset = 3x3
+width = (200, 600)
+height = (75, 120)
+
+font = "Cantarell 10"
+corner_radius = 4
+frame_width = 2
+
+icon_corner_radius = 4
+min_icon_size = 64
+max_icon_size = 64
+
+enable_recursive_icon_lookup = true
+idle_threshold = 1m
+separator_color= "#bac2de"
 
 [urgency_low]
-background = "#1e1e2e"
-foreground = "#cdd6f4"
+background = "#313244"
+foreground = "#b4befe"
+frame_color = "#b4befe"
+timeout = 3s
 
 [urgency_normal]
 background = "#1e1e2e"
 foreground = "#cdd6f4"
+frame_color = "#a6e3a1"
+timeout = 10s
 
 [urgency_critical]
-background = "#1e1e2e"
-foreground = "#cdd6f4"
+background = "#45475a"
+foreground = "#eba0ac"
 frame_color = "#fab387"
+timeout = 0s

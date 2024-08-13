@@ -24,16 +24,22 @@
             "on-click": "eww-toggle-window power-menu"
         },
         "hyprland/workspaces": {
-            "format": "{icon}",
-            "all-outputs": false,
-            "window-rewrite-default": "",
-            "sort": "number",
+            "format": "{name}",
+            "sort": "id",
+            "show-special": true,
+            "format-icons": [
+                "1",
+                "₂",
+                "₃",
+                "₄",
+                "₅"
+            ],
             "persistent-workspaces": {
-                "*": [
-                    1,
-                    2,
-                    3
-                ]
+                    "1": {},
+                    "2": {},
+                    "3": {},
+                    "4": {},
+                    "5": {}    
             },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
             "on-scroll-down": "hyprctl dispatch workspace e-1"
@@ -111,15 +117,15 @@
         "layer": "top",
         "output": "Acer Technologies B326HK T1NAA0038522",
         "modules-left": [
-            "hyprland/workspaces"
+            "hyprland/workspaces",
+            "cpu",
+            "memory",
+            "disk"
         ],
         "modules-center": [
             "hyprland/window"
         ],
         "modules-right": [
-            "cpu",
-            "memory",
-            "disk",
             "backlight/slider",
             "battery",
             "clock"
@@ -151,17 +157,22 @@
             ]
         },
         "hyprland/workspaces": {
-            "format": "{icon}",
-            "all-outputs": false,
-            "window-rewrite-default": "",
-            "sort": "number",
+            "format": "{name}",
+            "sort": "id",
+            "format-icons": [
+                "A",
+                "B",
+                "c",
+                "d",
+                "e"
+            ],
             "persistent-workspaces": {
-                "*": 3,
-                "*": [
-                    "c",
-                    "d"
-                ]
-            },
+                "A": {},
+                "B": {},
+                "c": {},
+                "d": {},
+                "e": {}    
+        },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
             "on-scroll-down": "hyprctl dispatch workspace e-1"
         },
