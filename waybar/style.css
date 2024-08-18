@@ -5,8 +5,13 @@
     font-family: Cantarell, "Font Awesome 6 Free", sans-serif;
 }
 
-.modules-left * {
+#cpu, #disk, #memory, #workspaces *, #custom-power {
     font-family: Ubuntu Mono, "Font Awesome 6 Free";
+}
+
+#workspaces button.focused {
+    background: #64727D;
+    border-bottom: 3px solid white;
 }
 
 #workspaces button {
@@ -16,13 +21,17 @@
     color: @text;
 }
 
-#workspaces button.visible {
-    color: @blue;
-}
-
+#workspaces button:not(.empty),
 #workspaces button.active {
-    background-color: @surface0;
     color: @green;
+}
+#workspaces button.special {
+    background-color: alpha(@lavender-rgb, 0.6);
+    color: @lavender;
+}
+#workspaces button.visible {
+    background-color: @surface0;
+    color: @blue;
 }
 
 #workspaces button.urgent {
@@ -48,25 +57,29 @@ label.module, #tray {
     border-color: @red;
 }
 
+#mpris.spotify {
+    color: @green;
+}
+#mpris.firefox, #mpris.vlc {
+    color: @peach;
+}
+#mpris.mpv {
+    color: @mauve;
+}
+#mpris.default {
+    color: @blue;
+}
+
 #bluetooth.off,
 #network.disconnected,
-#wireplumber.muted {
+#wireplumber.muted,
+#mpris.paused, #mpris.stopped {
     color: @subtext0;
     border-color: @subtext0;
 }
 
 label.module:hover /*, #tray > *:hover*/ {
     background-color: @base;
-}
-
-#workspaces button.focused {
-    background: #64727D;
-    border-bottom: 3px solid white;
-}
-
-#mode {
-    background: #64727D;
-    border-bottom: 3px solid white;
 }
 
 .modules-right > :nth-last-child(7) {
@@ -89,7 +102,7 @@ label.module:hover /*, #tray > *:hover*/ {
     border-bottom-color: @sky;
     color: @sky;
 }
-/*.modules-right > :nth-last-child(2)*/ #tray {
+.modules-right > :nth-last-child(2), #tray {
     border-bottom-color: @sapphire;
     color: @sapphire;
 }
@@ -99,20 +112,13 @@ label.module:hover /*, #tray > *:hover*/ {
 }
 
 .modules-left > :last-child {
-    border-bottom-color: rgba(229, 200, 144, 0.66);
-    color: rgb(229, 200, 144);
+    border-bottom-color: @peach;
+    color: @peach;
 }
-.modules-left > :nth-last-child(2) {
-    border-bottom-color: rgba(239, 159, 118, 0.66);
-    color: rgb(239, 159, 118);
-}
-.modules-left > :nth-last-child(3) {
-    border-bottom-color: rgba(234, 153, 156, 0.66);
-    color: rgb(234, 153, 156);
-}
-.modules-left > :nth-last-child(4) {
-    border-bottom-color: rgba(231, 130, 132, 0.66);
-    color: rgb(231, 130, 132);
+
+.modules-left > :first-child {
+    border-bottom-color: @maroon;
+    color: @maroon;
 }
 
 #battery {
@@ -168,3 +174,8 @@ tooltip label {
     color: @text;
 }
 
+#custom-spacer, #custom-spacer:hover {
+    border-bottom: none;
+    border-bottom-color: transparent;
+    background-color: transparent;
+}

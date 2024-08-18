@@ -5,65 +5,71 @@
         "layer": "top",
         "modules-left": [
             "custom/power",
-            "hyprland/workspaces"
+            "hyprland/workspaces",
+            "custom/spacer",
+            "mpris"
         ],
         "modules-center": [
             "hyprland/window"
         ],
         "modules-right": [
-            "mpris",
             "wireplumber",
             "hyprland/language",
+            "bluetooth",
+            "network",
             "tray",
             "battery",
             "clock"
         ],
+        "custom/spacer": {
+            "class": "spacer",
+            "format": " "
+        },
         "custom/power": {
             "format": "ewan",
             "tooltip": true,
-            "on-click": "eww-toggle-window power-menu"
+            "on-click": "/home/ewan/.local/bin/eww-toggle-window power-menu"
         },
         "hyprland/workspaces": {
-            "format": "{name}",
-            "sort": "id",
             "show-special": true,
-            "format-icons": [
-                "1",
-                "₂",
-                "₃",
-                "₄",
-                "₅"
-            ],
+            "sort": "id",
+            "format": "{icon}",
+            "format-icons": {
+                "1": "1",
+                "2": "<small>2</small>",
+                "3": "<small>3</small>",
+                "4": "<small>4</small>",
+                "5": "<small>5</small>"
+            },
             "persistent-workspaces": {
-                    "1": {},
-                    "2": {},
-                    "3": {},
-                    "4": {},
-                    "5": {}    
+                "1": {},
+                "2": {},
+                "3": {},
+                "4": {},
+                "5": {}    
             },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
             "on-scroll-down": "hyprctl dispatch workspace e-1"
         },
         "hyprland/window": {
-            "format": "{}",
-            "rewrite": {
-                "(.*) — Mozilla Firefox": "Zarb $1",
-                "Alacritty": "[Alacritty]"
-            },
+            "format": "{title} <small>{class}</small>",
             "max-length": 200,
             "separate-outputs": true
         },
         "mpris": {
-            "format": "{dynamic}",
-            "dynamic-len": 50,
-            "dynamic-importance-order": [
-                "title",
-                "artist",
-                "album"
-            ]
+            "interval": 1,
+            "format": "{player_icon} {dynamic}",
+            "player-icons": {
+                "firefox": "\uf269",
+                "spotify": "\uf1bc",
+                "default": "\uf144"
+            },
+            "title-len": 65,
+            "dynamic-separator": " •︎ ",
+            "dynamic-len": -1
         },
         "battery": {
-            "format": "{capacity}% {icon}",
+            "format": "{capacity}% {icon}",
             "format-icons": [
                 "",
                 "",
@@ -83,9 +89,9 @@
         },
         "network": {
             "format-ethernet": "\uf6ff",
-            "format-wifi": "\uf1eb {essid} {frequency}",
+            "format-wifi": "\uf1eb {essid} {frequency}",
             "tooltip": true,
-            "tooltip-format-ethernet": "{ifname} ({bandwidthTotalBits})"
+            "tooltip-format-ethernet": "{ifname} ({bandwidthTotalBits})"
         },
         "wireplumber": {
             "format": "{icon} {volume}%",
@@ -117,15 +123,15 @@
         "layer": "top",
         "output": "Acer Technologies B326HK T1NAA0038522",
         "modules-left": [
-            "hyprland/workspaces",
-            "cpu",
-            "memory",
-            "disk"
+            "hyprland/workspaces"
         ],
         "modules-center": [
             "hyprland/window"
         ],
         "modules-right": [
+            "cpu",
+            "memory",
+            "disk",
             "backlight/slider",
             "battery",
             "clock"
@@ -157,24 +163,29 @@
             ]
         },
         "hyprland/workspaces": {
-            "format": "{name}",
             "sort": "id",
-            "format-icons": [
-                "A",
-                "B",
-                "c",
-                "d",
-                "e"
-            ],
+            "format": "{icon}",
+            "format-icons": {
+                "6": "A",
+                "7": "B",
+                "8": "C",
+                "9": "<small>D</small>",
+                "10": "<small>E</small>"
+            },
             "persistent-workspaces": {
-                "A": {},
-                "B": {},
-                "c": {},
-                "d": {},
-                "e": {}    
+                "6": {},
+                "7": {},
+                "8": {},
+                "9": {},
+                "10": {}    
         },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
             "on-scroll-down": "hyprctl dispatch workspace e-1"
+        },
+        "hyprland/window": {
+            "format": "{title} <small>{class}</small>",
+            "max-length": 200,
+            "separate-outputs": false
         },
         "clock": {
             "format": "{:%I:%M %p}",

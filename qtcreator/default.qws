@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorSession>
-<!-- Written by QtCreator 13.0.2, 2024-08-10T05:05:33. -->
+<!-- Written by QtCreator 13.0.2, 2024-08-17T22:50:59. -->
 <qtcreator>
  <data>
   <variable>CascadeSetActive</variable>
@@ -12,7 +12,7 @@
  </data>
  <data>
   <variable>EditorSettings</variable>
-  <value type="QByteArray">AAAAD0VkaXRvck1hbmFnZXJWNQAAAAAAAAAAAAAACQAAAAVlbXB0eQAAAAA=</value>
+  <value type="QByteArray">AAAAD0VkaXRvck1hbmFnZXJWNQAAAAIAAAA4AC8AbQBuAHQALwB3AG8AcgBrAC8AdQBuAHQAaQB0AGwAZQBkADkALwBtAGEAaQBuAC4AYwBwAHAAAAAMAAAAACAAAAACAAAAAAAAAAAAAAANAAAAGwAAAAAAAAAAAAAAEgAAAKAALwBuAGkAeAAvAHMAdABvAHIAZQAvADMAcwAzAHIAagBrAGwAMwBtAHgAMAA1AHcAcAAwAGwAbQB4AGcAdwBrAGEAcQBoAGIAegA5AHMAeQA2AGsAawAtAGcAYwBjAC0AMQAzAC4AMwAuADAALwBpAG4AYwBsAHUAZABlAC8AYwArACsALwAxADMALgAzAC4AMAAvAGkAbwBzAGYAdwBkAAAADAAAAAAgAAAAAgAAAJMAAAAAAAAApAAAACEAAAAAAAAAkwAAALQAAAACAAAAoAAvAG4AaQB4AC8AcwB0AG8AcgBlAC8AMwBzADMAcgBqAGsAbAAzAG0AeAAwADUAdwBwADAAbABtAHgAZwB3AGsAYQBxAGgAYgB6ADkAcwB5ADYAawBrAC0AZwBjAGMALQAxADMALgAzAC4AMAAvAGkAbgBjAGwAdQBkAGUALwBjACsAKwAvADEAMwAuADMALgAwAC8AaQBvAHMAZgB3AGQAAAAMAGkAbwBzAGYAdwBkAAAAE0NwcEVkaXRvci5DKytFZGl0b3IAAAAAOAAvAG0AbgB0AC8AdwBvAHIAawAvAHUAbgB0AGkAdABsAGUAZAA5AC8AbQBhAGkAbgAuAGMAcABwAAAAEABtAGEAaQBuAC4AYwBwAHAAAAATQ3BwRWRpdG9yLkMrK0VkaXRvcgAAAAH9AAAADWN1cnJlbnRlZGl0b3IAAAA4AC8AbQBuAHQALwB3AG8AcgBrAC8AdQBuAHQAaQB0AGwAZQBkADkALwBtAGEAaQBuAC4AYwBwAHAAAAAmAEMAcABwAEUAZABpAHQAbwByAC4AQwArACsARQBkAGkAdABvAHIAAAAgAAAAAgAAAAAAAAAAAAAADQAAABsAAAAAAAAAAAAAABIAAAACAAAAdwAAADgALwBtAG4AdAAvAHcAbwByAGsALwB1AG4AdABpAHQAbABlAGQAOQAvAG0AYQBpAG4ALgBjAHAAcAAAABNDcHBFZGl0b3IuQysrRWRpdG9yAAAAIAAAAAIAAAAAAAAAAAAAAA8AAAAOAAAAAAAAAAAAAAARAAAA3wAAAKAALwBuAGkAeAAvAHMAdABvAHIAZQAvADMAcwAzAHIAagBrAGwAMwBtAHgAMAA1AHcAcAAwAGwAbQB4AGcAdwBrAGEAcQBoAGIAegA5AHMAeQA2AGsAawAtAGcAYwBjAC0AMQAzAC4AMwAuADAALwBpAG4AYwBsAHUAZABlAC8AYwArACsALwAxADMALgAzAC4AMAAvAGkAbwBzAGYAdwBkAAAAE0NwcEVkaXRvci5DKytFZGl0b3IAAAAgAAAAAgAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAACEAAAAA</value>
  </data>
  <data>
   <variable>ProjectDependencies</variable>
@@ -21,16 +21,17 @@
  <data>
   <variable>ProjectList</variable>
   <valuelist type="QVariantList">
-   <value type="QString">/mnt/work/jmon/CMakeLists.txt</value>
+   <value type="QString">/mnt/work/transmission/qt/CMakeLists.txt</value>
+   <value type="QString">/mnt/work/untitled9/CMakeLists.txt</value>
   </valuelist>
  </data>
  <data>
   <variable>StartupProject</variable>
-  <value type="QString">/mnt/work/jmon/CMakeLists.txt</value>
+  <value type="QString">/mnt/work/untitled9/CMakeLists.txt</value>
  </data>
  <data>
   <variable>value-ActiveMode</variable>
-  <value type="QString">Project</value>
+  <value type="QString">Edit</value>
  </data>
  <data>
   <variable>value-Breakpoints</variable>
@@ -38,7 +39,20 @@
  </data>
  <data>
   <variable>value-ProjectTree.ExpandData</variable>
-  <valuelist type="QVariantList"/>
+  <valuelist type="QVariantList">
+   <valuelist type="QVariantList">
+    <value type="QString">/mnt/work/untitled9</value>
+    <value type="int">400900</value>
+   </valuelist>
+   <valuelist type="QVariantList">
+    <value type="QString">/mnt/work/untitled9</value>
+    <value type="int">200005</value>
+   </valuelist>
+   <valuelist type="QVariantList">
+    <value type="QString">/mnt/work/untitled9</value>
+    <value type="int">200000</value>
+   </valuelist>
+  </valuelist>
  </data>
  <data>
   <variable>value-TaskWindow.Categories</variable>

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# $1 mode (suspend, reboot, poweroff), $2 timeout 
+sleep "$2" 
+eww active-windows | grep "prompt" > /dev/null
+if [ $? -eq 0 ]; then 
+    systemctl "$1"
+else
+    notify-send -u low "$1 cancelled"
+fi
+eww close-all

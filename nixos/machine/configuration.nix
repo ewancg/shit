@@ -99,12 +99,17 @@
   security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
   #security.pam.u2f.interactive = true;
 
+  services.gnome.gnome-keyring.enable = true;
+
   security.pam.services = {
     login.enableGnomeKeyring = true;
     sudo.enableGnomeKeyring = true;
+    gdm.enableGnomeKeyring = true;
     login.u2fAuth = true;
     sudo.u2fAuth = true;
+    gdm.u2fAuth = true;
   };
+
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -140,6 +145,7 @@
       Type = "oneshot";
     };
   };
+  
   # Apps
   # Fishy 
   programs.fish.enable = true;

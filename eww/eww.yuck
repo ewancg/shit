@@ -3,9 +3,9 @@
        :orientation "vertical"
        :halign "left"
        :spacing 4
-    (button :onclick "systemctl suspend" "Suspend")
-    (button :onclick "systemctl poweroff" "Shut down")
-    (button :onclick "systemctl reboot" "Reboot")
+    (button :onclick "eww-powermenu-wrapper suspend" "Suspend")
+    (button :onclick "eww-powermenu-wrapper poweroff" "Shut down")
+    (button :onclick "eww-powermenu-wrapper reboot" "Reboot")
 ))
 
 (defwindow power-menu [screen]
@@ -21,4 +21,55 @@
            :focusable false
            :wm-ignore false
            (power-menu-buttons)
+)
+
+(defwindow backdrop [screen]
+  :id "backdrop"
+  :monitor screen
+  :geometry (geometry :x "0px"
+                      :y "0px"
+                      :width "150%"
+                      :height "150%"
+                      :anchor "center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :wm-ignore false
+  (eventbox :onclick "eww close-all")
+)
+
+(defvar seconds "10")
+(defpoll timer :interval "1s"
+              :initial "10"  ; optional, defaults to poll at startup
+              :run-while time-visible   ; optional, defaults to 'true'
+  `if [ -n "$timer" ] && export timer=11 || export timer=$(expr "$timer" - 1) | echo $timer`)
+
+(defwindow prompt [screen mode pid t]
+  :monitor screen
+  :geometry (geometry :x "3px"
+                      :y "3px"
+                      :width "0"
+                      :height "0"
+                      :anchor "center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :wm-ignore false
+  (box :class "prompt-container"
+       :orientation "vertical"
+       :spacing 0
+       :space-evenly false
+    (label :vexpand true
+      :text "System will ${mode} in ${t} seconds.")
+    (box :class "prompt-buttons"
+         :orientation "horizontal"
+         :spacing 0
+         :space-evenly true
+         :vexpand false
+         (button :class "accept"
+                 :onclick "eww close-all; systemctl ${mode}" "Confirm")
+         (button :class "deny"
+         :onclick "eww close-all" "Cancel")
+    )
+  )
 )

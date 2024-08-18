@@ -32,7 +32,57 @@ $rosewater:  #f5e0dc;
     padding: 0.5rem;
 }
 
-.power-menu-buttons > * {
-   background-color: $blue;
-   border: 1px solid green;
+.backdrop {
+    background-color: rgba(0,0,0,0.25);
+}
+
+
+.prompt > * {
+    background-color: $mantle;
+    border-radius: 0px;
+}
+
+.prompt-buttons * {
+    margin: 0;
+    border-radius: 0px;
+}
+.prompt-buttons *:first-child {
+    border-bottom-left-radius: 0.5em;
+}
+.prompt-buttons *:last-child {
+    border-bottom-right-radius: 0.5em;
+}
+
+*:not(button) > label {
+    margin: 0;
+    padding: 1em 2em;
+}
+button {
+    padding: 0.325em 0.6em;
+}
+
+button.accept {
+    color: $red;
+}
+
+.prompt > *:first-child {
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+}
+
+.prompt > *:last-child {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+}
+
+.prompt-container {
+    border-radius: 0.5em;
+    margin: 0.25em;
+
+    border: 0.125em solid $green;
+    box-shadow: 0 0 0 0.125em rgba($mantle, 0.5);
+}
+
+.prompt {
+    background-color: transparent;
 }
