@@ -24,14 +24,6 @@
     # Allow tearing on kernels < 6.8
     # WLR_DRM_NO_ATOMIC = 1;
 
-    # Nvidia
-    NVD_BACKEND = "direct";
-    LIBVA_DRIVER_NAME = "nvidia";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    __GL_GSYNC_ALLOWED = 1;
-    __GL_VRR_ALLOWED = 1; # Change if problematic; should work on 555
-
     # Wayland
     XDG_SESSION_TYPE = "wayland";
     # https://www.reddit.com/r/linux_gaming/comments/1cvrvyg/psa_easy_anticheat_eac_failed_to_initialize/
@@ -55,7 +47,6 @@
 
     # GTK
     GTK_THEME = "adw-gtk3";
-
   };
 
   # wayland.windowManager.hyprland.settings = {
@@ -137,6 +128,8 @@
     pwvucontrol
 #    xdg-desktop-portal-hyprland
     xdg-desktop-portal-gnome
-
+    gradience
+    adw-gtk3
+    arc-icon-theme
   ]);
 }
