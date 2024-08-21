@@ -74,16 +74,16 @@ let
         cp ${./misc/discord.desktop} $out/share/applications/vesktop.desktop
       '';
     })
-    (symlinkJoin {
-      name = "my-ts3client";
-      paths = [ teamspeak_client ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/ts3client \
-          --set QT_SCALE_FACTOR "1.5"
-      '';
-    })
-    # teamspeak_client
+    # (symlinkJoin {
+    #   name = "my-ts3client";
+    #   paths = [ teamspeak_client ];
+    #   buildInputs = [ makeWrapper ];
+    #   postBuild = ''
+    #     wrapProgram $out/bin/ts3client \
+    #       --set QT_SCALE_FACTOR "1.5"
+    #   '';
+    # })
+    teamspeak_client
 
     # "Task manager"
     mission-center
@@ -118,6 +118,7 @@ let
     qpwgraph
     pwvucontrol
     obsidian
+    protonvpn-app
 
     fsearch
     nautilus
@@ -195,6 +196,12 @@ in
 
   # VLC plugin path
   environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
+
+  # VSCode
+  programs.vscode = {
+    enable = true;
+    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ firefox pkg-config ]);
+  };
 
   # Other
   environment.systemPackages = with pkgs; [

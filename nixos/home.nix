@@ -14,11 +14,6 @@
     allowUnfree = true;
   };
 
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ firefox pkg-config ]);
-  };
-
   home.packages = with pkgs; [
     arc-icon-theme
 
