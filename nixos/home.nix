@@ -72,7 +72,7 @@
     };
 
     #".tmux.conf".source = ../../.tmux.conf;
-    "dev".source = ../shells;
+    "dev".source = ./shells;
     # '';
   };
 
@@ -117,7 +117,7 @@
 
     programs.fish = {
       enable = true;
-      shellInit = builtins.readFile ../../fish/config.fish;
+      shellInit = builtins.readFile ../fish/config.fish;
       interactiveShellInit = ''
         bass source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
 
