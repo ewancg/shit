@@ -3,7 +3,7 @@
 {
 
   imports = [
-    ./misc/spicetify.nix
+    ./spicetify.nix
   ];
   
   home.username = "ewan";
