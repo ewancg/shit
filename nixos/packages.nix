@@ -67,11 +67,11 @@ let
         for size in 32 64 128 256 512 1024; do
           dim="$size"x"$size"
           rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-          ${lib.getExe imagemagick} ${../misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+          ${lib.getExe imagemagick} ${./misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
         done
 
         rm $out/share/applications/vesktop.desktop
-        cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
+        cp ${./misc/discord.desktop} $out/share/applications/vesktop.desktop
       '';
     })
     (symlinkJoin {
@@ -148,7 +148,7 @@ in
 
   # Fonts
   fonts.packages = with pkgs; [
-    (callPackage ../misc/segoe-ui-variable/default.nix { })
+    (callPackage ./misc/segoe-ui-variable/default.nix { })
     wineWowPackages.fonts
     wineWow64Packages.fonts
     winePackages.fonts
