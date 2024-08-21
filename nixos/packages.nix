@@ -97,13 +97,7 @@ let
         temurin-bin-17
       ];
     })
-    # Steam - Fix NVIDIA Vulkan driver bug on 555.58
-    (steam.override {
-      extraProfile = ''
-        export VK_ICD_FILENAMES=${config.hardware.nvidia.package}/share/vulkan/icd.d/nvidia_icd.json:${config.hardware.nvidia.package.lib32}/share/vulkan/icd.d/nvidia_icd32.json:$VK_ICD_FILENAMES
-      '';
-    })
-
+    steam
     # Multimedia
 
     # for Wayland
