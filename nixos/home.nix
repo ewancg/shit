@@ -128,7 +128,7 @@
         complete -r -c mullvad-split-tunnel -a "(__get_program_names)"
       '';
       functions = {
-        nixbuildconf.body = ''sudo nixos-rebuild --flake ~/shit/nixos#machine switch'';
+        nixbuildconf.body = ''sudo nixos-rebuild --flake ~/shit/nixos#$hostname switch'';
         start.body = ''xdg-open $@'';
         nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
         hostname.body = "/usr/bin/env cat /etc/hostname";
