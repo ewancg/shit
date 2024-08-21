@@ -32,7 +32,7 @@
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
         system = "${system}";
-        extraSpecialArgs = {inherit inputs;};
+        specialArgs = {inherit inputs;};
         modules = [
           inputs.home-manager.nixosModules.default
           ./configuration.nix
