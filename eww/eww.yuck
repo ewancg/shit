@@ -1,27 +1,78 @@
 (defwidget power-menu-buttons []
-  (box :class "button-container"
+  (box :class "power-button-container vbuttonbox"
        :orientation "vertical"
        :halign "left"
-       :spacing 4
+       :spacing 0
     (button :onclick "eww-powermenu-wrapper suspend" "Suspend")
-    (button :onclick "eww-powermenu-wrapper poweroff" "Shut down")
+    (button :onclick "eww-powermenu-wrapper poweroff" "Shutdown")
     (button :onclick "eww-powermenu-wrapper reboot" "Reboot")
 ))
 
 (defwindow power-menu [screen]
-           :id "power-menu"
-           :monitor screen
-           :geometry (geometry :x "3px"
-                               :y "3px"
-                               :width "15%"
-                               :height "10%"
-                               :anchor "top left")
-           :stacking "overlay"
-           :exclusive false
-           :focusable false
-           :wm-ignore false
-           (power-menu-buttons)
+  :id "power-menu"
+  :monitor screen
+  :geometry (geometry :x "2px"
+                      :y "2px"
+                      :width "10%"
+                      :height "10%"
+                      :anchor "top left")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :wm-ignore false
+  (power-menu-buttons)
 )
+
+(defpoll current-volume
+  :initial 50
+  :interval "0.1s"
+  :run-while time-visible   ; optional, defaults to 'true'
+  "gojq -n \"$(wpctl get-volume @DEFAULT_SINK@ | cut -b 9-) * 100\"" ; 9 - "Volume: "
+)
+
+(defwindow volume [screen x]
+  :id "volume"
+  :monitor screen
+  :geometry (geometry :x x
+                      :y "2px"
+                      :width "8%"
+                      :height "5%"
+                      :anchor "top left")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :wm-ignore false
+  (box
+    :class "volume-container"
+    :orientation "horizontal"
+    :halign "left"
+    :spacing 5
+    (scale 
+      :value current-volume
+      :min 0
+      :max 101
+      :round-digits 0
+      :onchange "wpctl set-volume @DEFAULT_SINK@ {}%"
+    ) 
+  )
+)
+
+
+(defwindow calendar [screen]
+  :id "power-menu"
+  :monitor screen
+  :geometry (geometry :x "2px"
+                      :y "2px"
+                      :width "15%"
+                      :height "15%"
+                      :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :wm-ignore false
+  (calendar)
+)
+
 
 (defwindow backdrop [screen]
   :id "backdrop"
@@ -38,16 +89,18 @@
   (eventbox :onclick "eww close-all")
 )
 
-(defvar seconds "10")
-(defpoll timer :interval "1s"
-              :initial "10"  ; optional, defaults to poll at startup
+(defpoll timer 
+              :initial ``
+              :interval "1s"
               :run-while time-visible   ; optional, defaults to 'true'
-  `if [ -n "$timer" ] && export timer=11 || export timer=$(expr "$timer" - 1) | echo $timer`)
+              "cat /tmp/timeout-timer"
+;  `cat /tmp/timeout-timer | head -n 1`
+)
 
-(defwindow prompt [screen mode pid t]
+(defwindow prompt [screen verb]
   :monitor screen
-  :geometry (geometry :x "3px"
-                      :y "3px"
+  :geometry (geometry :x "0px"
+                      :y "0px"
                       :width "0"
                       :height "0"
                       :anchor "center")
@@ -60,14 +113,14 @@
        :spacing 0
        :space-evenly false
     (label :vexpand true
-      :text "System will ${mode} in ${t} seconds.")
-    (box :class "prompt-buttons"
+      :text "System will ${verb} in ${timer} seconds.")
+    (box :class "prompt-buttons hbuttonbox"
          :orientation "horizontal"
          :spacing 0
          :space-evenly true
          :vexpand false
          (button :class "accept"
-                 :onclick "eww close-all; systemctl ${mode}" "Confirm")
+                 :onclick "eww close-all; systemctl ${verb}" "Confirm")
          (button :class "deny"
          :onclick "eww close-all" "Cancel")
     )

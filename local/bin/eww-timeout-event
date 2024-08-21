@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# $1 mode (suspend, reboot, poweroff), $2 timeout 
+# $1 verb (suspend, reboot, poweroff), $2 timeout 
 sleep "$2" 
 eww active-windows | grep "prompt" > /dev/null
 if [ $? -eq 0 ]; then 

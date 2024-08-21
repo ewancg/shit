@@ -75,7 +75,7 @@ let
       '';
     })
     (symlinkJoin {
-      name = "my-teamspeak_client";
+      name = "my-ts3client";
       paths = [ teamspeak_client ];
       buildInputs = [ makeWrapper ];
       postBuild = ''
@@ -83,7 +83,7 @@ let
           --set QT_SCALE_FACTOR "1.5"
       '';
     })
-    teamspeak_client
+    # teamspeak_client
 
     # "Task manager"
     mission-center
@@ -118,16 +118,16 @@ let
     })
     vlc-plugin-pipewire
 
-
     gimp
 
     # Productivity, misc.
     qpwgraph
     pwvucontrol
     obsidian
-    gnome-disk-utility
+
     fsearch
-    xfce.thunar
+    nautilus
+    gnome-disk-utility
   ];
 in
 {

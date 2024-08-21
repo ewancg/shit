@@ -26,25 +26,28 @@
         specialArgs = { inherit inputs;} ;
         modules = [
           inputs.home-manager.nixosModules.default
-          ./machine/configuration.nix
+          ./configuration.nix
+          ./machine/system.nix
         ];
       };
+      nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
+        system = "${system}";
+        extraSpecialArgs = {inherit inputs;};
+        modules = [
+          inputs.home-manager.nixosModules.default
+          ./configuration.nix
+          ./elbozo/system.nix
+        ];
+      };
+
+      # Me
       homeConfigurations."ewan" = home-manager.lib.homeManagerConfiguration {
         inherit nixpkgs;
         extraSpecialArgs = { inherit spicetify-nix; };
         modules = [
-          ./machine/home.nix
+          ./home.nix
         ];
       };
-      #      nixosConfigurations.slave = nixpkgs.lib.nixosSystem {
-      #        system = "${system}";
-      #        # extraSpecialArgs = {inherit inputs;};
-      #        modules = [
-      #          inputs.home-manager.nixosModules.default
-      #          ./slave/configuration.nix
-      #        ];
-      #      };
-
     };
 }
 

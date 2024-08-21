@@ -102,13 +102,20 @@
     terminal = "alacritty";
   };
 
+  # programs.kdeconnect = {
+  #   enable = true;
+  #   package = pkgs.valent;
+  #   # indicator = true;
+  # };
+
   # for blueman-applet/dbus-update-activation-environment
   #services.dbus.socketActivated = true;
 
   environment.systemPackages = (with pkgs; [
     hyprlock
     hypridle
-
+    hyprpicker
+    
     # need for gui auth
     polkit_gnome
 
@@ -128,6 +135,8 @@
 
     playerctl
     pwvucontrol
-    xdg-desktop-portal-hyprland
+#    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gnome
+
   ]);
 }

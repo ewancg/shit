@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+
+show_help() {
+	printf "%s%s\n" \
+	"$([ "$1" != "" ] && {
+		printf "%s\n" \
+		"error:" \
+		"    $1" \​""
+	})"\
+    "usage: $(basename $BASH_SOURCE) <mode> <media> [-u | --upload] [-h | --help] [-o | --output <output path>]" \
+    "   mode:   region, window, screen, all" \
+	"" \
+    "   media:  image,  video,  gif" \
+    "" \
+    "   --upload (-u) [upload]" \
+	"" \
+    "       Upload resulting capture" \
+    "" \
+    "   --output (-o) <path>: string" \
+	"" \
+    "       Destination for resulting capture"
+	exit
+}
+
+deconstruct_named_arg() {
+	if [[ "$1" == *'='* ]]; then
+		printf "${1#*=}"
+	elif [ ! -z $2 ]; then
+		printf "$2"
+	else
+		return 1
+	fi
+	return 0
+}
+
+clipboard_copy_command="wl-copy --primary"
+
+# These all return geometry: "X,Y WxH" 
+region_capture_command="slurp -b '#00000044' -c '#a6e3a1' -s '#00000000' -w 1"
+window_capture_command="hyprctl -j activewindow | gojq -j '\"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])\"'"
+screen_capture_command="hyprctl -j monitors | gojq -r 'first(.[] | select(.focused)) | \"\(.x),\(.y) \(.width)x\(.height)\"'"
+
+image_capture_command="grim -c -t png"
+image_region_opt="-g"
+
+video_capture_command=
+gif_capture_command=
+
+output_directory=
+upload=false
+
+mode=
+media=
+
+argv=($@)
+
+background="#00000044"
+selection="#00000000"
+border="#a6e3a1"
+
+parse_args() {
+	local arg
+	[ $# -lt 2 ] && show_help
+	while :; do
+		[ "$#" -gt 0 ] || break
+
+		arg="$1"
+		
+
+		if [[ "$arg" == +('--help'|'-h') ]]; then
+			show_help
+		elif [[ "$arg" == +('--upload'|'-u') ]]; then
+			export upload=true
+		elif [[ "$arg" =~ '--output'|'-o' ]]; then
+			export output_directory="$(deconstruct_named_arg "$1" "$2")"
+			[ $? == 0 ] && shift 2 || shift 
+			[ "$output_directory" == "" ] && show_help '--output requires a parameter'
+		else
+			if [[ "$mode" == "" ]]; then
+				case "$1" in
+					"region");;
+					"window");;
+					"screen");;
+					*)
+						show_help "mode '$1' not implemented"
+				esac
+				export mode="$1"
+				shift
+			fi
+			if [[ "$media" == "" ]]; then
+				case "$1" in
+					"image");;
+					"video");;
+					*)
+						show_help "mode '$1' not implemented"
+				esac
+				export media="$1"
+				shift
+			else
+				show_help "unknown argument '$1'"
+			fi
+		fi
+	done
+}
+
+parse_args ${argv[*]}
+
+if [ -z "$mode" ]; then
+	show_help "no mode, nothing to do"
+fi
+
+if [ -z "$media" ]; then
+	show_help "no media, nothing to do"
+fi
+
+if [ -z "$output_directory" ]; then
+	echo "inferring output directory"
+fi
+
+
+printf "%s\n" \
+"mode: $mode" \
+"type: $media" \
+"as: $output_directory"
+
+capture_command="${mode}_capture_command"
+bash -c "${!capture_command}"
+
+ACTION=$(dunstify --action="Upload,upload" --action="Cancel,cancel" "Message Received")
+
+case "$ACTION" in
+"cancel")
+    notify-send "Uploading"
+    ;;
+"upload")
+    notify-send "Fuck"
+    ;;
+"2")
+    notify-send "Fuck"
+    ;;
+esac

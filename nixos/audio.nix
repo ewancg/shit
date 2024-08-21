@@ -55,7 +55,7 @@
       table.insert (default_access.rules,{
           matches = {
               {
-                  { "application.process.binary", "=", "electron" }
+                  { "application.process.binary", "!=", "pwvucontrol" }
               }
           },
           default_permissions = "rx",

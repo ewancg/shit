@@ -66,7 +66,7 @@
             },
             "title-len": 65,
             "dynamic-separator": " •︎ ",
-            "dynamic-len": -1
+            "dynamic-len": 90
         },
         "battery": {
             "format": "{capacity}% {icon}",
@@ -79,8 +79,8 @@
             ]
         },
         "bluetooth": {
-            "format": "{icon}",
-            "format-connected": "{icon} {num_connections}",
+            "format": "{icon} <small>{controller_alias}</small>",
+            "format-connected": "{icon} {num_connections} <small>{controller_alias}</small>",
             "format-icons": [
                 ""
             ],
@@ -88,15 +88,18 @@
             "tooltip": true
         },
         "network": {
-            "format-ethernet": "\uf6ff",
+            "format-ethernet": "\uf6ff <small>{ifname}</small> ",
             "format-wifi": "\uf1eb {essid} {frequency}",
+            "format-disconnected": "\uf05e disconnected",
             "tooltip": true,
-            "tooltip-format-ethernet": "{ifname} ({bandwidthTotalBits})"
+            "tooltip-format-ethernet": "{ifname} ({bandwidthTotalBits})",
+            "on-click": "nm-connection-editor"
         },
         "wireplumber": {
             "format": "{icon} {volume}%",
             "format-muted": "\uf6a9",
-            "on-click": "pwvucontrol",
+            "on-click": "eww-toggle-window volume default --arg x=$(expr $(hyprctl cursorpos | awk '{print $1-1;}') - 40)",
+            "on-click-right": "pwvucontrol",
             "format-icons": {
                 "default": [
                     "\uf027",
@@ -111,7 +114,7 @@
             "spacing": 4
         },
         "hyprland/language": {
-            "format": "en {variant}"
+            "format": "<small>{}</small>"
         },
         "clock": {
             "format": "{:%I:%M %p}",

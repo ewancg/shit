@@ -3,7 +3,7 @@
 {
 
   imports = [
-    ./spicetify.nix
+    ./misc/spicetify.nix
   ];
   
   home.username = "ewan";
@@ -79,7 +79,7 @@
   # I only want this on Hyprland
   services.kdeconnect = {
     enable = true;
-    package = pkgs.kdePackages.kdeconnect-kde;
+    package = pkgs.valent;
     indicator = true;
   };
 

@@ -7,7 +7,6 @@
   imports =
     [
       # All hardware, network and miscellaneous system-level declarations
-      ./system.nix
 
       # GNOME
       #      ./desktop/gnome.nix
@@ -26,47 +25,6 @@
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 10d";
-  };
-
-  #  services.spotifyd = {
-  #  };
-
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/8d82561f-b4a6-41fb-a200-3e4039a995de";
-    fsType = "btrfs";
-    neededForBoot = true;
-    options = [
-      "defaults"
-      "nodev"
-      "noatime"
-      "compress=zstd"
-    ];
-  };
-
-  fileSystems."/mnt/data" = {
-    device = "/dev/disk/by-uuid/71331833-459a-4a50-afab-b07a1800bb63";
-    label = "Data";
-    fsType = "ext4";
-    neededForBoot = true;
-    options = [
-      "defaults"
-      "nodev"
-      "noatime"
-      "discard"
-      "data=ordered"
-    ];
-  };
-
-  fileSystems."/mnt/work" = {
-    label = "Projects";
-    device = "/dev/disk/by-uuid/0A10902A10901F2F";
-    options = [
-      "defaults"
-      "nodev"
-      "noatime"
-      "discard"
-      "data=ordered"
-    ];
   };
 
   fileSystems."/mnt/music" = {
@@ -198,5 +156,33 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
+  boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
+  # boot.supportedFilesystems = [ "ntfs" "sshfs" "zfs" ];
 
+  # Extra kernel modules
+  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+
+  # Set your time zone.
+  time.timeZone = "America/Denver";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+  };
+
+  # Configure keymap in X11
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "colemak";
+  };
 }

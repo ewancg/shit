@@ -3,7 +3,7 @@
 function show_backdrop {
     for i in $(seq 0 "$(expr $(hyprctl -j monitors | gojq -r length) - 1)"); do {
             export model="$(hyprctl -j monitors | gojq -r "first(.[$i]) | .model")"
-            eww open backdrop --screen="$model" --id="$i"
+            eww open backdrop --screen="$model" --id="$i" &
     }
     done
 
@@ -11,17 +11,22 @@ function show_backdrop {
 
 export timeout=5
 
-queue 
 case $1 in
   "suspend") 
     ;&
   "poweroff") 
     ;&
   "reboot") 
-    mode="$1"
-    nohup eww-timeout-event "$mode" 5 &
+    export verb="$1"
+    export start="$(expr $(date +%s) + $timeout)"
+
+    export outfile="/tmp/timeout-timer"
+    rm -rf "$outfile"
+    nohup eww-display-countdown "$outfile" &
+
+    nohup eww-timeout-event "$verb" "$timeout" &
     show_backdrop
-    eww-toggle-window prompt default --arg mode="$1" --arg pid="$pid" --arg t="$timeout"
+    notify-send "$(eww-toggle-window prompt default --id="$verb" --arg verb="$verb")"
     ;;
   *)
     notify-send "Unknown parameter"

@@ -25,32 +25,19 @@ $pink:       #f5c2e7;
 $flamingo:   #f2cdcd;
 $rosewater:  #f5e0dc;
 
-.power-menu {
-    border: 0.125rem solid $mantle;
-    border-radius: 0.4375rem;
-    margin: 0rem;
-    padding: 0.5rem;
-}
-
 .backdrop {
     background-color: rgba(0,0,0,0.25);
 }
 
-
-.prompt > * {
+.prompt, .volume, .power-menu {
+    background-color: transparent;
+    background: none;
+    margin: 0.125em;
+    border-radius: 0.75em;
+}
+.prompt > *, .volume > *, .power-menu > * {
     background-color: $mantle;
-    border-radius: 0px;
-}
-
-.prompt-buttons * {
-    margin: 0;
-    border-radius: 0px;
-}
-.prompt-buttons *:first-child {
-    border-bottom-left-radius: 0.5em;
-}
-.prompt-buttons *:last-child {
-    border-bottom-right-radius: 0.5em;
+    border-radius: 0;
 }
 
 *:not(button) > label {
@@ -65,24 +52,73 @@ button.accept {
     color: $red;
 }
 
+.volume > scale trough highlight {
+    background-color: $yellow;
+    color: $yellow;
+}
+
+.volume > * {
+    margin: 0;
+    padding: 0.25em 1.5em;
+    border-radius: calc(0.75em - 0.1875em);
+}
+
 .prompt > *:first-child {
-    border-top-left-radius: 0.5em;
-    border-top-right-radius: 0.5em;
+    border-top-left-radius:  (0.75em - 0.125em);
+    border-top-right-radius: (0.75em - 0.125em);
 }
 
 .prompt > *:last-child {
-    border-bottom-left-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
+    border-bottom-left-radius: (0.75em - 0.125em);
+    border-bottom-right-radius:(0.75em - 0.125em);
 }
 
-.prompt-container {
-    border-radius: 0.5em;
-    margin: 0.25em;
+.volume-container, .power-button-container, .prompt-container {
+    background-color: $mantle;
+    border-radius: 0.75em;
+    margin: 0.125em;
 
-    border: 0.125em solid $green;
-    box-shadow: 0 0 0 0.125em rgba($mantle, 0.5);
+    border: 0.1875em solid $yellow;
+    box-shadow: 0 0 0 0.0625em rgba($mantle, 0.5); 
 }
 
-.prompt {
-    background-color: transparent;
+.power-button-container, .prompt-container {
+    border-color: $maroon;
+}
+
+.power-button-container > * {
+    background-color: $base;
+    padding: 0;
+    border: 0.5pt solid rgba($surface2, 0.5);
+    border-left: none;
+    border-right: none;
+}
+
+.power-button-container > *:hover {
+    background-color: $surface0;
+}
+
+.power-button-container > *:active {
+    background-color: $base;
+}
+.power-button-container > *:first-child {
+    border-top-left-radius:  calc(0.75em - 0.125em);
+    border-top-right-radius: calc(0.75em - 0.125em);
+    border-top: none;
+}
+
+.power-button-container > *:last-child {
+    border-bottom-left-radius: calc(0.75em - 0.125em);
+    border-bottom-right-radius: calc(0.75em - 0.125em);
+    border-bottom: none;
+}
+.prompt-buttons * {
+    margin: 0;
+    border-radius: 0px;
+}
+.prompt-buttons > *:first-child {
+    border-bottom-left-radius: calc(0.75em - 0.125em);
+}
+.prompt-buttons > *:last-child {
+    border-bottom-right-radius: calc(0.75em - 0.125em);
 }
