@@ -10,6 +10,7 @@ let
     nil
 
     # Essential libraries and utilities
+    NetworkManager
     openssl
     gnupg
     wget
