@@ -26,7 +26,8 @@ case $1 in
 
     nohup eww-timeout-event "$verb" "$timeout" &
     show_backdrop
-    notify-send "$(eww-toggle-window prompt default --id="$verb" --arg verb="$verb")"
+    eww-toggle-window prompt default --arg uid="${uuidgen}" --arg verb="$verb" &
+
     ;;
   *)
     notify-send "Unknown parameter"

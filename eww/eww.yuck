@@ -1,11 +1,10 @@
 (defwidget power-menu-buttons []
   (box :class "power-button-container vbuttonbox"
        :orientation "vertical"
-       :halign "left"
        :spacing 0
-    (button :onclick "eww-powermenu-wrapper suspend" "Suspend")
-    (button :onclick "eww-powermenu-wrapper poweroff" "Shutdown")
-    (button :onclick "eww-powermenu-wrapper reboot" "Reboot")
+    (button :onclick "eww-powermenu-wrapper suspend & eww close power-menu" "Suspend")
+    (button :onclick "eww-powermenu-wrapper poweroff & eww close power-menu" "Shutdown")
+    (button :onclick "eww-powermenu-wrapper reboot & eww close power-menu" "Reboot")
 ))
 
 (defwindow power-menu [screen]
@@ -45,7 +44,6 @@
   (box
     :class "volume-container"
     :orientation "horizontal"
-    :halign "left"
     :spacing 5
     (scale 
       :value current-volume
@@ -59,7 +57,7 @@
 
 
 (defwindow calendar [screen]
-  :id "power-menu"
+  :id "calendar"
   :monitor screen
   :geometry (geometry :x "2px"
                       :y "2px"
@@ -97,8 +95,9 @@
 ;  `cat /tmp/timeout-timer | head -n 1`
 )
 
-(defwindow prompt [screen verb]
+(defwindow prompt [screen verb uid]
   :monitor screen
+  :id uid
   :geometry (geometry :x "0px"
                       :y "0px"
                       :width "0"

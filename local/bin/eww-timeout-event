@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # $1 verb (suspend, reboot, poweroff), $2 timeout 
+id_cmd="eww active-windows | grep \"prompt\" | awk '{print $2}'"
+id="${!id_cmd}"
 sleep "$2" 
 eww active-windows | grep "prompt" > /dev/null
-if [ $? -eq 0 ]; then 
+if [ $? -eq 0 ] && [ "$id" == "${!id_cmd}"]; then 
     systemctl "$1"
+    eww close-all
 else
     notify-send -u low "$1 cancelled"
 fi
-eww close-all
