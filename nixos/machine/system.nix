@@ -24,6 +24,7 @@
     {
       device = "/dev/disk/by-uuid/d7a32074-19be-43e4-8be0-a00132726527";
       fsType = "ext4";
+      autoResize = false;
       options = [
         "defaults"
         "nodev"
@@ -37,6 +38,7 @@ fileSystems."/boot" =
   {
     device = "/dev/disk/by-uuid/0FC1-0ECD";
     fsType = "vfat";
+    autoResize = false;
     options = [ "fmask=0022" "dmask=0022" ];
   };
 
@@ -44,6 +46,7 @@ fileSystems."/boot" =
     device = "/dev/disk/by-uuid/8d82561f-b4a6-41fb-a200-3e4039a995de";
     fsType = "btrfs";
     neededForBoot = true;
+    autoResize = false;
     options = [
       "defaults"
       "nodev"
@@ -57,6 +60,7 @@ fileSystems."/boot" =
     label = "Data";
     fsType = "ext4";
     neededForBoot = true;
+    autoResize = false;
     options = [
       "defaults"
       "nodev"
@@ -69,6 +73,7 @@ fileSystems."/boot" =
   fileSystems."/mnt/work" = {
     label = "Projects";
     device = "/dev/disk/by-uuid/0A10902A10901F2F";
+    autoResize = false;
     options = [
       "defaults"
       "nodev"

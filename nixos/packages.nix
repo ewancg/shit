@@ -15,6 +15,7 @@ let
     wget
     git
     lshw
+    dhcpcd
     pciutils
     udisks
 
@@ -118,7 +119,7 @@ let
     qpwgraph
     pwvucontrol
     obsidian
-    protonvpn-app
+    protonvpn-gui
 
     fsearch
     nautilus
@@ -196,12 +197,6 @@ in
 
   # VLC plugin path
   environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
-
-  # VSCode
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ firefox pkg-config ]);
-  };
 
   # Other
   environment.systemPackages = with pkgs; [

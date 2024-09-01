@@ -22,11 +22,11 @@ case $1 in
 
     export outfile="/tmp/timeout-timer"
     rm -rf "$outfile"
-    nohup eww-display-countdown "$outfile" &
 
-    nohup eww-timeout-event "$verb" "$timeout" &
     show_backdrop
-    eww-toggle-window prompt default --arg uid="${uuidgen}" --arg verb="$verb" &
+    eww-display-countdown "$outfile" &
+    eww-toggle-window prompt default --arg uid="${uuidgen}" --arg verb="$verb"
+    eww-timeout-event "$verb" "$timeout" &
 
     ;;
   *)

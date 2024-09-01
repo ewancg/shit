@@ -1,7 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   imports =
@@ -44,8 +44,15 @@
     ];
   };
 
+  # https://nixos.wiki/wiki/MPD#PipeWire
+  services.mpd.user = "ewan";
+  systemd.services.mpd.environment = {
+    XDG_RUNTIME_DIR = "/run/user/${toString config.users.users.ewan.uid}"; # User-id must match above user. MPD will look inside this directory for the PipeWire socket.
+  };
+
+
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
 
   # User / Authentication
   #services.pcscd.enable = true;
@@ -57,7 +64,32 @@
   security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
   #security.pam.u2f.interactive = true;
 
+  services.displayManager = {
+    enable = true;
+    
+    defaultSession = "hyprland";
+  };
+  services.xserver.displayManager = {
+    gdm.enable = true;
+  };
+
   services.gnome.gnome-keyring.enable = true;
+  systemd = {
+    user.services.polkit-gnome-authentication-agent-1 = {
+      description = "polkit-gnome-authentication-agent-1";
+      wantedBy = [ "graphical-session.target" ];
+      wants = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
+    };
+  };
+  security.polkit.enable = true;
 
   security.pam.services = {
     login.enableGnomeKeyring = true;

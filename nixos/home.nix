@@ -42,6 +42,19 @@
   #   "waybar".source = ../../waybar;
   # };
 
+  services.mpd = {
+    enable = true;
+    musicDirectory = "/mnt/music";
+    extraConfig = ''
+      audio_output {
+        type "pipewire"
+        name "pipewire"
+      }'';
+    # Optional:
+    network.listenAddress = "any"; # if you want to allow non-localhost connections
+    network.startWhenNeeded = true; # systemd feature: only start MPD service upon connection to its socket
+  };
+  
   # symlinks for debug
   xdg.configFile = {
     "alacritty".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/alacritty";
@@ -186,6 +199,12 @@
       };
       plugins = [
       ];
+    };
+
+    # VSCode
+    programs.vscode = {
+      enable = true;
+      package = pkgs.vscode.fhsWithPackages (ps: with ps; [ firefox pkg-config ]);
     };
 
     programs.tmux = {

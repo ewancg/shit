@@ -29,6 +29,7 @@
   fileSystems."/nix" = {
     device = "/dev/nvme0n1p3";
     fsType = "btrfs";
+    autoResize = false;
     neededForBoot = true;
     options = [
       "defaults"
@@ -40,6 +41,7 @@
   fileSystems."/" = {
     device = "/dev/nvme0n1p4";
     fsType = "ext4";
+    autoResize = false;
     options = [
       "defaults"
       "nodev"

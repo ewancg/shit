@@ -1,7 +1,7 @@
 ﻿[
     {
         "height": 28,
-        "output": "Samsung Electric Company LF32TU87 HCPRA08903",
+        "output": [ "Samsung Electric Company LF32TU87 HCPRA08903", "Chimei Innolux Corporation 0x1406" ],
         "layer": "top",
         "modules-left": [
             "custom/power",
@@ -53,7 +53,7 @@
         },
         "hyprland/window": {
             "format": "{title} <small>{class}</small>",
-            "max-length": 200,
+            "max-length": 100,
             "separate-outputs": true
         },
         "mpris": {
@@ -98,7 +98,7 @@
         "wireplumber": {
             "format": "{icon} {volume}%",
             "format-muted": "\uf6a9",
-            "on-click": "eww-toggle-window volume default --arg x=$(expr $(hyprctl cursorpos | awk '{print $1-1;}') - 40)",
+            "on-click": "eww-toggle-window volume default --arg x=$(expr $(hyprctl cursorpos | awk '{print $1-1;}')R - 40)",
             "on-click-right": "pwvucontrol",
             "format-icons": {
                 "default": [
@@ -135,24 +135,23 @@
             "cpu",
             "memory",
             "disk",
-            "backlight/slider",
             "battery",
             "clock"
         ],
         "cpu": {
             "interval": 1,
-            "format": " {usage:02d}%",
-            "format-alt": " {usage:02d}%: {avg_frequency:0.2f} / {max_frequency:0.2f} GHz"
+            "format": "<small> {usage:02d}%</small>",
+            "format-alt": "<small> {usage:02d}%: {avg_frequency:0.2f} / {max_frequency:0.2f}</small><sub>GHz</sub>"
         },
         "memory": {
             "interval": 15,
-            "format": " {percentage:02d}%",
-            "format-alt": " {percentage:02d}%: {used:0.1f} / {total:0.1f} GB"
+            "format": "<small> {percentage:02d}%</small>",
+            "format-alt": "<small> {percentage:02d}%: {used:0.1f} / {total:0.1f} </small><sub>GB</sub>"
         },
         "disk": {
             "interval": 90,
-            "format": " {percentage_used:02d}%",
-            "format-alt": " {percentage_used:02d}%: {specific_used:0.1f} / {specific_total:0.1f} GB used ({percentage_free:02d}% free)",
+            "format": "<small> {percentage_used:02d}%</small>",
+            "format-alt": "<small> {percentage_used:02d}%: {specific_used:0.1f} / {specific_total:0.1f} </small><sub>GB used </sub><small>({percentage_free:02d}% </small><sub>free</sub><small>)</small>",
             "unit": "GB"
         },
         "battery": {
@@ -186,9 +185,107 @@
             "on-scroll-down": "hyprctl dispatch workspace e-1"
         },
         "hyprland/window": {
-            "format": "{title} <small>{class}</small>",
-            "max-length": 200,
+            "format": "{title} <small>{class}</small>",
+            "max-length": 100,
             "separate-outputs": false
+        },
+        "clock": {
+            "format": "{:%I:%M %p}",
+            "format-alt": "{:%A, %B %d   %I:%M %p}"
+        }
+    },
+    {
+        "output": "LG Electronics LG TV 0x01010101",
+        "height": 24,
+        "modules-left": [
+            "hyprland/workspaces"
+        ],
+        "modules-center": [
+            "hyprland/window"
+        ],
+        "modules-right": [
+            "cpu",
+            "memory",
+            "disk",
+            "hyprland/language",
+            "battery",
+            "clock"
+        ],
+        "hyprland/workspaces": {
+            "sort": "id",
+            "persistent-workspaces": {
+                "*": 5
+            }
+        },
+        "hyprland/window": {
+            "format": "{title} <small>{class}</small>",
+            "max-length": 100,
+            "separate-outputs": true
+        },
+        "cpu": {
+            "interval": 1,
+            "format": " {usage:02d}%",
+            "format-alt": " {usage:02d}%: {avg_frequency:0.2f} / {max_frequency:0.2f} GHz"
+        },
+        "memory": {
+            "interval": 15,
+            "format": " {percentage:02d}%",
+            "format-alt": " {percentage:02d}%: {used:0.1f} / {total:0.1f} GB"
+        },
+        "disk": {
+            "interval": 90,
+            "format": " {percentage_used:02d}%",
+            "format-alt": " {percentage_used:02d}%: {specific_used:0.1f} / {specific_total:0.1f} GB used ({percentage_free:02d}% free)",
+            "unit": "GB"
+        },
+        "hyprland/language": {
+            "format": "<small>{}</small>"
+        },
+        "battery": {
+            "format": "{capacity}% {icon}",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        "clock": {
+            "format": "{:%I:%M %p}",
+            "format-alt": "{:%A, %B %d   %I:%M %p}"
+        }
+    },
+    {
+        "output": [ "!Samsung Electric Company LF32TU87 HCPRA08903", "!Acer Technologies B326HK T1NAA0038522", "!Chimei Innolux Corporation 0x1406", "!LG Electronics LG TV 0x01010101" ],
+        "height": 28,
+        "modules-left": [
+            "hyprland/workspaces"
+        ],
+        "modules-center": [
+            "hyprland/window"
+        ],
+        "modules-right": [
+            "battery",
+            "clock"
+        ],
+
+        "hyprland/workspaces": {
+            "sort": "id",
+            "persistent-workspaces": {
+                "*": 3
+            }
+        },
+
+        "battery": {
+            "format": "{capacity}% {icon}",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
         },
         "clock": {
             "format": "{:%I:%M %p}",
