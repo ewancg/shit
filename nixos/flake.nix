@@ -13,7 +13,7 @@
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
-    }; 
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprland, ... }@inputs:
@@ -23,7 +23,7 @@
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "${system}";
-        specialArgs = { inherit inputs;} ;
+        specialArgs = { inherit inputs; };
         modules = [
           inputs.home-manager.nixosModules.default
           ./configuration.nix
@@ -32,7 +32,7 @@
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
         system = "${system}";
-        specialArgs = {inherit inputs;};
+        specialArgs = { inherit inputs; };
         modules = [
           inputs.home-manager.nixosModules.default
           ./configuration.nix

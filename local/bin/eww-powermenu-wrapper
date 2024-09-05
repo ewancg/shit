@@ -25,7 +25,8 @@ case $1 in
 
     show_backdrop
     eww-display-countdown "$outfile" &
-    eww-toggle-window prompt default --arg uid="${uuidgen}" --arg verb="$verb"
+    eww-toggle-window prompt default --arg uid="$(uuidgen)" --arg verb="$verb"
+    notify-send "eww-toggle-window prompt default --arg uid='$(uuidgen)' --arg verb='$verb'"
     eww-timeout-event "$verb" "$timeout" &
 
     ;;

@@ -3,8 +3,8 @@
 id="$(eww active-windows | grep prompt | awk '{print $1-1}')"
 notify-send "$id"
 sleep "$2" 
-eww active-windows | grep "prompt" > /dev/null
-if [ $? -eq 0 ] && [ "$id" == "$(eww active-windows | grep prompt | awk '{print $1-1}')" ]; then 
+new_id="$(eww active-windows | grep prompt | awk '{print $1-1}')"
+if [ "$id" == "$new_id" ]; then 
     systemctl "$1"
     eww close-all
 else

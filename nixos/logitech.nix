@@ -1,9 +1,9 @@
 { pkgs, ... }:
 {
-  environment.systemPackages = with pkgs; [
-    logiops
+  environment.systemPackages = [
+    pkgs.solaar
   ];
-  # add config
-  #  hardware.logitech.wireless.enable = true;
-  #  hardware.logitech.wireless.enableGraphical = true;
+  
+  hardware.logitech.wireless.enable = true;
+  hardware.logitech.wireless.enableGraphical = true;
 }

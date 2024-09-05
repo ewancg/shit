@@ -78,7 +78,7 @@
   ];
 
   environment.variables = {
-        # Nvidia
+    # Nvidia
     NVD_BACKEND = "direct";
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";

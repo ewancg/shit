@@ -195,6 +195,13 @@ in
   # for nix-index command not found integration
   programs.command-not-found.enable = false;
 
+  # For broken package "nose" (which is used for Logitech hardware support)
+  nixpkgs.overlays = [
+    (_: prev: {
+        python312 = prev.python312.override { packageOverrides = _: pysuper: { nose = pysuper.pynose; }; };
+    })
+  ];
+
   # VLC plugin path
   environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
 

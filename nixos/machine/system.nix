@@ -34,13 +34,13 @@
       ];
     };
 
-fileSystems."/boot" =
-  {
-    device = "/dev/disk/by-uuid/0FC1-0ECD";
-    fsType = "vfat";
-    autoResize = false;
-    options = [ "fmask=0022" "dmask=0022" ];
-  };
+  fileSystems."/boot" =
+    {
+      device = "/dev/disk/by-uuid/0FC1-0ECD";
+      fsType = "vfat";
+      autoResize = false;
+      options = [ "fmask=0022" "dmask=0022" ];
+    };
 
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/8d82561f-b4a6-41fb-a200-3e4039a995de";

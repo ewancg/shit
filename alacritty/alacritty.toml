@@ -11,8 +11,8 @@ dynamic_title = true
 dimensions = { columns = 130, lines = 28 }
 decorations = "Full"
 
-opacity = 0
-blur =  false
+opacity = 0.9
+blur =  true
 
 resize_increments = true
 

@@ -29,7 +29,7 @@
 
   fileSystems."/mnt/music" = {
     label = "Music (@slave)";
-    device = "ewan@slave:/mnt/music";
+    device = "ewan@slave.local:/mnt/music";
     fsType = "sshfs";
     options = [
       "reconnect"
@@ -66,7 +66,7 @@
 
   services.displayManager = {
     enable = true;
-    
+
     defaultSession = "hyprland";
   };
   services.xserver.displayManager = {
@@ -135,7 +135,7 @@
       Type = "oneshot";
     };
   };
-  
+
   # Apps
   # Fishy 
   programs.fish.enable = true;

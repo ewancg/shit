@@ -6,7 +6,7 @@
     enable = true;
     xwayland.enable = true;
     #systemd.enable = true;
-  #  package = hyprland.
+    #  package = hyprland.
   };
   services.hypridle.enable = true;
 
@@ -88,7 +88,7 @@
     hyprlock
     hypridle
     hyprpicker
-    
+
     # need for gui auth
     polkit_gnome
 
@@ -108,7 +108,7 @@
 
     playerctl
     pwvucontrol
-#    xdg-desktop-portal-hyprland
+    #    xdg-desktop-portal-hyprland
     xdg-desktop-portal-gnome
     gradience
     adw-gtk3

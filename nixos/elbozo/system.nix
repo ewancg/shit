@@ -18,14 +18,14 @@
   ];
 
   fileSystems."/boot" =
-  {
-    device = "/dev/nvme0n1p1";
-    fsType = "vfat";
-    options = [ "fmask=0022" "dmask=0022" ];
-  };
-  swapDevices = [ {
+    {
+      device = "/dev/nvme0n1p1";
+      fsType = "vfat";
+      options = [ "fmask=0022" "dmask=0022" ];
+    };
+  swapDevices = [{
     device = "/dev/nvme0n1p2";
-  } ];
+  }];
   fileSystems."/nix" = {
     device = "/dev/nvme0n1p3";
     fsType = "btrfs";
@@ -50,7 +50,7 @@
       "data=ordered"
     ];
   };
-  
+
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 

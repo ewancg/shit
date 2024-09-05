@@ -1,27 +1,3 @@
-(defwidget power-menu-buttons []
-  (box :class "power-button-container vbuttonbox"
-       :orientation "vertical"
-       :spacing 0
-    (button :onclick "eww-powermenu-wrapper suspend & eww close power-menu" "Suspend")
-    (button :onclick "eww-powermenu-wrapper poweroff & eww close power-menu" "Shutdown")
-    (button :onclick "eww-powermenu-wrapper reboot & eww close power-menu" "Reboot")
-))
-
-(defwindow power-menu [screen]
-  :id "power-menu"
-  :monitor screen
-  :geometry (geometry :x "2px"
-                      :y "2px"
-                      :width "10%"
-                      :height "10%"
-                      :anchor "top left")
-  :stacking "overlay"
-  :exclusive false
-  :focusable false
-  :wm-ignore false
-  (power-menu-buttons)
-)
-
 (defpoll current-volume
   :initial 50
   :interval "0.1s"
@@ -124,4 +100,28 @@
          :onclick "eww close-all" "Cancel")
     )
   )
+)
+
+(defwidget power-menu-buttons []
+  (box :class "power-button-container vbuttonbox"
+       :orientation "vertical"
+       :spacing 0
+    (button :onclick "eww close power-menu && eww-powermenu-wrapper suspend &" "Suspend")
+    (button :onclick "eww close power-menu && eww-powermenu-wrapper poweroff &" "Shutdown")
+    (button :onclick "eww close power-menu && eww-powermenu-wrapper reboot &" "Reboot")
+))
+
+(defwindow power-menu [screen]
+  :id "power-menu"
+  :monitor screen
+  :geometry (geometry :x "2px"
+                      :y "2px"
+                      :width "10%"
+                      :height "10%"
+                      :anchor "top left")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :wm-ignore false
+  (power-menu-buttons)
 )

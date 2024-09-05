@@ -12,16 +12,16 @@
 
   # Load amggpu driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "amdgpu" ];
- 
+
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.extraModulePackages = with config.boot.kernelPackages; [
     amdgpu
   ];
 
   environment.variables = {
-        # Nvidia
+    # Nvidia
     LIBVA_DRIVER_NAME = "radeonsi";
-    
+
     # guessing now
     GBM_BACKEND = "amdgpu";
     __GLX_VENDOR_LIBRARY_NAME = "amdgpu";
