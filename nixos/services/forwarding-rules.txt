@@ -1,0 +1,10 @@
+lan              192.168.1.1
+local            192.168.1.1
+home             192.168.1.1
+home.arpa        192.168.1.1
+internal         192.168.1.1
+localdomain      192.168.1.1
+192.in-addr.arpa 192.168.1.1
+example.com      9.9.9.9,8.8.8.8
+ipv6.example.com [2001:DB8::42]:53
+onion            127.0.0.1:9053

@@ -4,6 +4,41 @@ let
   vlc-plugin-pipewire = callPackage ./misc/vlc-plugin-pipewire/default.nix { };
   # System packages
   system = [
+    # cli tools
+    killall
+    p7zip
+    playerctl
+    patchelf
+    traceroute
+    unzip
+    libnotify
+    kde-cli-tools
+    gojq
+    slurp
+    grim
+    normcap
+    fastfetch
+    ffmpeg
+    file
+    choose
+    datamash
+    at
+    bc
+
+    # system
+    avahi-compat
+    fuse
+    gamescope
+    mkinitcpio-nfs-utils
+    nfs-utils
+    sshfs-fuse
+    v4l-utils
+    udisks
+    nix-ld
+    bind
+    binutils
+    btrfs-progs
+
     # Nix
     nix-index
     nixpkgs-fmt
@@ -54,6 +89,14 @@ let
     # (callPackage ../misc/rustup.nix {})
   ];
 
+  dev = with pkgs; [
+    # dev tools (rare)
+    qtcreator
+    rustup
+    python3
+    ida-free
+  ];
+
   # Apps (move to home.nix?)
   apps = with pkgs; [
     # Communication
@@ -75,16 +118,17 @@ let
         cp ${./misc/discord.desktop} $out/share/applications/vesktop.desktop
       '';
     })
-    # (symlinkJoin {
-    #   name = "my-ts3client";
-    #   paths = [ teamspeak_client ];
-    #   buildInputs = [ makeWrapper ];
-    #   postBuild = ''
-    #     wrapProgram $out/bin/ts3client \
-    #       --set QT_SCALE_FACTOR "1.5"
-    #   '';
-    # })
-    teamspeak_client
+    
+    (symlinkJoin {
+      name = "my-ts3client";
+      paths = [ teamspeak_client ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/ts3client \
+          --set QT_SCALE_FACTOR "1.25"
+      '';
+    })
+    # teamspeak_client
 
     # "Task manager"
     mission-center
@@ -96,13 +140,22 @@ let
         temurin-bin-21
         temurin-bin-8
         temurin-bin-17
+	graalvm-ce
       ];
     })
     steam
     # Multimedia
 
-    # for Wayland
-    (symlinkJoin {
+    # Productivity, misc.
+    firefox
+    ungoogled-chromium
+    thunderbird
+    obsidian
+    sticky
+    gimp
+
+    spotify
+    (symlinkJoin { # for Wayland
       name = "my-vlc";
       paths = [ vlc ];
       buildInputs = [ makeWrapper ];
@@ -112,18 +165,49 @@ let
       '';
     })
     vlc-plugin-pipewire
-
-    gimp
-
-    # Productivity, misc.
     qpwgraph
     pwvucontrol
-    obsidian
-    protonvpn-gui
+    alsa-scarlett-gui
+    headsetcontrol
 
-    fsearch
-    nautilus
+    spotifyd
+    strawberry
+    transmission_4
+    transmission-remote-gtk
+    nicotine-plus    
+    
+    gnome.gnome-boxes
+    gnome-calculator
     gnome-disk-utility
+    gnome-font-viewer
+
+    gnome-system-monitor
+    nvidia-system-monitor-qt
+    nvtopPackages.full
+
+    nautilus
+    blueman
+    fsearch
+
+    ddnet
+    dolphin-emu
+    fceux
+    rpcs3
+    openrct2
+    path-of-building
+    
+    ptcollab
+    vmpk
+    guitarix
+    bitwig-studio
+
+    protonvpn-gui
+    zerotierone
+    
+    valent
+
+    # evile !!!!
+    zoom
   ];
 in
 {
@@ -174,10 +258,10 @@ in
   # File manager
   programs.thunar.enable = true;
 
-  programs.thunar.plugins = with pkgs.xfce; [
-    thunar-archive-plugin
-    thunar-volman
-  ];
+#  programs.thunar.plugins = with pkgs.xfce; [
+#    thunar-archive-plugin
+#    thunar-volman
+#  ];
 
   qt = {
     enable = true;
@@ -206,7 +290,5 @@ in
   environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
 
   # Other
-  environment.systemPackages = with pkgs; [
-    normcap
-  ] ++ system ++ termish ++ apps;
+  environment.systemPackages = system ++ termish ++ dev ++ apps;
 }

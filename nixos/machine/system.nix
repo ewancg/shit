@@ -16,6 +16,9 @@
     # Mouse configuration
     ../logitech.nix
 
+    # Webcam, video broadcast
+    ../obs-studio.nix
+
     # VM host configuration
     ./virtualization.nix
   ];

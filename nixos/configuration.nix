@@ -45,10 +45,10 @@
   };
 
   # https://nixos.wiki/wiki/MPD#PipeWire
-  services.mpd.user = "ewan";
-  systemd.services.mpd.environment = {
-    XDG_RUNTIME_DIR = "/run/user/${toString config.users.users.ewan.uid}"; # User-id must match above user. MPD will look inside this directory for the PipeWire socket.
-  };
+  #services.mpd.user = "ewan";
+  #systemd.services.mpd.environment = {
+  #  XDG_RUNTIME_DIR = "/run/user/${toString config.users.users.ewan.uid}"; # User-id must match above user. MPD will look inside this directory for the PipeWire socket.
+  #};
 
 
   # Enable touchpad support (enabled default in most desktopManager).
