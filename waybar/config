@@ -98,7 +98,7 @@
         "wireplumber": {
             "format": "{icon} {volume}%",
             "format-muted": "\uf6a9",
-            "on-click": "eww-toggle-window volume default --arg x=$(expr $(hyprctl cursorpos | awk '{print $1-1;}')R - 40)",
+            "on-click": "eww-toggle-window volume default --arg x=$(expr $(hyprctl cursorpos | awk '{print $1-1;}') - 40)",
             "on-click-right": "pwvucontrol",
             "format-icons": {
                 "default": [
@@ -167,19 +167,21 @@
         "hyprland/workspaces": {
             "sort": "id",
             "format": "{icon}",
+            "show-special": false,
             "format-icons": {
                 "6": "A",
                 "7": "B",
                 "8": "C",
                 "9": "<small>D</small>",
-                "10": "<small>E</small>"
+                "10": "<small>E</small>",
+                "magic": ""
             },
             "persistent-workspaces": {
                 "6": {},
                 "7": {},
                 "8": {},
                 "9": {},
-                "10": {}    
+                "10": {}
         },
             "on-scroll-up": "hyprctl dispatch workspace e+1",
             "on-scroll-down": "hyprctl dispatch workspace e-1"

@@ -3,28 +3,74 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 { pkgs, config, ... }:
 
-{
-  imports =
-    [
-      # All hardware, network and miscellaneous system-level declarations
+let 
+  english = "en_US.UTF-8";
+  locale-variables = {
+    # LC_ALL            = "";
+    LANG              = english;
+    LANGUAGE          = english;
 
-      # GNOME
-      #      ./desktop/gnome.nix
+    LC_ADDRESS        = english;
+    LC_CTYPE          = english;
+    LC_IDENTIFICATION = english;
+    LC_MEASUREMENT    = english;
+    LC_MONETARY       = english;
+    LC_NAME           = english;
+    LC_NUMERIC        = english;
+    LC_PAPER          = english;
+    LC_TELEPHONE      = english;
+    LC_TIME           = english;
+  };
+in {
+  imports = [
+    # All hardware, network and miscellaneous system-level declarations
 
-      # Hyprland
-      ./desktop/hyprland.nix
+    # Desktop; hyprland.nix or gnome.nix
+    ./desktop/hyprland.nix
 
-      # System-wide packages
-      ./packages.nix
-    ];
+    # System-wide packages
+    ./packages.nix
+  ];
 
-  nix.optimise.automatic = true;
-  nix.optimise.dates = [ "03:45" ];
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 10d";
+  # Careful..
+  system.stateVersion = "24.05";
+
+  boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
+
+  # Extra kernel modules
+  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+
+  # Time zone
+  time.timeZone = "America/Denver";
+  
+  # Internationalisation properties
+  i18n.defaultLocale = english;
+  i18n.supportedLocales = [ "${english}/UTF-8" ];
+  i18n.extraLocaleSettings = locale-variables;
+
+  # Keymap in X11
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "colemak";
+  };
+
+  nix = {
+    package = pkgs.nixFlakes;
+    
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+    #settings.experimental-features = [ "nix-command" "flakes" ];
+    
+    optimise = {
+      automatic = true;
+      dates = [ "03:45" ];
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 10d";
+    };
   };
 
   fileSystems."/mnt/music" = {
@@ -49,7 +95,6 @@
   #systemd.services.mpd.environment = {
   #  XDG_RUNTIME_DIR = "/run/user/${toString config.users.users.ewan.uid}"; # User-id must match above user. MPD will look inside this directory for the PipeWire socket.
   #};
-
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
@@ -167,54 +212,5 @@
   programs.steam = {
     enable = true;
     package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
-  };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
-
-  boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
-  # boot.supportedFilesystems = [ "ntfs" "sshfs" "zfs" ];
-
-  # Extra kernel modules
-  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
-
-  # Set your time zone.
-  time.timeZone = "America/Denver";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
-  };
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "colemak";
   };
 }

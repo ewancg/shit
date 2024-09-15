@@ -51,12 +51,13 @@
 (defwindow backdrop [screen]
   :id "backdrop"
   :monitor screen
-  :geometry (geometry :x "0px"
-                      :y "0px"
+  :geometry (geometry :x "0%"
+                      :y "-28"
                       :width "150%"
                       :height "150%"
-                      :anchor "center")
+                      :anchor "top left")
   :stacking "overlay"
+  :wm-ignore true
   :exclusive false
   :focusable false
   :wm-ignore false
@@ -106,9 +107,9 @@
   (box :class "power-button-container vbuttonbox"
        :orientation "vertical"
        :spacing 0
-    (button :onclick "eww close power-menu && eww-powermenu-wrapper suspend &" "Suspend")
-    (button :onclick "eww close power-menu && eww-powermenu-wrapper poweroff &" "Shutdown")
-    (button :onclick "eww close power-menu && eww-powermenu-wrapper reboot &" "Reboot")
+    (button :onclick "~/.local/bin/eww-powermenu-wrapper suspend" "Suspend")
+    (button :onclick "~/.local/bin/eww-powermenu-wrapper poweroff" "Shutdown")
+    (button :onclick "~/.local/bin/eww-powermenu-wrapper reboot" "Reboot")
 ))
 
 (defwindow power-menu [screen]

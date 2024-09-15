@@ -56,7 +56,7 @@
         }
         {
           packages = with pkgs; [
-            alsa.dev
+            #alsa.dev
             dbus.dev
 
             pkg-config

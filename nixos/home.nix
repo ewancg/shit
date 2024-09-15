@@ -1,39 +1,69 @@
 { config, pkgs, ... }:
 
 {
+  nixpkgs.config = {
+    allowUnfree = true;
+  };
 
   imports = [
     ./spicetify.nix
   ];
 
-  home.username = "ewan";
-  home.homeDirectory = "/home/ewan";
-  home.stateVersion = "24.05";
-
-  nixpkgs.config = {
-    allowUnfree = true;
+  home = {
+    homeDirectory = "/home/ewan";
+    stateVersion = "24.05";
+    username = "ewan";
+    pointerCursor = {
+      gtk.enable = true;
+      name = "Catppuccin-Mocha-Light-Cursors";
+      package = pkgs.catppuccin-cursors.mochaDark;
+    }; 
+    sessionVariables = {
+    EDITOR = "code --wait --new-window";
+    };
   };
 
   home.packages = with pkgs; [
+    adw-gtk3
     arc-icon-theme
-
     arc-theme
-    yaru-theme
     ayu-theme-gtk
-    solarc-gtk-theme
-
-    arc-kde-theme
-
-    themechanger
+    breeze-gtk
+    catppuccin-gtk
+    catppuccin-kvantum
+    gradience
+    kdePackages.breeze
     kdePackages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum
-    qt5ct
-    gradience
-    adw-gtk3
-
-    catppuccin-kvantum
-    catppuccin-gtk
+    lightly-boehs
+    # qt5ct
+    qt6ct
+    solarc-gtk-theme
+    themechanger
+    yaru-theme
   ];
+
+  services = {
+    kdeconnect = {
+      enable = true;
+      # valent on Hyprland; gsconnect on GNOME
+      package = pkgs.valent;
+      indicator = true;
+    };
+
+    mpd = {
+      enable = true;
+      musicDirectory = "/mnt/music";
+      extraConfig = ''
+        audio_output {
+          type "pipewire"
+          name "pipewire"
+        }'';
+      # Optional:
+      network.listenAddress = "any"; # if you want to allow non-localhost connections
+      network.startWhenNeeded = true; # systemd feature: only start MPD service upon connection to its socket
+    };
+  };
 
   # xdg.configFile = {
   #   "alacritty".source = ../../alacritty;
@@ -42,23 +72,11 @@
   #   "waybar".source = ../../waybar;
   # };
 
-  services.mpd = {
-    enable = true;
-    musicDirectory = "/mnt/music";
-    extraConfig = ''
-      audio_output {
-        type "pipewire"
-        name "pipewire"
-      }'';
-    # Optional:
-    network.listenAddress = "any"; # if you want to allow non-localhost connections
-    network.startWhenNeeded = true; # systemd feature: only start MPD service upon connection to its socket
-  };
-
   # symlinks for debug
   xdg.configFile = {
     "alacritty".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/alacritty";
     "Kvantum".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/Kvantum";
+    "qt5ct".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qt5ct";
 
     "wofi".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/wofi";
     "hypr".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/hypr";
@@ -71,7 +89,6 @@
     "QtProject/qtcreator/.clang-format".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/.clang-format";
   };
 
-
   home.file = {
     ".tmux.conf".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/.tmux.conf";
     ".local/bin" = {
@@ -82,13 +99,6 @@
     #".tmux.conf".source = ../../.tmux.conf;
     "dev".source = ./shells;
     # '';
-  };
-
-  # I only want this on Hyprland
-  services.kdeconnect = {
-    enable = true;
-    package = pkgs.valent;
-    indicator = true;
   };
 
   dconf = {
@@ -119,16 +129,12 @@
     };
   };
 
-  home.sessionVariables = {
-    EDITOR = "code --wait --new-window";
-  };
-
   programs.fish = {
     enable = true;
     shellInit = builtins.readFile ../fish/config.fish;
     interactiveShellInit = ''
       bass source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
-
+      LOCALE_ARCHIVE="$(readlink ~/.nix-profile/lib/locale)/locale-archive"
       function __get_program_names
           ps aux | choose 10 | sort | uniq
       end
@@ -198,13 +204,6 @@
       '';
     };
     plugins = [
-    ];
-  };
-
-  programs.obs-studio = {
-    enable = true;
-    plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval
     ];
   };
 

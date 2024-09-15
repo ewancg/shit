@@ -23,6 +23,8 @@ case $1 in
     export outfile="/tmp/timeout-timer"
     rm -rf "$outfile"
 
+    eww close power-menu
+
     show_backdrop
     eww-display-countdown "$outfile" &
     eww-toggle-window prompt default --arg uid="$(uuidgen)" --arg verb="$verb"
@@ -33,4 +35,4 @@ case $1 in
   *)
     notify-send "Unknown parameter"
     ;;
-esac
+    esac

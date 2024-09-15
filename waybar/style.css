@@ -5,7 +5,7 @@
     font-family: Cantarell, "Font Awesome 6 Free", sans-serif;
 }
 
-#cpu, #disk, #memory, #workspaces *, #custom-power {
+#cpu, #disk, #memory, #workspaces *, #custom-power, #wireplumber {
     font-family: Ubuntu Mono, "Font Awesome 6 Free";
 }
 

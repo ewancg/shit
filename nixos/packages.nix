@@ -1,85 +1,136 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 with pkgs;
 let
+  segoe-ui-variable-fonts = (callPackage ./misc/segoe-ui-variable/default.nix { });
   vlc-plugin-pipewire = callPackage ./misc/vlc-plugin-pipewire/default.nix { };
+  
+  # for Wayland
+  my-vlc = ( symlinkJoin {
+    name = "my-vlc";
+    paths = [ vlc ];
+    buildInputs = [ makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/vlc \
+        --unset DISPLAY
+    '';
+  });
+
+  my-discord = ( symlinkJoin {
+    name = "my-discord";
+    paths = [ vesktop ];
+    postBuild = ''
+      for size in 32 64 128 256 512 1024; do
+        dim="$size"x"$size"
+        rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+        ${lib.getExe imagemagick} ${./misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+      done
+      rm $out/share/applications/vesktop.desktop
+      cp ${./misc/discord.desktop} $out/share/applications/vesktop.desktop
+    '';
+  });
+
+  # Ugly hack. Not needed anymore
+  # my-ts3client = ( symlinkJoin {
+  #   name = "my-ts3client";
+  #   paths = [ teamspeak_client ];
+  #   buildInputs = [ makeWrapper ];
+  #   postBuild = ''
+  #     wrapProgram $out/bin/ts3client \
+  #       --set QT_SCALE_FACTOR "1.5"
+  #   '';
+  # });
+
+  my-prismlauncher = ( prismlauncher.override {
+    withWaylandGLFW = true;
+    jdks = [
+      temurin-bin-21
+      temurin-bin-8
+      temurin-bin-17
+    ];
+  });
+
+  my-obs = ( pkgs.wrapOBS {
+    plugins = with pkgs.obs-studio-plugins; [
+      obs-backgroundremoval
+    ];
+  });
+
+
   # System packages
   system = [
     # cli tools
-    killall
-    p7zip
-    playerctl
-    patchelf
-    traceroute
-    unzip
-    libnotify
-    kde-cli-tools
-    gojq
-    slurp
-    grim
-    normcap
+    at
+    bc
+    choose
+    datamash
     fastfetch
     ffmpeg
     file
-    choose
-    datamash
-    at
-    bc
+    gojq
+    grim
+    kde-cli-tools
+    killall
+    libnotify
+    p7zip
+    patchelf
+    playerctl
+    slurp
+    traceroute
+    unzip
 
     # system
     avahi-compat
-    fuse
-    gamescope
-    mkinitcpio-nfs-utils
-    nfs-utils
-    sshfs-fuse
-    v4l-utils
-    udisks
-    nix-ld
     bind
     binutils
     btrfs-progs
+    fuse
+    gamescope
+    glibcLocales
+    mkinitcpio-nfs-utils
+    nfs-utils
+    nix-ld
+    sshfs-fuse
+    udisks
+    v4l-utils
 
     # Nix
+    nil
     nix-index
     nixpkgs-fmt
-    nil
 
     # Essential libraries and utilities
-    openssl
-    gnupg
-    wget
-    git
-    lshw
     dhcpcd
+    git
+    gnupg
+    lshw
+    openssl
     pciutils
     udisks
+    wget
 
     # Wine
+    vkd3d-proton
+    wine-wayland
     wine64
     winetricks
-    #    wineWowPackages.staging
     wineWowPackages.stable
     wineWowPackages.waylandFull
 
-    wine-wayland
-    vkd3d-proton
-
     # Other
-    openrgb
-    # solaar # broken on 7 21 24
-    logiops
     headsetcontrol
+    openrgb
   ];
 
   # Packages involved/integrated in my terminal workflow
   termish = with pkgs; [
     alacritty
-    tmux
     fish
     fishPlugins.bass
+    tmux
 
     fd
     fzf
+    tree
 
     neovim
 
@@ -91,164 +142,104 @@ let
 
   dev = with pkgs; [
     # dev tools (rare)
+    ida-free
+    python3
     qtcreator
     rustup
-    python3
-    ida-free
   ];
 
   # Apps (move to home.nix?)
   apps = with pkgs; [
     # Communication
-    (symlinkJoin {
-      name = "my-discord";
-
-      paths = [
-        vesktop
-      ];
-
-      postBuild = ''
-        for size in 32 64 128 256 512 1024; do
-          dim="$size"x"$size"
-          rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-          ${lib.getExe imagemagick} ${./misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-        done
-
-        rm $out/share/applications/vesktop.desktop
-        cp ${./misc/discord.desktop} $out/share/applications/vesktop.desktop
-      '';
-    })
-    
-    (symlinkJoin {
-      name = "my-ts3client";
-      paths = [ teamspeak_client ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/ts3client \
-          --set QT_SCALE_FACTOR "1.25"
-      '';
-    })
-    # teamspeak_client
-
-    # "Task manager"
-    mission-center
-
-    # Gaming
-    (prismlauncher.override {
-      withWaylandGLFW = true;
-      jdks = [
-        temurin-bin-21
-        temurin-bin-8
-        temurin-bin-17
-	graalvm-ce
-      ];
-    })
-    steam
-    # Multimedia
-
-    # Productivity, misc.
-    firefox
-    ungoogled-chromium
+    my-discord
+    teamspeak_client
     thunderbird
-    obsidian
-    sticky
-    gimp
 
-    spotify
-    (symlinkJoin { # for Wayland
-      name = "my-vlc";
-      paths = [ vlc ];
-      buildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/vlc \
-          --unset DISPLAY
-      '';
-    })
-    vlc-plugin-pipewire
-    qpwgraph
-    pwvucontrol
-    alsa-scarlett-gui
-    headsetcontrol
-
-    spotifyd
-    strawberry
-    transmission_4
-    transmission-remote-gtk
-    nicotine-plus    
-    
-    gnome.gnome-boxes
-    gnome-calculator
+    # System monitors
     gnome-disk-utility
-    gnome-font-viewer
-
     gnome-system-monitor
+    mission-center
     nvidia-system-monitor-qt
     nvtopPackages.full
 
-    nautilus
-    blueman
-    fsearch
-
+    # Games
     ddnet
     dolphin-emu
     fceux
-    rpcs3
+    my-prismlauncher
     openrct2
     path-of-building
-    
+    rpcs3
+    steam
+
+    # Multimedia
+    my-vlc
+    spotify
+    strawberry
+    vlc-plugin-pipewire
+
+    alsa-scarlett-gui
+    headsetcontrol
+    pwvucontrol
+    qpwgraph
+
+    nicotine-plus    
+    spotifyd
+    transmission_4
+    transmission-remote-gtk
+
+    bitwig-studio
+    guitarix
     ptcollab
     vmpk
-    guitarix
-    bitwig-studio
 
+    my-obs
+    normcap # OCR
+
+    # Productivity, misc.
     protonvpn-gui
     zerotierone
-    
-    valent
 
-    # evile !!!!
-    zoom
+    blueman
+    firefox
+    fsearch
+    gimp
+    nautilus
+    obsidian
+    sticky
+    ungoogled-chromium
+    
+    gnome-calculator
+    gnome-font-viewer
+    gnome.gnome-boxes
   ];
 in
 {
-  # programs.spicetify =
-  #    let
-  #      spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-  #    in import (<nixpkgs/nixos/lib/eval-config.nix>)
-  #    {
-  #      enable = true;
-  #      enabledExtensions = with spicePkgs.extensions; [
-  #        #adblock
-  #        hidePodcasts
-  #        #shuffle # shuffle+ (special characters are sanitized out of extension names)
-  #      ];
-  #      theme = spicePkgs.themes.catppuccin;
-  #      colorScheme = "mocha";
-  #    };
-
   # Fonts
   fonts.packages = with pkgs; [
-    (callPackage ./misc/segoe-ui-variable/default.nix { })
-    wineWowPackages.fonts
-    wineWow64Packages.fonts
-    winePackages.fonts
+    # Windows fonts
+    segoe-ui-variable-fonts
     wine64Packages.fonts
+    winePackages.fonts
+    wineWow64Packages.fonts
+    wineWowPackages.fonts
 
+    # Not Windows fonts
     cantarell-fonts
-    ubuntu_font_family
-    noto-fonts
-    open-sans
-    liberation_ttf
+    corefonts
+    dina-font
     fira-code
     fira-code-symbols
-    mplus-outline-fonts.githubRelease
-    dina-font
-    proggyfonts
-    zilla-slab
-    ucs-fonts
-    corefonts
-    vistafonts
     font-awesome
+    liberation_ttf
+    mplus-outline-fonts.githubRelease
+    noto-fonts
+    open-sans
+    proggyfonts
+    ubuntu_font_family
+    ucs-fonts
+    vistafonts
+    zilla-slab
   ];
 
   # Run non-Nix binaries
@@ -258,10 +249,10 @@ in
   # File manager
   programs.thunar.enable = true;
 
-#  programs.thunar.plugins = with pkgs.xfce; [
-#    thunar-archive-plugin
-#    thunar-volman
-#  ];
+  programs.thunar.plugins = with pkgs.xfce; [
+    thunar-archive-plugin
+    thunar-volman
+  ];
 
   qt = {
     enable = true;
@@ -290,5 +281,5 @@ in
   environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
 
   # Other
-  environment.systemPackages = system ++ termish ++ dev ++ apps;
+  environment.systemPackages = [] ++ system ++ termish ++ dev ++ apps;
 }

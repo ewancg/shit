@@ -1,4 +1,5 @@
 {
+  
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -6,10 +7,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    spicetify-nix.url = "github:the-argus/spicetify-nix";
+    # spicetify-nix = {
+    #   url = "github:Gerg-L/spicetify-nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     hyprland = {
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -19,33 +21,32 @@
   outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprland, ... }@inputs:
     let
       system = "x86_64-linux";
+      home = { 
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        users.ewan = import ./home.nix;
+        extraSpecialArgs = { inherit spicetify-nix; };
+	    };
     in
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "${system}";
-        specialArgs = { inherit inputs; };
         modules = [
-          inputs.home-manager.nixosModules.default
-          ./configuration.nix
-          ./machine/system.nix
+	        ./configuration.nix
+      	  ./machine/system.nix
+          home-manager.nixosModules.home-manager {
+            home-manager = home;
+	        }
         ];
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
-        system = "${system}";
         specialArgs = { inherit inputs; };
         modules = [
-          inputs.home-manager.nixosModules.default
-          ./configuration.nix
-          ./elbozo/system.nix
-        ];
-      };
-
-      # Me
-      homeConfigurations."ewan" = home-manager.lib.homeManagerConfiguration {
-        inherit nixpkgs;
-        extraSpecialArgs = { inherit spicetify-nix; };
-        modules = [
-          ./home.nix
+	        ./configuration.nix
+	        ./elbozo/system.nix
+          home-manager.nixosModules.home-manager {
+            home-manager = home;
+      	  }
         ];
       };
     };
