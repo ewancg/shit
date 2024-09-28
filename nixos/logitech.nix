@@ -4,7 +4,7 @@
     solaar
     v4l2-relayd
   ];
-  
+
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
 

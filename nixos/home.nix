@@ -17,9 +17,9 @@
       gtk.enable = true;
       name = "Catppuccin-Mocha-Light-Cursors";
       package = pkgs.catppuccin-cursors.mochaDark;
-    }; 
+    };
     sessionVariables = {
-    EDITOR = "code --wait --new-window";
+      EDITOR = "code --wait --new-window";
     };
   };
 
@@ -36,8 +36,8 @@
     kdePackages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum
     lightly-boehs
-    # qt5ct
-    qt6ct
+    qt5ct
+    kdePackages.qt6ct
     solarc-gtk-theme
     themechanger
     yaru-theme
@@ -77,6 +77,7 @@
     "alacritty".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/alacritty";
     "Kvantum".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/Kvantum";
     "qt5ct".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qt5ct";
+    "qt6ct".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/qt6ct";
 
     "wofi".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/wofi";
     "hypr".source = config.lib.file.mkOutOfStoreSymlink "/home/ewan/shit/hypr";
@@ -134,7 +135,6 @@
     shellInit = builtins.readFile ../fish/config.fish;
     interactiveShellInit = ''
       bass source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
-      LOCALE_ARCHIVE="$(readlink ~/.nix-profile/lib/locale)/locale-archive"
       function __get_program_names
           ps aux | choose 10 | sort | uniq
       end

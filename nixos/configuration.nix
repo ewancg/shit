@@ -3,25 +3,26 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 { pkgs, config, ... }:
 
-let 
+let
   english = "en_US.UTF-8";
   locale-variables = {
     # LC_ALL            = "";
-    LANG              = english;
-    LANGUAGE          = english;
+    LANG = english;
+    LANGUAGE = english;
 
-    LC_ADDRESS        = english;
-    LC_CTYPE          = english;
+    LC_ADDRESS = english;
+    LC_CTYPE = english;
     LC_IDENTIFICATION = english;
-    LC_MEASUREMENT    = english;
-    LC_MONETARY       = english;
-    LC_NAME           = english;
-    LC_NUMERIC        = english;
-    LC_PAPER          = english;
-    LC_TELEPHONE      = english;
-    LC_TIME           = english;
+    LC_MEASUREMENT = english;
+    LC_MONETARY = english;
+    LC_NAME = english;
+    LC_NUMERIC = english;
+    LC_PAPER = english;
+    LC_TELEPHONE = english;
+    LC_TIME = english;
   };
-in {
+in
+{
   imports = [
     # All hardware, network and miscellaneous system-level declarations
 
@@ -42,7 +43,7 @@ in {
 
   # Time zone
   time.timeZone = "America/Denver";
-  
+
   # Internationalisation properties
   i18n.defaultLocale = english;
   i18n.supportedLocales = [ "${english}/UTF-8" ];
@@ -56,12 +57,12 @@ in {
 
   nix = {
     package = pkgs.nixFlakes;
-    
+
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
     #settings.experimental-features = [ "nix-command" "flakes" ];
-    
+
     optimise = {
       automatic = true;
       dates = [ "03:45" ];

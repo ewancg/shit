@@ -1,7 +1,8 @@
 { lib, ... }:
-{  
+{
   networking = {
     nameservers = [ "127.0.0.1" "::1" ];
+    dhcpcd.enable = true;
     dhcpcd.extraConfig = "nohook resolv.conf";
     networkmanager.dns = "none";
   };
@@ -38,18 +39,18 @@
   # For whatever reason, the proxy is not able to open this file even when we set the mode. 
   # https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-forwarding-rules.txt
   environment.etc."nixos/services/forwarding-rules.txt" = {
-  mode = "0644";
-  text = ''
-    lan              192.168.1.1
-    local            192.168.1.1
-    home             192.168.1.1
-    home.arpa        192.168.1.1
-    internal         192.168.1.1
-    localdomain      192.168.1.1
-    192.in-addr.arpa 192.168.1.1
-    example.com      9.9.9.9,8.8.8.8
-    ipv6.example.com [2001:DB8::42]:53
-    onion            127.0.0.1:9053
+    mode = "0644";
+    text = ''
+      lan              192.168.1.1
+      local            192.168.1.1
+      home             192.168.1.1
+      home.arpa        192.168.1.1
+      internal         192.168.1.1
+      localdomain      192.168.1.1
+      192.in-addr.arpa 192.168.1.1
+      example.com      9.9.9.9,8.8.8.8
+      ipv6.example.com [2001:DB8::42]:53
+      onion            127.0.0.1:9053
     '';
   };
 
@@ -76,7 +77,7 @@
       ];
 
       # Defined above
-#      forwarding_rules = "/etc/nixos/services/forwarding-rules.txt";
+      #      forwarding_rules = "/etc/nixos/services/forwarding-rules.txt";
     };
   };
 }

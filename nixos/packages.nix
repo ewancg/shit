@@ -1,11 +1,11 @@
 { pkgs, ... }:
 with pkgs;
 let
-  segoe-ui-variable-fonts = (callPackage ./misc/segoe-ui-variable/default.nix { });
+  segoe-ui-variable-fonts = callPackage ./misc/segoe-ui-variable/default.nix { };
   vlc-plugin-pipewire = callPackage ./misc/vlc-plugin-pipewire/default.nix { };
-  
+
   # for Wayland
-  my-vlc = ( symlinkJoin {
+  my-vlc = (symlinkJoin {
     name = "my-vlc";
     paths = [ vlc ];
     buildInputs = [ makeWrapper ];
@@ -15,7 +15,7 @@ let
     '';
   });
 
-  my-discord = ( symlinkJoin {
+  my-discord = (symlinkJoin {
     name = "my-discord";
     paths = [ vesktop ];
     postBuild = ''
@@ -30,7 +30,7 @@ let
   });
 
   # Ugly hack. Not needed anymore
-  # my-ts3client = ( symlinkJoin {
+  # my-ts3client = (symlinkJoin {
   #   name = "my-ts3client";
   #   paths = [ teamspeak_client ];
   #   buildInputs = [ makeWrapper ];
@@ -40,7 +40,7 @@ let
   #   '';
   # });
 
-  my-prismlauncher = ( prismlauncher.override {
+  my-prismlauncher = (prismlauncher.override {
     withWaylandGLFW = true;
     jdks = [
       temurin-bin-21
@@ -49,7 +49,7 @@ let
     ];
   });
 
-  my-obs = ( pkgs.wrapOBS {
+  my-obs = (pkgs.wrapOBS {
     plugins = with pkgs.obs-studio-plugins; [
       obs-backgroundremoval
     ];
@@ -61,6 +61,7 @@ let
     # cli tools
     at
     bc
+    bchunk
     choose
     datamash
     fastfetch
@@ -77,6 +78,11 @@ let
     slurp
     traceroute
     unzip
+
+    # virt
+    gnome.gnome-boxes
+    bridge-utils
+    libvirt
 
     # system
     avahi-compat
@@ -152,8 +158,12 @@ let
   apps = with pkgs; [
     # Communication
     my-discord
+    ripcord
+    #my-ts3client
     teamspeak_client
     thunderbird
+    teams-for-linux
+    slack
 
     # System monitors
     gnome-disk-utility
@@ -183,7 +193,7 @@ let
     pwvucontrol
     qpwgraph
 
-    nicotine-plus    
+    nicotine-plus
     spotifyd
     transmission_4
     transmission-remote-gtk
@@ -208,10 +218,9 @@ let
     obsidian
     sticky
     ungoogled-chromium
-    
+
     gnome-calculator
     gnome-font-viewer
-    gnome.gnome-boxes
   ];
 in
 {
@@ -273,7 +282,7 @@ in
   # For broken package "nose" (which is used for Logitech hardware support)
   nixpkgs.overlays = [
     (_: prev: {
-        python312 = prev.python312.override { packageOverrides = _: pysuper: { nose = pysuper.pynose; }; };
+      python312 = prev.python312.override { packageOverrides = _: pysuper: { nose = pysuper.pynose; }; };
     })
   ];
 
@@ -281,5 +290,5 @@ in
   environment.variables.VLC_PLUGIN_PATH = "${vlc-plugin-pipewire}/lib";
 
   # Other
-  environment.systemPackages = [] ++ system ++ termish ++ dev ++ apps;
+  environment.systemPackages = [ ] ++ system ++ termish ++ dev ++ apps;
 }

@@ -9,11 +9,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
+
   services.pipewire.wireplumber.enable = true;
   services.pipewire.wireplumber.extraConfig = {
     alsaUseUCM = {
@@ -32,35 +29,36 @@
         "bluez5.enable-sbc-xq" = true;
         "bluez5.enable-msbc" = true;
         "bluez5.enable-hw-volume" = true;
-	
-	"bluez5.codecs" = [ 
-	  "ldac"
-	  "aptx"
-	  "aptx_11_duplex"
-	  "aptx_11"
-	  "aptx_hd"
-	  "opus_05_pro"
-	  "opus_05_71"
-	  "opus_05_51"
-	  "opus_05"
-	  "opus_05_duplex"
-	  "aac"
-	  "sbc_xq"
-	];
-        
-	"bluez5.roles" = [
-	  "a2dp_sink"
-	  "a2dp_source"
-	  "bap_sink"
-	  "bap_source"
-	  "hsp_hs"
-	  "hsp_ag"
-	  "hfp_hf"
-	  "hfp_ag"
-	];
+
+        "bluez5.codecs" = [
+          "ldac"
+          "aptx"
+          "aptx_11_duplex"
+          "aptx_11"
+          "aptx_hd"
+          "opus_05_pro"
+          "opus_05_71"
+          "opus_05_51"
+          "opus_05"
+          "opus_05_duplex"
+          "aac"
+          "sbc_xq"
+        ];
+
+        "bluez5.roles" = [
+          "a2dp_sink"
+          "a2dp_source"
+          "bap_sink"
+          "bap_source"
+          "hsp_hs"
+          "hsp_ag"
+          "hfp_hf"
+          "hfp_ag"
+        ];
       };
     };
   };
+
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/main.lua.d/99-alsa-lowlatency.lua" ''
       alsa_monitor.rules = {

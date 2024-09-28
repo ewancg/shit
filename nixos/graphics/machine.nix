@@ -46,30 +46,31 @@
     package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
-#  hardware.nvidia.prime = {
-#    # Offload mode
-#    offload = {
-#      enable = true;
-#      enableOffloadCmd = true;
-#    };
-#    # Sync mode 
-#    # sync.enable = true;
-#
-#    # Getting PCI IDs of GPUs
-#    # sudo lshw -c display; "bus info"
-#    #   pci@0000:0d:00.0
-#    # take last 7 characters
-#    #   0d:00.0
-#    # convert hex to decimal
-#    #   13:00.0
-#    # replace '.' with ':'
-#    #   13:00:0
-#    # prepend "PCI:"
-#    #   PCI:13:00:0
-#
-#    amdgpuBusId = "PCI:13:00:0";
-#    nvidiaBusId = "PCI:01:00:0";
-#  };
+  #  Optimus causes some issues
+  #  hardware.nvidia.prime = {
+  #    # Offload mode
+  #    offload = {
+  #      enable = true;
+  #      enableOffloadCmd = true;
+  #    };
+  #    # Sync mode 
+  #    # sync.enable = true;
+  #
+  #    # Getting PCI IDs of GPUs
+  #    # sudo lshw -c display; "bus info"
+  #    #   pci@0000:0d:00.0
+  #    # take last 7 characters
+  #    #   0d:00.0
+  #    # convert hex to decimal
+  #    #   13:00.0
+  #    # replace '.' with ':'
+  #    #   13:00:0
+  #    # prepend "PCI:"
+  #    #   PCI:13:00:0
+  #
+  #    amdgpuBusId = "PCI:13:00:0";
+  #    nvidiaBusId = "PCI:01:00:0";
+  #  };
 
   # 
   boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_drm" "nvidia_uvm" ];
@@ -94,7 +95,7 @@
   ];
 
   boot.extraModprobeConfig = ''
-    options nvidia_drm modeset=1 fbdev=1
+    options nvidia_drm modeset=1 fbdev=1 hdmi_deepcolor=1
     options nouveau modeset=0
   '';
 }
