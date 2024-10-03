@@ -13,6 +13,7 @@
 
   services.pipewire.wireplumber.enable = true;
   services.pipewire.wireplumber.extraConfig = {
+    node.features.audio.control-port = true;
     alsaUseUCM = {
       "monitor.alsa.properties" = {
         # Use ALSA-Card-Profile devices. They use UCM or the profile

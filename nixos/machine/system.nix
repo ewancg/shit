@@ -23,6 +23,17 @@
     ./virtualization.nix
   ];
 
+  # Still not working!
+  # Suspend; https://discourse.nixos.org/t/hibernate-doesnt-work-anymore/24673/3 https://nixos.wiki/wiki/Laptop
+  boot.zfs.forceImportRoot = false;
+  boot.zfs.allowHibernation = true;
+  security.protectKernelImage = false;
+  powerManagement.enable = true;
+  swapDevices = [ {
+    device = "/var/lib/swapfile";
+    size = 64*1024;
+  } ];
+
   fileSystems."/" =
     {
       device = "/dev/disk/by-uuid/d7a32074-19be-43e4-8be0-a00132726527";
@@ -111,8 +122,9 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Package ‘zfs-kernel-2.2.4-6.9.8’ marked as broken on unstable as of 10/03/2024
   boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
-  # boot.supportedFilesystems = [ "ntfs" "sshfs" "zfs" ];
+  # boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" "zfs" ];
 
   # Extra kernel modules
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];

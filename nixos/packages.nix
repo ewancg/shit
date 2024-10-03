@@ -109,6 +109,7 @@ let
     git
     gnupg
     lshw
+    usbutils #lsusb
     openssl
     pciutils
     udisks
@@ -165,6 +166,10 @@ let
     teams-for-linux
     slack
 
+    # Calendar
+    gnome-calendar
+    evolution-ews
+
     # System monitors
     gnome-disk-utility
     gnome-system-monitor
@@ -185,6 +190,7 @@ let
     # Multimedia
     my-vlc
     spotify
+    psst
     strawberry
     vlc-plugin-pipewire
 
