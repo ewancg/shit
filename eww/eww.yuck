@@ -107,9 +107,9 @@
   (box :class "power-button-container vbuttonbox"
        :orientation "vertical"
        :spacing 0
-    (button :onclick "~/.local/bin/eww-powermenu-wrapper suspend" "Suspend")
-    (button :onclick "~/.local/bin/eww-powermenu-wrapper poweroff" "Shutdown")
-    (button :onclick "~/.local/bin/eww-powermenu-wrapper reboot" "Reboot")
+    (button :onclick "~/.local/bin/eww-powermenu-wrapper suspend -1" "Suspend")
+    (button :onclick "~/.local/bin/eww-powermenu-wrapper poweroff -1" "Shutdown")
+    (button :onclick "~/.local/bin/eww-powermenu-wrapper reboot -1 " "Reboot")
 ))
 
 (defwindow power-menu [screen]

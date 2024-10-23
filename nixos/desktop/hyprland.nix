@@ -95,9 +95,13 @@
   # for blueman-applet/dbus-update-activation-environment
   #services.dbus.socketActivated = true;
 
+  # Brightness control
+  hardware.brillo.enable = true;
+
   environment.systemPackages = (with pkgs; [
-    hyprlock
-    hypridle
+    #hyprlock
+    #hypridle
+    hyprshade
     hyprpicker
 
     # not showkey
