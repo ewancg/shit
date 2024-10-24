@@ -18,10 +18,10 @@
       "monitor.alsa.properties" = {
         # Use ALSA-Card-Profile devices. They use UCM or the profile
         # configuration to configure the device and mixer settings.
-        # alsa.use-acp = true;
+        alsa.use-acp = true;
         # Use UCM instead of profile when available. Can be disabled
         # to skip trying to use the UCM profile.
-        "alsa.use-ucm" = true;
+        # "alsa.use-ucm" = true;
       };
     };
 
@@ -63,13 +63,69 @@
   services.pipewire.wireplumber.configPackages = [
     (pkgs.writeTextDir "share/wireplumber/main.lua.d/99-alsa-lowlatency.lua" ''
       alsa_monitor.rules = {
+        -- Unimportant sound cards
         {
           matches = {{{ "node.name", "matches", "alsa_output.*" }}};
           apply_properties = {
-            ["audio.format"] = "S32LE",
-            ["audio.rate"] = "96000", -- for USB soundcards it should be twice your desired rate
-            ["api.alsa.period-size"] = 2, -- defaults to 1024, tweak by trial-and-error
-            -- ["api.alsa.disable-batch"] = true, -- generally, USB soundcards use the batch mode
+            ["resample.quality"]       = 14,
+
+            ["node.pause-on-idle"]     = false,
+            ["node.suspend-on-idle"]   = false,
+            ["session.suspend-timeout-seconds"] = 0,
+
+            ["priority.driver"]        = 100,
+            ["priority.session"]       = 100,
+            ["channelmix.normalize"]   = false,
+            ["channelmix.mix-lfe"]     = false,
+
+            ["api.alsa.period-size"]   = 512,
+            ["api.alsa.headroom"]      = 0,
+            ["api.alsa.disable-mmap"]  = false,
+            ["api.alsa.disable-batch"] = false,            
+          },
+        },
+
+        -- Scarlett Solo USB
+        {
+          matches = {
+            {
+              { "alsa.card_name", "matches", "Scarlett Solo USB" }
+              -- { "device.name", "matches", "alsa_card.usb-Focusrite_Scarlett_Solo_USB_Y71ERQT079EC70-00" }
+              -- { "node.name", "matches", "alsa_input.*" },
+            },
+            {
+              -- Matches all sinks.
+              { "node.name", "matches", "alsa_output.*" },
+            },
+          },
+          apply_properties = {
+            ["node.nick"]              = "Scarlett Solo USB",
+            ["node.latency"]           = "512/192000"
+            ["audio.format"]           = "S32LE",
+            ["audio.rate"]             = 192000,
+            ["audio.allowed-rates"]    = "32000,44100,48000,96000,192000"
+            ["audio.channels"]         = 2,
+            ["audio.position"]         = "FL,FR",
+          },
+        },
+        
+        -- Syba Sonic USB
+        {
+          matches = {
+            {
+              { "device.name", "matches", "alsa_card.usb-Speed_Dragon_USB_Advanced_Audio_Device-00" },
+              { "node.name", "matches", "alsa_output.usb-Speed_Dragon_USB_Advanced_Audio_Device-00.iec958-stereo" }
+            },
+          },
+          apply_properties = { 
+              ["node.nick"]              = "Syba Sonic USB",
+              ["node.latency"]           = "512/96000"
+              ["audio.format"]           = "S24LE",
+              ["audio.rate"]             = 96000,
+              ["audio.allowed-rates"]    = "32000,44100,48000,88200,96000"
+              ["audio.channels"]         = 2,
+              ["audio.position"]         = "FL,FR",
+            },
           },
         },
       }
@@ -78,51 +134,21 @@
       table.insert (default_access.rules,{
           matches = {
               {
-                  { "application.process.binary", "!=", ".pwvucontrol-wr" }
+                  { application.process.binary != ".pwvucontrol-wr" }
               }
-          },
+          }
           default_permissions = "rx",
       })
     '')
-    (pkgs.writeTextDir "share/wireplumber/main.lua.d/51-config.lua" ''
-      alsa_monitor.enabled = true
-
-      alsa_monitor.rules = {
-      {
-      matches = {
-                  {
-                      {"device.name", "matches", "alsa_card.usb-Speed_Dragon_USB_Advanced_Audio_Device-00"}
-                  },
-              },
-      
-      apply_properties = {
-                  ["audio.format"] = "s24le",
-              },
-          },
-      },
-      {
-      matches = {
-                  {
-                      {"device.name", "matches", "alsa_card.usb-Focusrite_Scarlett_Solo_USB_Y71ERQT079EC70-00"}
-                  },
-              },
-      
-      apply_properties = {
-                  ["audio.format"] = "s32le",
-              },
-          },
-      }
-    '')
-
   ];
 
   services.pipewire.extraConfig.pipewire."92-low-latency" = {
     context.properties = {
       default.clock.rate = 96000;
-      default.clock.allowed-rates = [ 44100 48000 88200 96000 192000 ];
-      default.clock.quantum = 24;
-      default.clock.min-quantum = 24;
-      default.clock.max-quantum = 24;
+      default.clock.allowed-rates = [ 32000 44100 48000 88200 96000 192000 ];
+      default.clock.quantum = 512;
+      default.clock.min-quantum = 512;
+      default.clock.max-quantum = 1024;
     };
   };
 
@@ -130,8 +156,9 @@
     monitor.alsa.rules = [{
       matches = [
         { device.name = "alsa_card.pci-0000_0d_00.1"; } # onboard audio
-        { device.name = "alsa_card.usb-Generic_USB_Audio-00"; } # unsure
         { device.name = "alsa_card.pci-0000_01_00.1"; } # GPU
+        { device.name = "alsa_card.usb-Generic_USB_Audio-00"; } # unsure
+        { device.name = "alsa_card.usb-046d_HD_Pro_Webcam_C920_F7571F4F-02"; } # GPU
       ];
       actions = {
         update-props = {
@@ -157,7 +184,7 @@
     ];
     stream.properties = {
       node.latency = "32/96000";
-      resample.quality = 1;
+      resample.quality = 14;
     };
   };
 }

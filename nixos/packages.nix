@@ -1,6 +1,12 @@
 { pkgs, ... }:
 with pkgs;
 let
+  graal-pkgs = import (builtins.fetchTarball {
+        url = "https://github.com/NixOS/nixpkgs/archive/9957cd48326fe8dbd52fdc50dd2502307f188b0d.tar.gz";
+    }) {};
+  graalvm-ce- = pkgs.graalvm-ce;
+
+
   segoe-ui-variable-fonts = callPackage ./misc/segoe-ui-variable/default.nix { };
   vlc-plugin-pipewire = callPackage ./misc/vlc-plugin-pipewire/default.nix { };
 
@@ -43,6 +49,7 @@ let
   my-prismlauncher = (prismlauncher.override {
     withWaylandGLFW = true;
     jdks = [
+      graalvm-ce
       temurin-bin-21
       temurin-bin-8
       temurin-bin-17
@@ -94,14 +101,15 @@ let
     glibcLocales
     mkinitcpio-nfs-utils
     nfs-utils
-    nix-ld
     sshfs-fuse
     udisks
     v4l-utils
 
     # Nix
+    direnv
     nil
     nix-index
+    nix-ld
     nixpkgs-fmt
 
     # Essential libraries and utilities
@@ -116,6 +124,7 @@ let
     wget
 
     # Wine
+    proton-caller
     vkd3d-proton
     wine-wayland
     wine64
@@ -179,6 +188,7 @@ let
 
     # Games
     ddnet
+    ares
     dolphin-emu
     fceux
     my-prismlauncher
@@ -193,6 +203,7 @@ let
     psst
     strawberry
     vlc-plugin-pipewire
+    okular
 
     alsa-scarlett-gui
     headsetcontrol

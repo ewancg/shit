@@ -155,7 +155,7 @@ in
     isNormalUser = true;
     initialPassword = "ewan";
     description = "Ewan Green";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "video" ];
   };
 
   environment.shellInit = ''

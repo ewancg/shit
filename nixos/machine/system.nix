@@ -19,6 +19,9 @@
     # Webcam, video broadcast
     ../obs-studio.nix
 
+    # Docker
+    ../docker.nix
+
     # VM host configuration
     ./virtualization.nix
   ];

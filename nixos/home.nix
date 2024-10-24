@@ -51,6 +51,19 @@
       indicator = true;
     };
 
+    # May not be needed on GNOME
+    gammastep = {
+      enable = true;
+      tray = true;
+      #provider = "geoclue2";
+      provider = "manual";
+      latitude = 39.9;
+      longitude = -105.1;
+
+      temperature.day = 6000;
+      temperature.night = 4000;
+    };
+
     mpd = {
       enable = true;
       musicDirectory = "/mnt/music";
