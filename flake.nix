@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -32,6 +33,11 @@
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
+#    vfkit-tap =
+#      {
+#        url = "github:cfergeau/homebrew-crc";
+#        flake = false;
+#      };
     homebrew-core = {
       url = "github:homebrew/homebrew-core";
       flake = false;
@@ -41,12 +47,28 @@
       flake = false;
     };
 
-    
+    gimme-aws-creds.url = "github:Nike-Inc/gimme-aws-creds";
+    awsctx.url = "github:john2143/dotfiles/7bd638d74e9c5809396bbdbd7b6c497de1a50ec6?dir=awsctx";
   };
 
-  outputs = { self, nixpkgs, home-manager, spicetify-nix, hyprland, nixvirt, nix-darwin, nix-homebrew, homebrew-core, homebrew-cask, ... }@inputs:
+  outputs =
+    { self
+    , nixpkgs
+    , home-manager
+    , spicetify-nix
+    , hyprland
+    , nixvirt
+    , nix-darwin
+    , nix-homebrew
+    , homebrew-core
+    , homebrew-cask
+    #, vfkit-tap
+    , flake-utils
+    , gimme-aws-creds
+    , awsctx
+    , ...
+    } @inputs:
     let
-      system = "x86_64-linux";
       home = {
         useGlobalPkgs = true;
         useUserPackages = true;
@@ -56,7 +78,7 @@
     in
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
-        system = "${system}";
+        system = "x86_64-linux";
         modules = [
           ./nixos/configuration.nix
           ./nixos/machine/system.nix
@@ -68,6 +90,7 @@
         specialArgs = { inherit nixvirt; };
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./nixos/configuration.nix
@@ -79,10 +102,12 @@
         ];
       };
       darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
-          modules = [ 
-            nix-homebrew.darwinModules.nix-homebrew
-            ./nix-macos/system.nix 
-            ];
+        system = "aarch64-darwin";
+        specialArgs = { inherit inputs; };
+        modules = [
+          nix-homebrew.darwinModules.nix-homebrew
+          ./nix-macos/system.nix
+        ];
       };
     };
 }
