@@ -190,6 +190,7 @@ let
     ddnet
     ares
     dolphin-emu
+    snes9x-gtk
     fceux
     my-prismlauncher
     openrct2

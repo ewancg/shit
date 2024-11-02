@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   # Graphics configuration to run Optimus with an RTX 3060 (nvidia) behind AMD integrated graphics (amdgpu)
@@ -8,7 +8,11 @@
   hardware.graphics = {
     enable32Bit = true;
     enable = true;
+    extraPackages = with pkgs; [
+      nvidia-vaapi-driver
+    ];
   };
+  
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
