@@ -69,45 +69,52 @@
     , ...
     } @inputs:
     let
-      home = {
+      home-desktop = {
+        backupFileExtension = "backup";
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.ewan = import ./nixos/home.nix;
-        extraSpecialArgs = { inherit spicetify-nix; };
+        users.ewan = import ./nix/home/desktop.nix;
       };
     in
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
-          ./nixos/configuration.nix
-          ./nixos/machine/system.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = home;
+          ./nix/os/configuration.nix
+          ./nix/os/machine/system.nix
+          ./nix/home/desktop-accomodations.nix
+          home-manager.nixosModules.home-manager {
+            home-manager = home-desktop;
           }
         ];
-        specialArgs = { inherit nixvirt; };
+        # specialArgs = { inherit nixvirt; };
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./nixos/configuration.nix
-          ./nixos/elbozo/system.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = home;
+          ./nix/os/configuration.nix
+          ./nix/os/elbozo/system.nix
+          ./nix/home/desktop-accomodations.nix
+          home-manager.nixosModules.home-manager {
+            home-manager = home-desktop;
           }
         ];
       };
       darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = { inherit inputs; };
-        modules = [
-          nix-homebrew.darwinModules.nix-homebrew
-          ./nix-macos/system.nix
-        ];
+          system = "aarch64-darwin";
+          modules = [ 
+            nix-homebrew.darwinModules.nix-homebrew
+            ./nix/darwin/system.nix
+            ./nix/home/apps-accomodations.nix
+            home-manager.nixosModules.home-manager {
+              backupFileExtension = "backup.darwin";
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.ewan = import ./nix/home/base.nix;
+            }
+          ];  
       };
     };
 }

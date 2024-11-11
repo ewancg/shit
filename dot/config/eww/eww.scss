@@ -1,0 +1,124 @@
+$base:       #1E1D2E;
+$mantle:     #181825;
+$crust:      #11111b;
+$text:       #cdd6f4;
+$subtext0:   #a6adc8;
+$subtext1:   #bac2de;
+$surface0:   #313244;
+$surface1:   #45475a;
+$surface2:   #585b70;
+$overlay0:   #6c7086;
+$overlay1:   #7f849c;
+$overlay2:   #9399b2;
+$blue:       #89b4fa;
+$lavender:   #b4befe;
+$sapphire:   #74c7ec;
+$sky:        #89dceb;
+$teal:       #94e2d5;
+$green:      #a6e3a1;
+$yellow:     #f9e2af;
+$peach:      #fab387;
+$maroon:     #eba0ac;
+$red:        #f38ba8;
+$mauve:      #cba6f7;
+$pink:       #f5c2e7;
+$flamingo:   #f2cdcd;
+$rosewater:  #f5e0dc;
+
+.backdrop {
+    background-color: rgba(0,0,0,0.25);
+}
+
+.prompt, .volume, .power-menu {
+    background-color: transparent;
+    background: none;
+    margin: 0.125em;
+    border-radius: 0.75em;
+}
+.prompt > *, .volume > *, .power-menu > * {
+    background-color: $mantle;
+    border-radius: 0;
+}
+
+*:not(button) > label {
+    margin: 0;
+    padding: 1em 2em;
+}
+button {
+    padding: 0.325em 0.6em;
+}
+
+button.accept {
+    color: $red;
+}
+
+.volume > scale trough highlight {
+    background-color: $yellow;
+    color: $yellow;
+}
+
+.volume > * {
+    margin: 0;
+    padding: 0.25em 1.5em;
+    border-radius: calc(0.75em - 0.1875em);
+}
+
+.prompt > *:first-child {
+    border-top-left-radius:  (0.75em - 0.125em);
+    border-top-right-radius: (0.75em - 0.125em);
+}
+
+.prompt > *:last-child {
+    border-bottom-left-radius: (0.75em - 0.125em);
+    border-bottom-right-radius:(0.75em - 0.125em);
+}
+
+.volume-container, .power-button-container, .prompt-container {
+    background-color: $mantle;
+    border-radius: 0.75em;
+    margin: 0.125em;
+
+    border: 0.1875em solid $yellow;
+    box-shadow: 0 0 0 0.0625em rgba($mantle, 0.5); 
+}
+
+.power-button-container, .prompt-container {
+    border-color: $maroon;
+}
+
+.power-button-container > * {
+    background-color: $base;
+    padding: 0;
+    border: 0.5pt solid rgba($surface2, 0.5);
+    border-left: none;
+    border-right: none;
+}
+
+.power-button-container > *:hover {
+    background-color: $surface0;
+}
+
+.power-button-container > *:active {
+    background-color: $base;
+}
+.power-button-container > *:first-child {
+    border-top-left-radius:  calc(0.75em - 0.125em);
+    border-top-right-radius: calc(0.75em - 0.125em);
+    border-top: none;
+}
+
+.power-button-container > *:last-child {
+    border-bottom-left-radius: calc(0.75em - 0.125em);
+    border-bottom-right-radius: calc(0.75em - 0.125em);
+    border-bottom: none;
+}
+.prompt-buttons * {
+    margin: 0;
+    border-radius: 0px;
+}
+.prompt-buttons > *:first-child {
+    border-bottom-left-radius: calc(0.75em - 0.125em);
+}
+.prompt-buttons > *:last-child {
+    border-bottom-right-radius: calc(0.75em - 0.125em);
+}

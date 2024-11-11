@@ -7,7 +7,7 @@ result
 *.qcow2
 
 # Qt Creator
-.qtc_clangd/
+.qtc_clangd
 *.cflags
 *.config
 *.creator

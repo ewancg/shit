@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# eww-toggle-window
+# $1 = window name, $2 = monitor id or "default" (or none) for current
+
+eww active-windows | grep "$1" > /dev/null
+if [ $? -eq 0 ]; then 
+    eww close "$1"
+else
+    export x="$2"
+    if [ "$2" == "default" ]; then 
+        export x=""
+    fi
+    export screen="${x:-$(hyprctl -j monitors | gojq -r 'first(.[] | select(.focused)) | .model')}"
+    eww open "$1" --screen="$screen" "${@:3}"
+fi

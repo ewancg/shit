@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+juush -k $HOME/.ssh/juushkey -r https://2143.christmas/uf "$(ls -Art "$HOME/Pictures/Screenshots" | tail -n 1)"

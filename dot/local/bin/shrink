@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+SIZE=8
+OUTDIR="$HOME/Videos"
+ENCODER=hevc_nvenc
+# ENCODER=libx265
+# ENCODER=h264_nvenc
+# ENCODER=libx264
+
+shrink() {
+    TARGET_KBPS=$(\
+        awk \
+        -v size="$SIZE" \
+        -v duration="$(ffprobe -v error -show_streams -select_streams a "$1" | grep -Po "(?<=^duration\=)\d*\.\d*")" \
+        -v audio_rate="$(ffprobe -v error -pretty -show_streams -select_streams a "$1" | grep -Po "(?<=^bit_rate\=)\d*\.\d*")" \
+        'BEGIN { print  ( ( size * 8192.0 ) / ( 1.048576 * duration ) - audio_rate ) }')
+
+    ffmpeg \
+        -y \
+        -i "$1" \
+	-s "$2" \
+        -c:v "$ENCODER" \
+        -b:v "$TARGET_KBPS"k \
+	-b_ref_mode 0 \
+        -pass 1 \
+        -an \
+        -f mp4 \
+        /dev/null \
+    && \
+    ffmpeg \
+        -i "$1" \
+	-s "$2" \
+        -c:v "$ENCODER" \
+        -b:v "$TARGET_KBPS"k \
+	-b_ref_mode 0 \
+        -pass 2 \
+        -c:a aac \
+        -b:a "$TARGET_KBPS"k \
+        "${1%.*}-$SIZE-$ENCODER-$2.mp4"
+}
+
+DIR="`pwd`"
+cd $OUTDIR
+if [ ! -z "$1" ]
+    then
+    SIZE=${1//[!0-9]/}
+else
+    printf "No arguments provided\n"
+	exit
+fi
+
+if [ ! -z "$2" ]
+	then
+	RESOLUTION="$2"
+else
+	RESOLUTION="1920x1080"
+fi
+shrink "`zsh -c 'print -lr -- **/*.mp4(.om[1])'`" $RESOLUTION
+# shrink $(realpath `find . -name "**.mp4" -maxdepth 1 -type f -exec stat -c '%X %n' {} \; | sort -nr | awk 'NR==1 {print $2}'`)
+rm "./ffmpeg2pass-0.log"
+cd $DIR
