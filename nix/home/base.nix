@@ -5,7 +5,7 @@ with pkgs;
 {
   home = {
     stateVersion = "24.05";
-
+    
     packages = [
       # cli tools
       python3
@@ -95,6 +95,10 @@ with pkgs;
 
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
       
+      bk.body = ''
+      mv "$1" "$1.old"
+      '';
+
       start.body = ''
       set _dist_start "$([ $(uname) = 'Darwin' ] && 
         printf open || 

@@ -32,4 +32,11 @@
       enable = true;
      platformTheme = "qt5ct";
     };
+
+    # for nix-index command not found integration
+    programs.command-not-found.enable = false;
+
+    # Run non-NixOS binaries
+    programs.nix-ld.enable = true;
+    programs.nix-ld.package = pkgs.nix-ld-rs;
 }

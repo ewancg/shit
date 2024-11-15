@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   english = "en_US.UTF-8";
@@ -57,6 +57,13 @@ in
   # Careful..
   system.stateVersion = "24.05";
 
+  home-manager.users.ewan = lib.mkMerge [{ home = {
+      homeDirectory = "/home/ewan";
+      username = "ewan"; 
+    };}
+    import ../home/desktop.nix
+  ];
+  
   boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
 
   # Extra kernel modules

@@ -83,9 +83,6 @@ in
       # proggyfonts
       # dina-font
     ];
-    homeDirectory = "/home/ewan";
-    stateVersion = "24.05";
-    username = "ewan";
     pointerCursor = {
       gtk.enable = true;
       name = "Catppuccin-Mocha-Light-Cursors";

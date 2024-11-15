@@ -69,11 +69,15 @@
     , ...
     } @inputs:
     let
-      home-desktop = {
+      home-nixos = {
         backupFileExtension = "backup";
         useGlobalPkgs = true;
         useUserPackages = true;
-        users.ewan = import ./nix/home/desktop.nix;
+      };
+      home-macos = {
+        backupFileExtension = "backup.darwin";
+        useGlobalPkgs = true;
+        useUserPackages = true;
       };
     in
     {
@@ -83,10 +87,12 @@
         modules = [
           ./nix/os/configuration.nix
           ./nix/os/machine/system.nix
+          
           ./nix/home/desktop-accomodations.nix
-          home-manager.nixosModules.home-manager {
-            home-manager = home-desktop;
-          }
+          
+          #home-manager.nixosModules.home-manager {
+          #  home-manager = home-nixos;
+          #}
         ];
         # specialArgs = { inherit nixvirt; };
       };
@@ -96,26 +102,25 @@
         modules = [
           ./nix/os/configuration.nix
           ./nix/os/elbozo/system.nix
+          
           ./nix/home/desktop-accomodations.nix
-          home-manager.nixosModules.home-manager {
-            home-manager = home-desktop;
-          }
+          
+          #home-manager.nixosModules.home-manager {
+          #  home-manager = home-nixos;
+          #}
         ];
       };
       darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [ 
-            nix-homebrew.darwinModules.nix-homebrew
             ./nix/darwin/system.nix
-            ./nix/home/apps-accomodations.nix
-            home-manager.darwinModules.home-manager {
-              home-manager = {
-                backupFileExtension = "backup.darwin";
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.ewan = import ./nix/home/base.nix;
-              };
-            }
+
+            ./nix/home/base-accomodations.nix
+
+            nix-homebrew.darwinModules.nix-homebrew
+            #home-manager.darwinModules.home-manager {
+            #  home-manager = home-macos;
+            #}
           ];  
       };
     };

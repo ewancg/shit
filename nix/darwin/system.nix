@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, config, lib, ... }:
 let
   rust = with pkgs; [
     cargo
@@ -11,12 +11,23 @@ let
   ];
 in
 {
-  imports = [ ./nix-darwin-activation.nix ];
+  imports = [ 
+    ./nix-darwin-activation.nix
+    ../home/base-accomodations.nix 
+  ];
   system.stateVersion = 5;
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.hostPlatform = "aarch64-darwin";
+
   services.nix-daemon.enable = true;
+
+  home-manager.users.ewan = lib.mkMerge [{ home = {
+      homeDirectory = lib.mkForce "/Users/egreen";
+      username = lib.mkForce "egreen";
+    };}
+    import ../home/base.nix
+  ];
 
   nix = {
     # package = pkgs.nix;
@@ -55,9 +66,9 @@ in
     awscli
 
     # Shell
-    tmux
-    fish
-    starship # prompt
+    #tmux
+    #fish
+    #starship # prompt
 
     # dataing
     dasel
