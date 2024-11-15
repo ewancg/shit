@@ -108,11 +108,13 @@
             nix-homebrew.darwinModules.nix-homebrew
             ./nix/darwin/system.nix
             ./nix/home/apps-accomodations.nix
-            home-manager.nixosModules.home-manager {
-              backupFileExtension = "backup.darwin";
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.ewan = import ./nix/home/base.nix;
+            home-manager.darwinModules.home-manager {
+              home-manager = {
+                backupFileExtension = "backup.darwin";
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.ewan = import ./nix/home/base.nix;
+              };
             }
           ];  
       };

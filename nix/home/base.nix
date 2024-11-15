@@ -160,10 +160,9 @@ with pkgs;
     enable = true;
     plugins = with pkgs.tmuxPlugins; [
       sensible
-      # tmux-colors-solarized
-      # tokyo-night-tmux
-      catppuccin
-      tmux-battery
+      catppuccin # colors
+      battery # seeing battery in remote session
+      continuum # tmux session restore
       # vim-tmux-navigator
     ];
   };
