@@ -4,6 +4,8 @@
 with pkgs; 
 {
   home = {
+    stateVersion = "24.05";
+
     packages = [
       # cli tools
       python3
