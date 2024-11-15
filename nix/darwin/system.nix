@@ -1,23 +1,34 @@
-{ pkgs, homebrew-core, homebrew-cask, ... }:
+{ pkgs, inputs, config, ... }:
+let
+  rust = with pkgs; [
+    cargo
+    rustc
+    rustfmt
+    pre-commit
+    rustPackages.clippy
+
+    # rust is needed system-wide for vscode rust-analyzer extension and such... not covered by direnv extension
+  ];
+in
 {
-	system.stateVersion = 5;
+  imports = [ ./nix-darwin-activation.nix ];
+  system.stateVersion = 5;
 
-	
+  nixpkgs.config.allowUnfree = true;
+  nixpkgs.hostPlatform = "aarch64-darwin";
+  services.nix-daemon.enable = true;
 
-	nixpkgs.config.allowUnfree = true;
-	nixpkgs.hostPlatform = "aarch64-darwin";
-	services.nix-daemon.enable = true;
+  nix = {
+    # package = pkgs.nix;
+    # idk
+    # package = pkgs.nixFlakes;
 
-	nix = {
-		# idk
-    package = pkgs.nixFlakes;
-
-		# how did i end up with 3
+    # how did i end up with 3
     #extraOptions = ''
     #  experimental-features = nix-command flakes
     #'';
     #settings.experimental-features = [ "nix-command" "flakes" ];
-		settings.experimental-features = "nix-command flakes";
+    settings.experimental-features = "nix-command flakes";
 
     optimise = {
       automatic = true;
@@ -28,45 +39,89 @@
     };
   };
 
-	environment.systemPackages = with pkgs; [
-		vscode
-	
-		# Broken as of 10/24, try again whenever
-		# gimme-aws-creds
-		github-cli
-		awscli
+  environment.systemPackages = with pkgs; [
+    ## gui
+    vscode
 
-		tmux
-		fish
-		alacritty
-		
-		nixpkgs-fmt
-		nil
-		direnv
-	];
+    # Clouds
+    lens
 
-	environment.shells = [pkgs.fish pkgs.bash];
-	programs.fish.enable = true;
+    # depends on vfkit which i cant get
+    #podman
 
-	nix-homebrew = {
-	# Install Homebrew under the default prefix
-	enable = true;
+    ## the rest
+    git
+    github-cli
+    awscli
 
-	# Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
-	enableRosetta = true;
+    # Shell
+    tmux
+    fish
+    starship # prompt
 
-	# User owning the Homebrew prefix
-	user = "egreen";
+    # dataing
+    dasel
+    jq
 
-	# Optional: Declarative tap management
-	taps = {
-		"homebrew/homebrew-core" = homebrew-core;
-		"homebrew/homebrew-cask" = homebrew-cask;
-	};
+    fzf
+    tree
+    alacritty
+    nixpkgs-fmt
+    nil
+    direnv
 
-	# Optional: Enable fully-declarative tap management
-	#
-	# With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
-	mutableTaps = false;
-};
+    #nodePackages.nodejs
+    nodejs_22
+    # nodePackages.npm
+
+    python311Packages.python-lsp-server
+
+    # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
+    # gimme-aws-creds
+    # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
+    inputs.awsctx.defaultPackage.${pkgs.system}
+  ] ++ rust;
+
+  environment.shells = [
+    pkgs.fish
+    pkgs.bash
+    pkgs.zsh
+  ];
+
+  # Enable zsh in order to add /run/current-system/sw/bin to $PATH, because the Nix installer on macOS only hooks into bashrc & zshrc
+  programs.zsh.enable = true;
+  programs.fish.enable = true;
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_15;
+    #ensureDatabases = [ "mydatabase" ];
+    authentication = pkgs.lib.mkOverride 10 ''
+      #type database  DBuser  auth-method
+      local all       all     trust
+    '';
+  };
+
+  nix-homebrew = {
+    # Install Homebrew under the default prefix
+    enable = true;
+
+    # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
+    enableRosetta = true;
+
+    # User owning the Homebrew prefix
+    user = "egreen";
+
+    # Optional: Declarative tap management
+    taps = {
+      "homebrew/homebrew-core" = inputs.homebrew-core;
+      "homebrew/homebrew-cask" = inputs.homebrew-cask;
+      #  # "cfergeau/homebrew-crc" =  inputs.vfkit-tap;
+    };
+
+    # Optional: Enable fully-declarative tap management
+    #
+    # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
+    mutableTaps = true;
+  };
 }
