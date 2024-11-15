@@ -79,7 +79,7 @@
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit nixvirt; };
         modules = [
           ./nix/os/configuration.nix
           ./nix/os/machine/system.nix

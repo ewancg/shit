@@ -1,4 +1,4 @@
-{ pkgs, nix-homebrew, homebrew-core, homebrew-cask, ... }:
+{ pkgs, homebrew-core, homebrew-cask, ... }:
 {
 	system.stateVersion = 5;
 

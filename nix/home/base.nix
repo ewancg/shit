@@ -76,8 +76,8 @@ with pkgs;
     programs.fish = {
     enable = true;
     interactiveShellInit = ''
-      bass source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
       direnv hook fish | source
+
 
       set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
       set -gx FZF_LEGACY_KEYBINDS 0
@@ -85,10 +85,21 @@ with pkgs;
       source "$HOME/.config/fish/fzf.fish"
     '';
     functions = {
-      nixbuildconf.body = ''sudo nixos-rebuild --flake ~/shit/nixos#$hostname switch'';
-      start.body = ''xdg-open $@'';
+      nixbuildconf.body = ''
+      set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] && 
+        printf darwin-rebuild || 
+        printf nixos-rebuild)";
+      sudo $_nix_dist_rebuild --flake ~/shit/#$hostname switch'';
+
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
-      hostname.body = "/usr/bin/env cat /etc/hostname";
+      
+      start.body = ''
+      set _dist_start "$([ $(uname) = 'Darwin' ] && 
+        printf open || 
+        printf xdg-open)";
+      $_dist_start $argv
+      '';
+            
       kc.body = ''
         set -f new_env (kubectl config get-contexts -o name | fzf)
         if test "A$new_env" = "A"
@@ -96,6 +107,7 @@ with pkgs;
         end
         kubectl config use-context $new_env
       '';
+      
       replace-all.body = ''
         set -f find $argv[1]
         set -f rep $argv[2]
@@ -108,11 +120,13 @@ with pkgs;
             rg $find --files-with-matches | xargs sed -i "s/$find/$rep/g"
         end
       '';
+      
       sk.body = ''
         set -x SIGNING_KEY (gpg --list-secret-keys --keyid-format long | grep $EMAIL -B 3 | grep "(work|github|disco|1E7452EAEE)" -B 3 | grep sec | string split "/" | tail -n 1 | string match -r '[0-9A-F]+')
         echo "Set Signing key to $SIGNING_KEY"
         git config --global user.signingkey $SIGNING_KEY > /dev/null
       '';
+      
       envsource.body = ''
         set -f envfile "$argv"
         if not test -f "$envfile"
@@ -133,7 +147,12 @@ with pkgs;
         end < "$envfile"
       '';
     };
-    plugins = [
+    
+    plugins = with pkgs.fishPlugins; [
+      bass # source bash stuff
+      async-prompt # yep
+      autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+      clownfish # "mock" command
     ];
   };
 
@@ -144,7 +163,7 @@ with pkgs;
       # tmux-colors-solarized
       # tokyo-night-tmux
       catppuccin
-      # tmux-battery
+      tmux-battery
       # vim-tmux-navigator
     ];
   };
