@@ -1,9 +1,9 @@
-{...}:
+{pkgs, ...}:
 {
-    imports = [
-      ./apps-accomodations.nix
-      ./base-accomodations.nix
-    ];
+#    imports = [
+#      ./apps-accommodations.nix
+#      ./base-accommodations.nix
+#    ];
 
     nixpkgs.overlays = [
       (_: prev: {

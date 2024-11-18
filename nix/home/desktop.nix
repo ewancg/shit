@@ -7,12 +7,16 @@ let
 in
 {
   imports = [
+#    ../misc/spicetify.nix
+
     ./apps.nix
     ./base.nix
-   # ../misc/spicetify.nix
   ];
 
   home = {
+    homeDirectory = "/home/ewan";
+    username = "ewan";
+
     packages = [
       # Theming
       adw-gtk3
@@ -27,7 +31,7 @@ in
       kdePackages.qtstyleplugin-kvantum
       libsForQt5.qtstyleplugin-kvantum
       lightly-boehs
-      qt5ct
+      libsForQt5.qt5ct
       kdePackages.qt6ct
       solarc-gtk-theme
       themechanger
@@ -91,14 +95,14 @@ in
   };
 
   xdg.configFile = {
-    "Kvantum".source  = ../../dot/Kvantum;
-    "qt5ct".source    = ../../dot/qt5ct;
-    "qt6ct".source    = ../../dot/qt6ct;
-    "wofi".source     = ../../dot/wofi;
-    "hypr".source     = ../../dot/hypr;
-    "eww".source      = ../../dot/eww;
-    "waybar".source   = ../../dot/waybar;
-    "dunst".source    = ../../dot/dunst;
+    "Kvantum".source  = ../../dot/config/Kvantum;
+    #"qt5ct".source    = ../../dot/config/qt5ct;
+    "qt6ct".source    = ../../dot/config/qt6ct;
+    "wofi".source     = ../../dot/config/wofi;
+    "hypr".source     = ../../dot/config/hypr;
+    "eww".source      = ../../dot/config/eww;
+    "waybar".source   = ../../dot/config/waybar;
+    "dunst".source    = ../../dot/config/dunst;
   };
 
   xdg.mimeApps = {
@@ -171,7 +175,7 @@ in
           tiling-assistant.extensionUuid
           window-calls.extensionUuid
           window-calls-extended.extensionUuid
-          ddnet-friends-panel.extensionUuid
+          #ddnet-friends-panel.extensionUuid
           user-themes.extensionUuid
           dash-to-panel.extensionUuid
           quick-settings-audio-panel.extensionUuid

@@ -1,0 +1,7 @@
+%YAML 1.3
+---
+- Key: [Smart Shift, pressed]
+- KeyPress:
+  - F13
+  - click
+...

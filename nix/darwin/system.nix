@@ -13,7 +13,9 @@ in
 {
   imports = [ 
     ./nix-darwin-activation.nix
-    ../home/base-accomodations.nix 
+
+    # Home Manager accommmodations
+    ../home/base-accommodations.nix
   ];
   system.stateVersion = 5;
 

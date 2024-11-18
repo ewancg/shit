@@ -73,41 +73,67 @@
         backupFileExtension = "backup";
         useGlobalPkgs = true;
         useUserPackages = true;
+
+        users.ewan = nixpkgs.lib.mkMerge [
+          # These must be matched inside of where they're used
+          ./nix/home/desktop.nix
+          ./nix/home/apps.nix
+          ./nix/home/base.nix
+
+          { home = {
+              homeDirectory = "/home/ewan";
+              username = "ewan";
+          };}
+        ];
       };
       home-macos = {
         backupFileExtension = "backup.darwin";
         useGlobalPkgs = true;
         useUserPackages = true;
+
+        users.egreen = nixpkgs.lib.mkMerge [
+          # These must be matched inside of where they're used
+          ./nix/home/base.nix
+
+          { home = {
+              homeDirectory = "/Users/egreen";
+              username = "egreen";
+          };}
+        ];
       };
     in
     {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit nixvirt; };
+        specialArgs = { 
+            inherit nixvirt home-manager nixpkgs;
+        };
         modules = [
-          ./nix/os/configuration.nix
-          ./nix/os/machine/system.nix
-          
-          ./nix/home/desktop-accomodations.nix
-          
-          #home-manager.nixosModules.home-manager {
-          #  home-manager = home-nixos;
-          #}
+            ./nix/os/configuration.nix
+            ./nix/os/machine/system.nix
+            home-manager.nixosModules.home-manager ./nix/os/home.nix
+                #{
+                #nixpkgs.lib.mkMerge [
+                    #{ home-manager.extraSpecialArgs = { inherit nixpkgs; }; }
+                    #{
+                    #    nixpkgs.lib.callPackageWith ./nix/os/home.nix { nixpkgs = nixpkgs; };
+                    #}
+                #]
+                #}
         ];
-        # specialArgs = { inherit nixvirt; };
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
+        extraSpecialArgs = {
+          inherit nixpkgs;
+        };
         modules = [
-          ./nix/os/configuration.nix
-          ./nix/os/elbozo/system.nix
-          
-          ./nix/home/desktop-accomodations.nix
-          
-          #home-manager.nixosModules.home-manager {
-          #  home-manager = home-nixos;
-          #}
+         # ./nix/os/configuration.nix
+         # ./nix/os/elbozo/system.nix
+         # home-manager.nixosModules.home-manager {
+         #   home-manager = ./nix/os/home.nix;
+         # }
         ];
       };
       darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
@@ -115,14 +141,15 @@
           modules = [ 
             ./nix/darwin/system.nix
 
-            ./nix/home/base-accomodations.nix
-
             nix-homebrew.darwinModules.nix-homebrew
-            #home-manager.darwinModules.home-manager {
-            #  home-manager = home-macos;
-            #}
+            home-manager.darwinModules.home-manager {
+            home-manager = ./nix/darwin/home.nix;
+            }
           ];  
       };
+	buildInputs = [ 
+		nixpkgs.git
+	];
     };
 }
 

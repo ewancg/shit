@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, home-manager, ... }:
 
 let
   english = "en_US.UTF-8";
@@ -25,8 +25,18 @@ in
 
     # Desktop; hyprland.nix or gnome.nix
     ./desktop/hyprland.nix
+
+    # Home Manager accommodations
+    ../home/desktop-accommodations.nix
+    ../home/apps-accommodations.nix
+    ../home/base-accommodations.nix
   ];
 
+  # Careful..
+  system.stateVersion = "24.05";
+
+  # temp
+  services.logrotate.checkConfig = false;
   environment.systemPackages = with pkgs; [
     # linux/system
     libnotify
@@ -54,16 +64,6 @@ in
     udisks
   ];
 
-  # Careful..
-  system.stateVersion = "24.05";
-
-  home-manager.users.ewan = lib.mkMerge [{ home = {
-      homeDirectory = "/home/ewan";
-      username = "ewan"; 
-    };}
-    import ../home/desktop.nix
-  ];
-  
   boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
 
   # Extra kernel modules
@@ -84,7 +84,7 @@ in
   };
 
   nix = {
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.stable;
 
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -243,7 +243,7 @@ in
     package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
   };
 
-  # Home manager accomodations
+  # Home manager accommodations
 
   # alacritty for nautilus
   programs.nautilus-open-any-terminal.enable = true;

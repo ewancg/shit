@@ -48,7 +48,8 @@ let
   # });
 
   my-prismlauncher = (prismlauncher.override {
-    withWaylandGLFW = true;
+  # deprecated https://github.com/NixOS/nixpkgs/commit/2a5017a5550a32dfdf4000bd8fa2fea89e6a0f95
+  #  withWaylandGLFW = true;
     jdks = [
       graalvm-ce
       temurin-bin-21
@@ -156,13 +157,13 @@ in {
   ];
 
   xdg.configFile = {
-    "QtProject/qtcreator" = {
+  "QtProject/qtcreator" = {
       recursive = true;
-      source = ../../dot/qtcreator;
+      source = ../../dot/config/qtcreator;
     };
-    "QtProject/qtcreator/styles".source = ../../dot/qtcreator/styles;
-    "QtProject/qtcreator/themes".source = ../../dot/qtcreator/themes;
-    "QtProject/qtcreator/.clang-format".source = ../../dot/.clang-format;
+    "QtProject/qtcreator/styles".source = ../../dot/config/qtcreator/styles;
+    "QtProject/qtcreator/themes".source = ../../dot/config/qtcreator/themes;
+    #"QtProject/qtcreator/.clang-format".source = ../../dot/.clang-format;
   };
   
   # VSCode

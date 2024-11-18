@@ -5,7 +5,7 @@ with pkgs;
 {
   home = {
     stateVersion = "24.05";
-    
+
     packages = [
       # cli tools
       python3
@@ -72,7 +72,7 @@ with pkgs;
   };
 
   xdg.configFile = {
-    "alacritty".source = ../../dot/alacritty;
+    "alacritty".source = ../../dot/config/alacritty;
   };
 
     programs.fish = {
@@ -154,17 +154,19 @@ with pkgs;
       '';
     };
     
-    plugins = with pkgs.fishPlugins; [
-      bass # source bash stuff
-      async-prompt # yep
-      autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-      clownfish # "mock" command
-    ];
+    #plugins = with fishPlugins; [
+    #  z # common directories
+    #  bass # source bash stuff
+    #  fzf-fish # ctrl j file search
+    #  async-prompt # yep
+    #  autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+    #  clownfish # "mock" command
+    #];
   };
 
   programs.tmux = {
     enable = true;
-    plugins = with pkgs.tmuxPlugins; [
+    plugins = with tmuxPlugins; [
       sensible
       catppuccin # colors
       battery # seeing battery in remote session

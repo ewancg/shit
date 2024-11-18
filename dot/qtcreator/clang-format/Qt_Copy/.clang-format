@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=https://json.schemastore.org/clang-format.json
----
-Language:        Cpp
-AccessModifierOffset: -4
-BasedOnStyle: LLVM
-IndentWidth: 4
