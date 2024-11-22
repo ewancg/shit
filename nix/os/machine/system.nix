@@ -25,18 +25,7 @@
     # VM host configuration
     ./virtualization.nix
   ];
-
-  # Still not working!
-  # Suspend; https://discourse.nixos.org/t/hibernate-doesnt-work-anymore/24673/3 https://nixos.wiki/wiki/Laptop
-  boot.zfs.forceImportRoot = false;
-  boot.zfs.allowHibernation = true;
-  security.protectKernelImage = false;
-  powerManagement.enable = true;
-  swapDevices = [ {
-    device = "/var/lib/swapfile";
-    size = 64*1024;
-  } ];
-
+  
   fileSystems."/" =
     {
       device = "/dev/disk/by-uuid/d7a32074-19be-43e4-8be0-a00132726527";

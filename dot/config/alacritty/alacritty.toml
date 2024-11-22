@@ -1,10 +1,10 @@
 
-import = [
+general.import = [
 	"~/.config/alacritty/catpuccin_mocha.toml"
 ]
 
-shell = "tmux"
-live_config_reload = true
+terminal.shell = "tmux"
+general.live_config_reload = true
 
 [window]
 dynamic_title = true

@@ -94,7 +94,7 @@ in {
     slack
 
     # Games
-    ddnet
+    taterclient-ddnet
     ares
     dolphin-emu
     snes9x-gtk
@@ -130,6 +130,7 @@ in {
     ptcollab
     vmpk
 
+
     my-obs
     normcap # OCR
 
@@ -146,7 +147,7 @@ in {
     sticky
     ungoogled-chromium
 
-    gnome.gnome-boxes
+    gnome-boxes
 
     # dev tools (rare)
     ida-free

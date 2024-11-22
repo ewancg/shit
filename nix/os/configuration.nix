@@ -248,4 +248,14 @@ in
   # alacritty for nautilus
   programs.nautilus-open-any-terminal.enable = true;
 
+  boot.initrd.systemd.enable = true;
+  swapDevices = [ { device = "/var/swapfile"; size = 64*1024; } ];
+  boot.resumeDevice = "/dev/nvme1n1p1";
+  # hibernate
+  boot.kernelParams = [ "mem_sleep_default=deep" ];
+  # suspend-then-hibernate
+  systemd.sleep.extraConfig = ''
+    HibernateDelaySec=30m
+    SuspendState=mem
+  '';
 }

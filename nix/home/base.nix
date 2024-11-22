@@ -51,6 +51,13 @@ with pkgs;
       # Whatever
       neovim
       imagemagick
+    ] ++ [
+      fishPlugins.z # common directories
+      fishPlugins.bass # source bash stuff
+      fishPlugins.fzf-fish # ctrl j file search
+      fishPlugins.async-prompt # yep
+      fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+      fishPlugins.clownfish # "mock" command
     ];
 
     sessionVariables = {
@@ -80,18 +87,16 @@ with pkgs;
     interactiveShellInit = ''
       direnv hook fish | source
 
-
       set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
       set -gx FZF_LEGACY_KEYBINDS 0
       set -gx FZF_COMPLETE 1
-      source "$HOME/.config/fish/fzf.fish"
     '';
     functions = {
       nixbuildconf.body = ''
       set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] && 
         printf darwin-rebuild || 
         printf nixos-rebuild)";
-      sudo $_nix_dist_rebuild --flake ~/shit/#$hostname switch'';
+      sudo $_nix_dist_rebuild --flake ~/shit/#$hostname switch --fast $argv'';
 
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
       
@@ -154,6 +159,7 @@ with pkgs;
       '';
     };
     
+    # borked
     #plugins = with fishPlugins; [
     #  z # common directories
     #  bass # source bash stuff

@@ -37,8 +37,8 @@
     # QT_QPA_PLATFORM = "wayland;xcb";
     # PROTON_ENABLE_NGX_UPDATER=1;
     # #WLR_USE_LIBINPUT=1; # 
-    # XWAYLAND_NO_GLAMOR=1; # with this you'll need to use gamescope for gaming
-    # __GL_MaxFramesAllowed=0;
+    XWAYLAND_NO_GLAMOR=1; # with this you'll need to use gamescope for gaming
+    __GL_MaxFramesAllowed=0;
 
     # Wayland
     XDG_SESSION_TYPE = "wayland";

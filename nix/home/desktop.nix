@@ -7,7 +7,7 @@ let
 in
 {
   imports = [
-#    ../misc/spicetify.nix
+    #../misc/spicetify.nix
 
     ./apps.nix
     ./base.nix
