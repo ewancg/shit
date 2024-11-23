@@ -47,6 +47,7 @@
       flake = false;
     };
 
+    mac-app-util.url = "github:hraban/mac-app-util";
     gimme-aws-creds.url = "github:Nike-Inc/gimme-aws-creds";
     awsctx.url = "github:john2143/dotfiles/7bd638d74e9c5809396bbdbd7b6c497de1a50ec6?dir=awsctx";
   };
@@ -62,6 +63,7 @@
     , nix-homebrew
     , homebrew-core
     , homebrew-cask
+    , mac-app-util
       #, vfkit-tap
     , flake-utils
     , gimme-aws-creds
@@ -92,11 +94,12 @@
       };
       darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        specialArgs = { inherit inputs nixpkgs; };
+        specialArgs = { inherit inputs nixpkgs mac-app-util; };
         modules = [
           ./nix/darwin/system.nix
           nix-homebrew.darwinModules.nix-homebrew
           home-manager.darwinModules.home-manager
+          mac-app-util.darwinModules.default
           ./nix/darwin/home.nix
         ];
       };

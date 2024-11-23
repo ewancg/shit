@@ -68,21 +68,6 @@ in
       #wineWow64Packages.fonts
       #wineWowPackages.fonts
 
-      # Not Windows fonts
-      cantarell-fonts
-      corefonts
-      fira-code
-      fira-code-symbols
-      font-awesome
-      liberation_ttf
-      mplus-outline-fonts.githubRelease
-      noto-fonts
-      open-sans
-      ubuntu_font_family
-      ucs-fonts
-      vistafonts
-      zilla-slab
-
       # Linux exclusive CLI
       grim
       playerctl
@@ -93,10 +78,6 @@ in
 
       # NixOS
       nix-ld
-
-      # Conflict
-      # proggyfonts
-      # dina-font
     ];
     pointerCursor = {
       gtk.enable = true;

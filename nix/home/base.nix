@@ -44,6 +44,28 @@ with pkgs;
       # Whatever
       neovim
       imagemagick
+
+
+      # Not Windows fonts
+      #cantarell-fonts
+      corefonts
+      fira-code
+      fira-code-symbols
+      font-awesome
+      liberation_ttf
+      mplus-outline-fonts.githubRelease
+      noto-fonts
+      open-sans
+      ubuntu-sans-mono
+      ubuntu_font_family
+      ucs-fonts
+      vistafonts
+      zilla-slab
+
+      # Conflict
+      # proggyfonts
+      # broke 11/23
+      #dina-font
     ] ++ [
       fishPlugins.z # common directories
       fishPlugins.bass # source bash stuff
@@ -90,7 +112,7 @@ with pkgs;
         set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] && 
           printf darwin-rebuild || 
           printf nixos-rebuild)";
-        sudo $_nix_dist_rebuild --flake ~/shit/#$hostname switch --fast $argv'';
+        $_nix_dist_rebuild --flake ~/shit/#$hostname switch $argv'';
 
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
 

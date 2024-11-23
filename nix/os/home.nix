@@ -10,7 +10,6 @@
       ../home/desktop.nix
       ../home/apps.nix
       ../home/base.nix
-
       {
         home = {
           homeDirectory = "/home/ewan";
