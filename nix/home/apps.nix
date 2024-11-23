@@ -48,8 +48,8 @@ let
   # });
 
   my-prismlauncher = (prismlauncher.override {
-  # deprecated https://github.com/NixOS/nixpkgs/commit/2a5017a5550a32dfdf4000bd8fa2fea89e6a0f95
-  #  withWaylandGLFW = true;
+    # deprecated https://github.com/NixOS/nixpkgs/commit/2a5017a5550a32dfdf4000bd8fa2fea89e6a0f95
+    #  withWaylandGLFW = true;
     jdks = [
       graalvm-ce
       temurin-bin-21
@@ -81,9 +81,10 @@ let
 
     runScript = pkgs.lib.getExe pkgs.qtcreator;
   });
-in {
+in
+{
   # VLC plugin path
-  home.packages = with pkgs; [ 
+  home.packages = with pkgs; [
     # Communication
     my-discord
     ripcord
@@ -114,7 +115,7 @@ in {
     vlc-plugin-pipewire
     okular
     photoflare
-    
+
     alsa-scarlett-gui
     headsetcontrol
     pwvucontrol
@@ -158,7 +159,7 @@ in {
   ];
 
   xdg.configFile = {
-  "QtProject/qtcreator" = {
+    "QtProject/qtcreator" = {
       recursive = true;
       source = ../../dot/config/qtcreator;
     };
@@ -166,7 +167,7 @@ in {
     "QtProject/qtcreator/themes".source = ../../dot/config/qtcreator/themes;
     #"QtProject/qtcreator/.clang-format".source = ../../dot/.clang-format;
   };
-  
+
   # VSCode
   programs.vscode = {
     enable = true;

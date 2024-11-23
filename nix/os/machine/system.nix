@@ -25,7 +25,7 @@
     # VM host configuration
     ./virtualization.nix
   ];
-  
+
   fileSystems."/" =
     {
       device = "/dev/disk/by-uuid/d7a32074-19be-43e4-8be0-a00132726527";

@@ -1,4 +1,4 @@
-{ pkgs, lib, home-manager, ... }:
+{ pkgs, lib, ... }:
 
 let
   english = "en_US.UTF-8";
@@ -243,13 +243,11 @@ in
     package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
   };
 
-  # Home manager accommodations
-
   # alacritty for nautilus
   programs.nautilus-open-any-terminal.enable = true;
 
   boot.initrd.systemd.enable = true;
-  swapDevices = [ { device = "/var/swapfile"; size = 64*1024; } ];
+  swapDevices = [{ device = "/var/swapfile"; size = 64 * 1024; }];
   boot.resumeDevice = "/dev/nvme1n1p1";
   # hibernate
   boot.kernelParams = [ "mem_sleep_default=deep" ];

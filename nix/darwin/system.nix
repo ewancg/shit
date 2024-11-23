@@ -11,7 +11,7 @@ let
   ];
 in
 {
-  imports = [ 
+  imports = [
     ./nix-darwin-activation.nix
 
     # Home Manager accommmodations
@@ -19,17 +19,26 @@ in
   ];
   system.stateVersion = 5;
 
+  security.pam.enableSudoTouchIdAuth = true;
+
   nixpkgs.config.allowUnfree = true;
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   services.nix-daemon.enable = true;
 
-  home-manager.users.ewan = lib.mkMerge [{ home = {
-      homeDirectory = lib.mkForce "/Users/egreen";
-      username = lib.mkForce "egreen";
-    };}
-    import ../home/base.nix
-  ];
+  # Required for home-manager.users.* to work
+  users.users.egreen = {
+    description = "Ewan Green";
+    home = "/Users/egreen";
+    name = "egreen";
+  };
+
+  home-manager.users.egreen = {
+    home = {
+      homeDirectory = "/Users/egreen";
+      username = "egreen";
+    };
+  };
 
   nix = {
     # package = pkgs.nix;
@@ -104,16 +113,6 @@ in
   # Enable zsh in order to add /run/current-system/sw/bin to $PATH, because the Nix installer on macOS only hooks into bashrc & zshrc
   programs.zsh.enable = true;
   programs.fish.enable = true;
-
-  services.postgresql = {
-    enable = true;
-    package = pkgs.postgresql_15;
-    #ensureDatabases = [ "mydatabase" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method
-      local all       all     trust
-    '';
-  };
 
   nix-homebrew = {
     # Install Homebrew under the default prefix

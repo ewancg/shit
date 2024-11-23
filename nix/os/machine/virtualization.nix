@@ -19,7 +19,7 @@ in
   #   containers.enable = true;
   #   podman = {
   #     enable = true;
-# 
+  # 
   #     # Required for containers under podman-compose to be able to talk to each other.
   #     defaultNetwork.settings.dns_enabled = true;
   #   };
@@ -62,11 +62,11 @@ in
       runAsRoot = true; # Doesn't actually run as root because of overriding config below.
       # We want to run as a specific user/group, not Nix's non-root default of `qemu-libvirtd`,
       verbatimConfig =
-      ''
-        namespaces = []
-        user = "ewan"
-        group = "users"
-      '';
+        ''
+          namespaces = []
+          user = "ewan"
+          group = "users"
+        '';
       swtpm.enable = true;
       ovmf = {
         enable = true;

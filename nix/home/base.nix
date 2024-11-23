@@ -1,7 +1,7 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
 { pkgs, ... }:
-with pkgs; 
+with pkgs;
 {
   home = {
     stateVersion = "24.05";
@@ -9,31 +9,24 @@ with pkgs;
     packages = [
       # cli tools
       python3
-      ffmpeg    
+      ffmpeg
       bchunk
       choose
       datamash
       fastfetch
       file
       gojq
-      grim
 
       killall
       p7zip
-      playerctl
-      traceroute
       unzip
 
       # virt
-
-      # system
-      glibcLocales
 
       # Nix
       direnv
       nil
       nix-index
-      nix-ld
       nixpkgs-fmt
 
       # Essential libraries and utilities
@@ -54,7 +47,8 @@ with pkgs;
     ] ++ [
       fishPlugins.z # common directories
       fishPlugins.bass # source bash stuff
-      fishPlugins.fzf-fish # ctrl j file search
+      # fishPlugins.fishtape_3      
+      # fishPlugins.fzf-fish # ctrl j file search
       fishPlugins.async-prompt # yep
       fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
       fishPlugins.clownfish # "mock" command
@@ -73,7 +67,7 @@ with pkgs;
       "dev".source = ../shells;
     };
   };
-  
+
   nixpkgs.config = {
     allowUnfree = true;
   };
@@ -82,7 +76,7 @@ with pkgs;
     "alacritty".source = ../../dot/config/alacritty;
   };
 
-    programs.fish = {
+  programs.fish = {
     enable = true;
     interactiveShellInit = ''
       direnv hook fish | source
@@ -93,24 +87,24 @@ with pkgs;
     '';
     functions = {
       nixbuildconf.body = ''
-      set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] && 
-        printf darwin-rebuild || 
-        printf nixos-rebuild)";
-      sudo $_nix_dist_rebuild --flake ~/shit/#$hostname switch --fast $argv'';
+        set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] && 
+          printf darwin-rebuild || 
+          printf nixos-rebuild)";
+        sudo $_nix_dist_rebuild --flake ~/shit/#$hostname switch --fast $argv'';
 
       nixpkg.body = ''NIXPKGS_ALLOW_UNFREE=1 nix-env -iA nixos."$1"'';
-      
+
       bk.body = ''
-      mv "$1" "$1.old"
+        mv "$1" "$1.old"
       '';
 
       start.body = ''
-      set _dist_start "$([ $(uname) = 'Darwin' ] && 
-        printf open || 
-        printf xdg-open)";
-      $_dist_start $argv
+        set _dist_start "$([ $(uname) = 'Darwin' ] && 
+          printf open || 
+          printf xdg-open)";
+        $_dist_start $argv
       '';
-            
+
       kc.body = ''
         set -f new_env (kubectl config get-contexts -o name | fzf)
         if test "A$new_env" = "A"
@@ -118,7 +112,7 @@ with pkgs;
         end
         kubectl config use-context $new_env
       '';
-      
+
       replace-all.body = ''
         set -f find $argv[1]
         set -f rep $argv[2]
@@ -131,13 +125,13 @@ with pkgs;
             rg $find --files-with-matches | xargs sed -i "s/$find/$rep/g"
         end
       '';
-      
+
       sk.body = ''
         set -x SIGNING_KEY (gpg --list-secret-keys --keyid-format long | grep $EMAIL -B 3 | grep "(work|github|disco|1E7452EAEE)" -B 3 | grep sec | string split "/" | tail -n 1 | string match -r '[0-9A-F]+')
         echo "Set Signing key to $SIGNING_KEY"
         git config --global user.signingkey $SIGNING_KEY > /dev/null
       '';
-      
+
       envsource.body = ''
         set -f envfile "$argv"
         if not test -f "$envfile"
@@ -158,7 +152,7 @@ with pkgs;
         end < "$envfile"
       '';
     };
-    
+
     # borked
     #plugins = with fishPlugins; [
     #  z # common directories

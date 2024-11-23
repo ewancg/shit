@@ -13,7 +13,7 @@
   # To enable network-discovery; required for *.local, AirPlay, etc.
   services.avahi = {
     enable = true;
-    nssmdns4 = true;  # printing; *.local
+    nssmdns4 = true; # printing; *.local
     openFirewall = true; # ensuring that firewall ports are open as needed
     publish = {
       enable = true;

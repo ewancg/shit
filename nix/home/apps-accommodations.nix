@@ -1,7 +1,7 @@
-{pkgs, ...}:
+{ pkgs, ... }:
 with pkgs;
 let
-    vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
+  vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
 in
 {
   # VLC pipewire plugin

@@ -14,8 +14,8 @@ in
   ];
 
   home = {
-    homeDirectory = "/home/ewan";
-    username = "ewan";
+    #homeDirectory = "/home/ewan";
+    #username = "ewan";
 
     packages = [
       # Theming
@@ -60,7 +60,7 @@ in
 
       # Fonts
       segoe-ui-variable-fonts
-      
+
       ## Windows fonts
       segoe-ui-variable-fonts
       #wine64Packages.fonts
@@ -83,6 +83,17 @@ in
       vistafonts
       zilla-slab
 
+      # Linux exclusive CLI
+      grim
+      playerctl
+      traceroute
+
+      # Linux system
+      glibcLocales
+
+      # NixOS
+      nix-ld
+
       # Conflict
       # proggyfonts
       # dina-font
@@ -95,14 +106,14 @@ in
   };
 
   xdg.configFile = {
-    "Kvantum".source  = ../../dot/config/Kvantum;
+    "Kvantum".source = ../../dot/config/Kvantum;
     #"qt5ct".source    = ../../dot/config/qt5ct;
-    "qt6ct".source    = ../../dot/config/qt6ct;
-    "wofi".source     = ../../dot/config/wofi;
-    "hypr".source     = ../../dot/config/hypr;
-    "eww".source      = ../../dot/config/eww;
-    "waybar".source   = ../../dot/config/waybar;
-    "dunst".source    = ../../dot/config/dunst;
+    "qt6ct".source = ../../dot/config/qt6ct;
+    "wofi".source = ../../dot/config/wofi;
+    "hypr".source = ../../dot/config/hypr;
+    "eww".source = ../../dot/config/eww;
+    "waybar".source = ../../dot/config/waybar;
+    "dunst".source = ../../dot/config/dunst;
   };
 
   xdg.mimeApps = {
@@ -114,8 +125,8 @@ in
       "text/html" = "firefox.desktop";
       "application/" = "firefox.desktop"; # PDF, .docx, etc..
       "application/gz" = "nautilus.desktop"; # PDF, .docx, etc..
-      
-      
+
+
       "x-scheme-handler/http" = "firefox.desktop";
       "x-scheme-handler/https" = "firefox.desktop";
       "x-scheme-handler/about" = "firefox.desktop";
