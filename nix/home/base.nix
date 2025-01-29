@@ -71,9 +71,10 @@ with pkgs;
       fishPlugins.bass # source bash stuff
       # fishPlugins.fishtape_3      
       # fishPlugins.fzf-fish # ctrl j file search
-      fishPlugins.async-prompt # yep
       fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
       fishPlugins.clownfish # "mock" command
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
+      fishPlugins.async-prompt # broken on macos
     ];
 
     sessionVariables = {
