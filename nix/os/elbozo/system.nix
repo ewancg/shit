@@ -54,6 +54,11 @@
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
+  # don’t shutdown when power button is short-pressed
+  services.logind.extraConfig = ''
+    HandlePowerKey=ignore
+  '';
+  
   boot.kernelPackages = pkgs.linuxPackages_latest;
   systemd.sleep.extraConfig = ''
     AllowSuspend=yes

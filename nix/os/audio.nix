@@ -26,24 +26,55 @@
     };
 
     bluetoothEnhancements = {
+
+      # disable switching to duplex mode
+       "module-allow-priority" = false;
+       "bluetooth.autoswitch-to-headset-profile" = {
+          description = "Whether to autoswitch to BT headset profile or not";
+          type = "bool";
+          default = false; # change this to false
+      };
+      "monitor.bluez.rules" = [{
+          matches = [
+            {
+              "device.name" = "~bluez_card.*";
+              "device.product.id" = "*";
+              "device.vendor.id" = "*";
+            }
+          ];
+          actions = {
+            update-props = {
+              # Set quality to high quality instead of the default of auto
+              "bluez5.*.ldac.quality" = "hq";
+              "bluez5.a2dp.aac.bitratemode" = "5";
+              "device.profile" = "a2dp-sink";
+            };
+          };
+      }];
+
       "monitor.bluez.properties" = {
-        "bluez5.enable-sbc-xq" = true;
-        "bluez5.enable-msbc" = true;
+        #"bluez5.enable-sbc-xq" = true;
+        #"bluez5.enable-msbc" = true;
         "bluez5.enable-hw-volume" = true;
 
         "bluez5.codecs" = [
+          "sbc"
+          "sbc_xq"
+          "aac"
           "ldac"
           "aptx"
-          "aptx_11_duplex"
-          "aptx_11"
           "aptx_hd"
-          "opus_05_pro"
-          "opus_05_71"
-          "opus_05_51"
+          "aptx_ll"
+          "aptx_ll_duplex"
+          "faststream"
+          "faststream_duplex"
+          "lc3plus_h3"
           "opus_05"
+          "opus_05_51"
+          "opus_05_71"
           "opus_05_duplex"
-          "aac"
-          "sbc_xq"
+          "opus_05_pro"
+          "lc3"
         ];
 
         "bluez5.roles" = [
@@ -53,8 +84,8 @@
           "bap_source"
           "hsp_hs"
           "hsp_ag"
-          "hfp_hf"
-          "hfp_ag"
+          #"hfp_hf"
+          #"hfp_ag"
         ];
       };
     };
