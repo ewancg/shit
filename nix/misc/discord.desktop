@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=Network;InstantMessaging;Chat
-Exec=vesktop %U
+Exec=vesktop --disable-features=WebRtcAllowInputVolumeAdjustment %U
 GenericName=Internet Messenger
 Icon=vesktop
 Keywords=discord;vencord;electron;chat

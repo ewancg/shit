@@ -9,14 +9,11 @@ in
   imports = [
     #../misc/spicetify.nix
 
-    ./apps.nix
-    ./base.nix
+    #./apps.nix
+    #./base.nix
   ];
 
   home = {
-    #homeDirectory = "/home/ewan";
-    #username = "ewan";
-
     packages = [
       # Theming
       adw-gtk3
@@ -60,9 +57,9 @@ in
 
       # Fonts
       segoe-ui-variable-fonts
-
+      cantarell-fonts
+      
       ## Windows fonts
-      segoe-ui-variable-fonts
       #wine64Packages.fonts
       #winePackages.fonts
       #wineWow64Packages.fonts
@@ -88,7 +85,7 @@ in
 
   xdg.configFile = {
     "Kvantum".source = ../../dot/config/Kvantum;
-    #"qt5ct".source    = ../../dot/config/qt5ct;
+    "qt5ct".source    = ../../dot/config/qt5ct;
     "qt6ct".source = ../../dot/config/qt6ct;
     "wofi".source = ../../dot/config/wofi;
     "hypr".source = ../../dot/config/hypr;
@@ -106,7 +103,6 @@ in
       "text/html" = "firefox.desktop";
       "application/" = "firefox.desktop"; # PDF, .docx, etc..
       "application/gz" = "nautilus.desktop"; # PDF, .docx, etc..
-
 
       "x-scheme-handler/http" = "firefox.desktop";
       "x-scheme-handler/https" = "firefox.desktop";

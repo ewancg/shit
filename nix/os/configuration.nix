@@ -64,6 +64,7 @@ in
     udisks
   ];
 
+  hardware.enableAllFirmware = true;
   boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
 
   # Extra kernel modules
@@ -103,7 +104,6 @@ in
   };
 
   fileSystems."/mnt/music" = {
-    label = "Music (@slave)";
     device = "ewan@slave.local:/mnt/music";
     fsType = "sshfs";
     options = [
@@ -179,11 +179,27 @@ in
     enableSSHSupport = true;
   };
 
-  users.users.ewan = {
-    isNormalUser = true;
-    initialPassword = "ewan";
-    description = "Ewan Green";
-    extraGroups = [ "networkmanager" "wheel" "video" ];
+  users = {
+    groups.ewan = {
+    };
+    users.ewan = {
+      group = "ewan";
+      home = "/home/ewan";
+      isNormalUser = true;
+      initialPassword = "ewan";
+      description = "Ewan Green";
+      extraGroups = [ "networkmanager" "wheel" "video" ];
+    };
+    groups.egreen = {
+    };
+    users.egreen = {
+      group = "egreen";
+      home = "/home/egreen";
+      isNormalUser = true;
+      initialPassword = "egreen";
+      description = "Ewan Green (Office)";
+      extraGroups = [ "networkmanager" "wheel" "video" ];
+    };
   };
 
   environment.shellInit = ''
@@ -247,8 +263,8 @@ in
   programs.nautilus-open-any-terminal.enable = true;
 
   boot.initrd.systemd.enable = true;
-  swapDevices = [{ device = "/var/swapfile"; size = 64 * 1024; }];
-  boot.resumeDevice = "/dev/nvme1n1p1";
+  #swapDevices = [{ device = "/var/swapfile"; size = 64 * 1024; }];
+  #boot.resumeDevice = "/dev/nvme1n1p1";
   # hibernate
   boot.kernelParams = [ "mem_sleep_default=deep" ];
   # suspend-then-hibernate

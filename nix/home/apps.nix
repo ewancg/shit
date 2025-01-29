@@ -57,6 +57,9 @@ let
       temurin-bin-17
     ];
   });
+  my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix { 
+    withMinecraftPatch = true; 
+  };
 
   my-obs = (pkgs.wrapOBS {
     plugins = with pkgs.obs-studio-plugins; [
@@ -101,6 +104,7 @@ in
     snes9x-gtk
     fceux
     my-prismlauncher
+    my-minecraft-glfw
     openrct2
     path-of-building
     rpcs3
@@ -110,12 +114,14 @@ in
     mpv
     my-vlc
     spotify
+    spot
     psst
     strawberry
     vlc-plugin-pipewire
     okular
     photoflare
 
+    easyeffects
     alsa-scarlett-gui
     headsetcontrol
     pwvucontrol
@@ -131,7 +137,6 @@ in
     ptcollab
     vmpk
 
-
     my-obs
     normcap # OCR
 
@@ -145,14 +150,12 @@ in
     gimp
     nautilus
     obsidian
-    sticky
-    ungoogled-chromium
 
     gnome-boxes
 
-    # dev tools (rare)
-    ida-free
-    qtcreator-fhs
+    sysprof
+
+    qdirstat
 
     # Java
     # graal-pkgs

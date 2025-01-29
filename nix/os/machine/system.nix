@@ -42,7 +42,7 @@
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/0FC1-0ECD";
+      device = "/dev/disk/by-uuid/E0A1-2614";
       fsType = "vfat";
       autoResize = false;
       options = [ "fmask=0022" "dmask=0022" ];
@@ -63,7 +63,6 @@
 
   fileSystems."/mnt/data" = {
     device = "/dev/disk/by-uuid/71331833-459a-4a50-afab-b07a1800bb63";
-    label = "Data";
     fsType = "ext4";
     neededForBoot = true;
     autoResize = false;
@@ -77,7 +76,6 @@
   };
 
   fileSystems."/mnt/work" = {
-    label = "Projects";
     device = "/dev/disk/by-uuid/0A10902A10901F2F";
     autoResize = false;
     options = [

@@ -20,6 +20,7 @@ with pkgs;
       killall
       p7zip
       unzip
+      unrar
 
       # virt
 
@@ -44,10 +45,9 @@ with pkgs;
       # Whatever
       neovim
       imagemagick
-
+      nethogs
 
       # Not Windows fonts
-      #cantarell-fonts
       corefonts
       fira-code
       fira-code-symbols

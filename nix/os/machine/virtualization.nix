@@ -81,6 +81,9 @@ in
   };
   programs.virt-manager.enable = true;
   users.users.ewan.extraGroups = [ "libvirtd" ];
+  environment.systemPackages = with pkgs; [
+    virt-viewer
+  ];
 
   # Open ports in the firewall.
   networking.firewall.trustedInterfaces = [ libvirt_sandbox_dev libvirt_nat_bridge_dev ]; # Allow traffic on the container sandbox bridge.
