@@ -58,7 +58,7 @@
   services.logind.extraConfig = ''
     HandlePowerKey=ignore
   '';
-  
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
   systemd.sleep.extraConfig = ''
     AllowSuspend=yes

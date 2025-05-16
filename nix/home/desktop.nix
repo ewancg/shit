@@ -58,7 +58,7 @@ in
       # Fonts
       segoe-ui-variable-fonts
       cantarell-fonts
-      
+
       ## Windows fonts
       #wine64Packages.fonts
       #winePackages.fonts
@@ -69,6 +69,7 @@ in
       grim
       playerctl
       traceroute
+      nethogs
 
       # Linux system
       glibcLocales
@@ -85,7 +86,7 @@ in
 
   xdg.configFile = {
     "Kvantum".source = ../../dot/config/Kvantum;
-    "qt5ct".source    = ../../dot/config/qt5ct;
+    "qt5ct".source = ../../dot/config/qt5ct;
     "qt6ct".source = ../../dot/config/qt6ct;
     "wofi".source = ../../dot/config/wofi;
     "hypr".source = ../../dot/config/hypr;

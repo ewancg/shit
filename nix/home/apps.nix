@@ -57,8 +57,8 @@ let
       temurin-bin-17
     ];
   });
-  my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix { 
-    withMinecraftPatch = true; 
+  my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix {
+    withMinecraftPatch = true;
   };
 
   my-obs = (pkgs.wrapOBS {
@@ -152,6 +152,8 @@ in
     obsidian
 
     gnome-boxes
+
+    alacritty
 
     sysprof
 

@@ -1,6 +1,6 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 with pkgs;
 {
   home = {
@@ -35,7 +35,6 @@ with pkgs;
       gnupg
       wget
 
-      alacritty
       fish
       tmux
       fd
@@ -43,9 +42,7 @@ with pkgs;
       tree
 
       # Whatever
-      neovim
       imagemagick
-      nethogs
 
       # Not Windows fonts
       corefonts
@@ -53,6 +50,7 @@ with pkgs;
       fira-code-symbols
       font-awesome
       liberation_ttf
+      jetbrains-mono
       mplus-outline-fonts.githubRelease
       noto-fonts
       open-sans
@@ -66,27 +64,76 @@ with pkgs;
       # proggyfonts
       # broke 11/23
       #dina-font
-    ] ++ [
+    ] ++ (with pkgs.nerd-fonts; [
+      # Nerdfonts
+      jetbrains-mono
+      ubuntu-sans
+      ubuntu-mono
+    ]) ++ [
       fishPlugins.z # common directories
       fishPlugins.bass # source bash stuff
-      # fishPlugins.fishtape_3      
+      # fishPlugins.fishtape
       # fishPlugins.fzf-fish # ctrl j file search
       fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-      fishPlugins.clownfish # "mock" command
-    ] ++ lib.optionals pkgs.stdenv.isLinux [
-      fishPlugins.async-prompt # broken on macos
-    ];
+      #fishPlugins.clownfish # "mock" command
+      fishPlugins.pure
+    ];# ++ lib.optionals pkgs.stdenv.isLinux [
+      #fishPlugins.async-prompt # broken on macos
+    #];
 
     sessionVariables = {
       EDITOR = "code --wait --new-window";
     };
 
     file = {
-      ".tmux.conf".source = ../../dot/.tmux.conf;
       ".local/bin" = {
         recursive = true;
         source = ../../dot/local/bin;
       };
+      ".config/alacritty/alacritty.toml" = {
+      text = ''
+      terminal.shell = { program = "${lib.getExe pkgs.tmux}", args = ["-u"] }
+      general.live_config_reload = true
+
+      [window]
+      dynamic_title = true
+      dimensions = { columns = 130, lines = 28 }
+      dynamic_padding = true
+      decorations = "Buttonless"
+
+      opacity = 0.91
+      blur = true
+
+      resize_increments = true
+
+      [scrolling]
+      history = 0 # Handled by tmux
+
+      [font]
+      size = 11.5
+
+      normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+      bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+      italic = { family = "JetBrainsMono Nerd Font", style = "Regular Italic" }
+      bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
+
+      [cursor]
+      style = { shape = "Beam", blinking = "Off" }
+      blink_interval = 500
+      thickness = 0.1
+
+      [mouse]
+      bindings = [{ mouse = "Right", mods = "None", action = "Copy" }]
+
+      [[keyboard.bindings]]
+      key = "Alt"
+      mods = "Control"
+      chars = "\uE000"
+
+      ${builtins.readFile  ../../dot/config/alacritty/gruvbox_material.toml }
+    '';
+
+    };
       "dev".source = ../shells;
     };
   };
@@ -95,14 +142,153 @@ with pkgs;
     allowUnfree = true;
   };
 
-  xdg.configFile = {
-    "alacritty".source = ../../dot/config/alacritty;
+  #xdg.configFile = {
+  #  "alacritty" = {
+  #    source = ../../dot/config/alacritty;
+  #  };
+  #};
+
+  programs.tmux = {
+    enable = true;
+    terminal = "tmux-256color";
+    shell = "${lib.getExe pkgs.fish}";
+
+    # sensibleOnTop = true;
+
+    plugins = with tmuxPlugins; [
+      sensible
+      yank
+      cpu
+      gruvbox
+      #{
+      #    plugin = tmuxPlugins.catppuccin;
+      #    extraConfig = ''
+      #      set-option -sa terminal-features "tmux-256color,:RGB"
+      #      set -g @catppuccin_flavour 'mocha'
+      #      set -g @catppuccin_status_modules_right "session"
+      #      set -g @catppuccin_status_modules_left " "
+      #      set -g @catppuccin_status_fill "icon"
+      #      set -g @catppuccin_window_number_position "right"
+      #      set -g @catppuccin_window_left_separator ""
+      #      set -g @catppuccin_window_right_separator " "
+      #      set -g @catppuccin_window_middle_separator " █"
+      #      set -g @catppuccin_window_number_position "right"
+      #      set -g @catppuccin_window_default_fill "none"
+      #      set -g @catppuccin_window_default_text "#W"
+      #      set -g @catppuccin_window_current_fill "number"
+      #      set -g @catppuccin_window_current_text "#W"
+      #      set -g @catppuccin_pane_active_border_style "fg=#313244"
+      #      set -g status-bg "#11111b" # also duplicated at the bottom of the file
+      #      set -g @catppuccin_window_status_style "rounded"
+      #      set -g status-right-length 100
+      #      set -g status-left-length 100
+      #      set -g status-left ""
+      #      set -g status-right "#{E:@catppuccin_status_application}"
+      #      set -agF status-right "#{E:@catppuccin_status_cpu}"
+      #      set -ag status-right "#{E:@catppuccin_status_session}"
+      #      set -ag status-right "#{E:@catppuccin_status_uptime}"
+      #      set -agF status-right "#{E:@catppuccin_status_battery}"
+      #    '';
+      #  }
+      battery # seeing battery in remote session
+      tmux-powerline # statusbar
+      {
+        plugin = resurrect;
+        extraConfig = ''
+          set -g @resurrect-strategy-nvim 'session'
+          set -g @resurrect-capture-pane-contents 'on'
+        '';
+      }
+      {
+        plugin = continuum;
+        extraConfig = ''
+          set -g @continuum-restore 'on'
+          set -g @continuum-boot 'on'
+          set -g @continuum-boot-options 'alacritty,fullscreen'
+          set -g @continuum-save-interval '5' # save every 5 minutes
+        '';
+      }
+    ];
+
+    extraConfig = ''
+      # set -gu default-command
+      set -g default-shell "${lib.getExe fish}"
+      unbind C-b
+
+      # https://github.com/hasundue/tmux-gruvbox-material/blob/master/dark-soft.conf
+      set -g status-justify "left"
+      set -g status "on"
+      set -g status-left-style "none"
+      set -g message-command-style "fg=#ddc7a1,bg=#5b534d"
+      set -g status-right-style "none"
+      set -g pane-active-border-style "fg=#a89984"
+      set -g status-style "none,bg=#3c3836"
+      set -g message-style "fg=#ddc7a1,bg=#5b534d"
+      set -g pane-border-style "fg=#5b534d"
+      set -g status-right-length "100"
+      set -g status-left-length "100"
+      setw -g window-status-activity-style "none"
+      setw -g window-status-separator ""
+      setw -g window-status-style "none,fg=#ddc7a1,bg=#3c3836"
+      set -g status-left "#[fg=#32302f,bg=#a89984,bold] #S #[fg=#a89984,bg=#3c3836,nobold,nounderscore,noitalics]"
+      set -g status-right "#[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] %Y-%m-%d  %H:%M #[fg=#a89984,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#32302f,bg=#a89984,bold] #h "
+      setw -g window-status-format "#[fg=#ddc7a1,bg=#3c3836] #I #[fg=#ddc7a1,bg=#3c3836] #W "
+      setw -g window-status-current-format "#[fg=#3c3836,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] #I #[fg=#ddc7a1,bg=#5b534d] #W #[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]"
+
+      set -g prefix 
+      set -g escape-time 1
+      set -g mouse on
+      set -g default-terminal "tmux-256color"
+
+      # set-window-option -g window-active-style bg=terminal
+      # set-window-option -g window-style bg="#1c1c1c"
+
+      set -ga terminal-features "*:hyperlinks".
+
+      bind h split-window -h
+      bind v split-window -v
+
+      unbind r
+      bind r source-file ~/.config/tmux/tmux.conf
+    '';
   };
 
+  programs.atuin = {
+    enable = true;
+    enableFishIntegration = true;
+    settings = {
+      auto_sync = true;
+      sync_frequency = "5m";
+      sync_address = "https://api.atuin.sh";
+      key_path = "${config.home.homeDirectory}/secrets/ATUIN_KEY";
+      ctrl_n_shortcuts = true;
+      enter_accept = true;
+      filter_mode = "session";
+    };
+  };
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
       direnv hook fish | source
+
+      set -gx pure_enable_nixdevshell true
+      set -gx pure_symbol_nixdevshell_prefix '󱄅 '
+      
+      # too clunky
+      set -gx pure_enable_k8s false
+      set -gx pure_symbol_k8s_prefix ' '
+
+      set -gx pure_enable_aws_profile true
+      
+      set -gx pure_symbol_git_stash 'stash'
+      set -gx PURE_GIT_DOWN_ARROW '↓'
+      set -gx PURE_GIT_UP_ARROW '↑'
+      set -gx pure_symbol_reverse_prompt '<><'
+      set -gx pure_symbol_prompt '><>'
+      set -gx pure_enable_single_line_prompt false
+      set --universal pure_check_for_new_release false
+
+      set -gx pure_shorten_prompt_current_directory_length 1
 
       set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
       set -gx FZF_LEGACY_KEYBINDS 0
@@ -110,8 +296,8 @@ with pkgs;
     '';
     functions = {
       nixbuildconf.body = ''
-        set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] && 
-          printf darwin-rebuild || 
+        set _nix_dist_rebuild "$([ $(uname) = 'Darwin' ] &&
+          printf darwin-rebuild ||
           printf nixos-rebuild)";
         $_nix_dist_rebuild --flake ~/shit/#$hostname switch $argv'';
 
@@ -122,8 +308,8 @@ with pkgs;
       '';
 
       start.body = ''
-        set _dist_start "$([ $(uname) = 'Darwin' ] && 
-          printf open || 
+        set _dist_start "$([ $(uname) = 'Darwin' ] &&
+          printf open ||
           printf xdg-open)";
         $_dist_start $argv
       '';
@@ -134,25 +320,6 @@ with pkgs;
             exit 1
         end
         kubectl config use-context $new_env
-      '';
-
-      replace-all.body = ''
-        set -f find $argv[1]
-        set -f rep $argv[2]
-        set -f filter $argv[3]
-        if test $filter
-            echo "Replacing /$find/ with /$rep/ with extra $filter"
-            rg --files-with-matches $filter | rg $find --files-with-matches | xargs sed -i "s/$find/$rep/g"
-        else
-            echo "Replacing /$find/ with /$rep/"
-            rg $find --files-with-matches | xargs sed -i "s/$find/$rep/g"
-        end
-      '';
-
-      sk.body = ''
-        set -x SIGNING_KEY (gpg --list-secret-keys --keyid-format long | grep $EMAIL -B 3 | grep "(work|github|disco|1E7452EAEE)" -B 3 | grep sec | string split "/" | tail -n 1 | string match -r '[0-9A-F]+')
-        echo "Set Signing key to $SIGNING_KEY"
-        git config --global user.signingkey $SIGNING_KEY > /dev/null
       '';
 
       envsource.body = ''
@@ -177,24 +344,12 @@ with pkgs;
     };
 
     # borked
-    #plugins = with fishPlugins; [
-    #  z # common directories
-    #  bass # source bash stuff
-    #  fzf-fish # ctrl j file search
-    #  async-prompt # yep
-    #  autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-    #  clownfish # "mock" command
-    #];
-  };
-
-  programs.tmux = {
-    enable = true;
-    plugins = with tmuxPlugins; [
-      sensible
-      catppuccin # colors
-      battery # seeing battery in remote session
-      continuum # tmux session restore
-      # vim-tmux-navigator
-    ];
+    # plugins = with fishPlugins; [
+    # autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+    # bass # source bash stuff
+    # tide # prompt
+    # fzf-fish # ctrl j file search
+    # z # common directories
+    # ];
   };
 }

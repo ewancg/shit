@@ -180,8 +180,7 @@ in
   };
 
   users = {
-    groups.ewan = {
-    };
+    groups.ewan = { };
     users.ewan = {
       group = "ewan";
       home = "/home/ewan";
@@ -190,8 +189,7 @@ in
       description = "Ewan Green";
       extraGroups = [ "networkmanager" "wheel" "video" ];
     };
-    groups.egreen = {
-    };
+    groups.egreen = { };
     users.egreen = {
       group = "egreen";
       home = "/home/egreen";

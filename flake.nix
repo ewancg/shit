@@ -3,6 +3,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
+    nixvim = {
+        url = "github:nix-community/nixvim";
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,6 +64,7 @@
     , spicetify-nix
     , hyprland
     , nixvirt
+    , nixvim
     , nix-darwin
     , nix-homebrew
     , homebrew-core
@@ -79,6 +85,7 @@
           ./nix/os/configuration.nix
           ./nix/os/machine/system.nix
           home-manager.nixosModules.home-manager
+          nixvim.nixosModules.nixvim
           ./nix/os/home.nix
         ];
       };
@@ -89,6 +96,7 @@
           ./nix/os/configuration.nix
           ./nix/os/elbozo/system.nix
           home-manager.nixosModules.home-manager
+          nixvim.nixosModules.nixvim
           ./nix/os/home.nix
         ];
       };
@@ -100,6 +108,7 @@
           nix-homebrew.darwinModules.nix-homebrew
           home-manager.darwinModules.home-manager
           mac-app-util.darwinModules.default
+          nixvim.nixDarwinModules.nixvim
           ./nix/darwin/home.nix
         ];
       };
