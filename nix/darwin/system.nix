@@ -15,7 +15,7 @@ in
     ./nix-darwin-activation.nix
     ./touch-id.nix
 
-    ../misc/ollama.nix
+    # ../misc/ollama.nix
 
     # Home Manager accommmodations
     ../home/base-accommodations.nix
@@ -48,14 +48,6 @@ in
       options = "--delete-older-than 10d";
     };
   };
-
-  services.ollama = {
-    enable = true;
-  };
-  #services.ollama = {
-  #  enable = true;
-  #};
-
   environment.systemPackages = with pkgs; [
     ## gui
     vscode

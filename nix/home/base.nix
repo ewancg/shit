@@ -2,7 +2,41 @@
 
 { config, lib, pkgs, ... }:
 with pkgs;
+let 
+  pure = pkgs.fishPlugins.pure.overrideAttrs (old: rec {
+    name = "pure-${version}";
+    version = "4.11.2";
+    src = fetchFromGitHub {
+      owner = "pure-fish";
+      repo = "pure";
+      rev = "v${version}";
+      hash = "sha1-+Mt5rTeyRP4yTstOuc+yJZwTVJs=";
+    };
+  });
+in
 {
+  #services.darkman = {
+  #  enable = true;
+  #  darkModeScripts = {
+  #    alacritty-theme = ''
+  #      ln -fs ${config.xdg.configHome}/alacritty/gruvbox_material_medium_dark.toml ${config.xdg.configHome}/alacritty/_active.toml
+  #    '';
+  #  };
+  #  lightModeScripts = {
+  #    alacritty-theme = ''
+  #      ln -fs ${config.xdg.configHome}/alacritty/gruvbox_material_hard_light.toml ${config.xdg.configHome}/alacritty/_active.toml
+  #    '';
+  #  };
+  #  settings = {
+  #    usegeoclue = true;
+  #  };
+  #};
+
+  xdg.configFile.alacritty = {
+    source = ../../dot/config/alacritty;
+    recursive = true;
+  };
+
   home = {
     stateVersion = "24.05";
 
@@ -76,7 +110,10 @@ with pkgs;
       # fishPlugins.fzf-fish # ctrl j file search
       fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
       #fishPlugins.clownfish # "mock" command
-      fishPlugins.pure
+      
+      # out of date as of 5/27/25
+      # fishPlugins.pure
+      pure
     ];# ++ lib.optionals pkgs.stdenv.isLinux [
       #fishPlugins.async-prompt # broken on macos
     #];
@@ -93,7 +130,9 @@ with pkgs;
       ".config/alacritty/alacritty.toml" = {
       text = ''
       terminal.shell = { program = "${lib.getExe pkgs.tmux}", args = ["-u"] }
-      general.live_config_reload = true
+      [general]
+      live_config_reload = true
+      import = "${config.xdg.configHome}/alacritty/_active.toml"
 
       [window]
       dynamic_title = true
@@ -129,8 +168,6 @@ with pkgs;
       key = "Alt"
       mods = "Control"
       chars = "\uE000"
-
-      ${builtins.readFile  ../../dot/config/alacritty/gruvbox_material.toml }
     '';
 
     };
