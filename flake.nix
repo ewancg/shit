@@ -6,27 +6,26 @@
   };
 
   outputs =
-    inputs@{
-    self,
-    nixpkgs,
-    flake-utils,
-    nix-minecraft,
-    ...
-  }: 
-  {
+    inputs@{ self
+    , nixpkgs
+    , flake-utils
+    , nix-minecraft
+    , ...
+    }:
+    {
       nixosConfigurations.minecraft = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = {
           inherit inputs nixpkgs;
         };
-		modules = [
-			./configuration.nix
-#			./minecraft.nix
-			nix-minecraft.nixosModules.minecraft-servers
-			{
-				nixpkgs.overlays = [ inputs.nix-minecraft.overlay ];
-			}
-		];
+        modules = [
+          ./configuration.nix
+          #			./minecraft.nix
+          nix-minecraft.nixosModules.minecraft-servers
+          {
+            nixpkgs.overlays = [ inputs.nix-minecraft.overlay ];
+          }
+        ];
       };
     };
 }
