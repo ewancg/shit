@@ -1,8 +1,13 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with pkgs;
-let 
+let
   pure = pkgs.fishPlugins.pure.overrideAttrs (old: rec {
     name = "pure-${version}";
     version = "4.11.2";
@@ -40,82 +45,86 @@ in
   home = {
     stateVersion = "24.05";
 
-    packages = [
-      # cli tools
-      python3
-      ffmpeg
-      bchunk
-      choose
-      datamash
-      fastfetch
-      file
-      gojq
+    packages =
+      [
+        # cli tools
+        python3
+        ffmpeg
+        bchunk
+        choose
+        datamash
+        fastfetch
+        file
+        gojq
 
-      killall
-      p7zip
-      unzip
-      unrar
+        killall
+        p7zip
+        unzip
+        unrar
 
-      # virt
+        # virt
 
-      # Nix
-      direnv
-      nil
-      nix-index
-      nixpkgs-fmt
+        # Nix
+        direnv
+        nil
+        nix-index
+        nixpkgs-fmt
 
-      # Essential libraries and utilities
-      git
-      gnupg
-      wget
+        # Essential libraries and utilities
+        git
+        gnupg
+        wget
 
-      fish
-      tmux
-      fd
-      fzf
-      tree
+        fish
+        tmux
+        fd
+        fzf
+        tree
 
-      # Whatever
-      imagemagick
+        # Whatever
+        imagemagick
 
-      # Not Windows fonts
-      corefonts
-      fira-code
-      fira-code-symbols
-      font-awesome
-      liberation_ttf
-      jetbrains-mono
-      mplus-outline-fonts.githubRelease
-      noto-fonts
-      open-sans
-      ubuntu-sans-mono
-      ubuntu_font_family
-      ucs-fonts
-      vistafonts
-      zilla-slab
+        # Not Windows fonts
+        corefonts
+        fira-code
+        fira-code-symbols
+        font-awesome
+        liberation_ttf
+        jetbrains-mono
+        mplus-outline-fonts.githubRelease
+        noto-fonts
+        open-sans
+        ubuntu-sans-mono
+        ubuntu_font_family
+        ucs-fonts
+        vistafonts
+        zilla-slab
 
-      # Conflict
-      # proggyfonts
-      # broke 11/23
-      #dina-font
-    ] ++ (with pkgs.nerd-fonts; [
-      # Nerdfonts
-      jetbrains-mono
-      ubuntu-sans
-      ubuntu-mono
-    ]) ++ [
-      fishPlugins.z # common directories
-      fishPlugins.bass # source bash stuff
-      # fishPlugins.fishtape
-      # fishPlugins.fzf-fish # ctrl j file search
-      fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-      #fishPlugins.clownfish # "mock" command
-      
-      # out of date as of 5/27/25
-      # fishPlugins.pure
-      pure
-    ];# ++ lib.optionals pkgs.stdenv.isLinux [
-      #fishPlugins.async-prompt # broken on macos
+        # Conflict
+        # proggyfonts
+        # broke 11/23
+        #dina-font
+      ]
+      ++ (with pkgs.nerd-fonts; [
+        # Nerdfonts
+        jetbrains-mono
+        ubuntu-sans
+        ubuntu-mono
+      ])
+      ++ [
+        fishPlugins.z # common directories
+        fishPlugins.bass # source bash stuff
+        # fishPlugins.fishtape
+        # fishPlugins.fzf-fish # ctrl j file search
+        fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+        #fishPlugins.clownfish # "mock" command
+
+        # out of date as of 5/27/25
+        # fishPlugins.pure
+        pure
+      ];
+    # ++ lib.optionals pkgs.stdenv.isLinux [
+    #fishPlugins.async-prompt # broken on macos
     #];
 
     sessionVariables = {
@@ -127,50 +136,54 @@ in
         recursive = true;
         source = ../../dot/local/bin;
       };
+      ".config/alacritty/_active.toml" = {
+        source = ../../dot/config/alacritty/gruvbox-material-hard-light.toml;
+      };
       ".config/alacritty/alacritty.toml" = {
-      text = ''
-      terminal.shell = { program = "${lib.getExe pkgs.tmux}", args = ["-u"] }
-      [general]
-      live_config_reload = true
-      import = "${config.xdg.configHome}/alacritty/_active.toml"
+        text = ''
+          terminal.shell = { program = "${lib.getExe pkgs.tmux}", args = ["-u"] }
+          [general]
+          live_config_reload = true
+          import = [ "${config.xdg.configHome}/alacritty/_active.toml", "~/.config/alacritty/dynamic-settings.toml" ]
 
-      [window]
-      dynamic_title = true
-      dimensions = { columns = 130, lines = 28 }
-      dynamic_padding = true
-      decorations = "Buttonless"
+          [window]
+          dynamic_title = true
+          dimensions = { columns = 130, lines = 28 }
+          dynamic_padding = true
+          decorations = "Buttonless"
 
-      opacity = 0.91
-      blur = true
+          # opacity = 0.91
+          opacity = 1
+          blur = true
 
-      resize_increments = true
+          resize_increments = true
 
-      [scrolling]
-      history = 0 # Handled by tmux
+          [scrolling]
+          history = 0 # Handled by tmux
 
-      [font]
-      size = 11.5
+          [font]
+          size = 11.5
 
-      normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
-      bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
-      italic = { family = "JetBrainsMono Nerd Font", style = "Regular Italic" }
-      bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
+          normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+          bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+          italic = { family = "JetBrainsMono Nerd Font", style = "Regular Italic" }
+          bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
 
-      [cursor]
-      style = { shape = "Beam", blinking = "Off" }
-      blink_interval = 500
-      thickness = 0.1
+          [cursor]
+          style = { shape = "Beam", blinking = "Off" }
+          blink_interval = 500
+          thickness = 0.1
 
-      [mouse]
-      bindings = [{ mouse = "Right", mods = "None", action = "Copy" }]
+          [mouse]
+          bindings = [{ mouse = "Right", mods = "None", action = "Copy" }]
 
-      [[keyboard.bindings]]
-      key = "Alt"
-      mods = "Control"
-      chars = "\uE000"
-    '';
+          [[keyboard.bindings]]
+          key = "Alt"
+          mods = "Control"
+          chars = "\uE000"
+        '';
 
-    };
+      };
       "dev".source = ../shells;
     };
   };
@@ -310,13 +323,13 @@ in
 
       set -gx pure_enable_nixdevshell true
       set -gx pure_symbol_nixdevshell_prefix '󱄅 '
-      
+
       # too clunky
       set -gx pure_enable_k8s false
       set -gx pure_symbol_k8s_prefix ' '
 
       set -gx pure_enable_aws_profile true
-      
+
       set -gx pure_symbol_git_stash 'stash'
       set -gx PURE_GIT_DOWN_ARROW '↓'
       set -gx PURE_GIT_UP_ARROW '↑'
@@ -330,6 +343,39 @@ in
       set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
       set -gx FZF_LEGACY_KEYBINDS 0
       set -gx FZF_COMPLETE 1
+
+      # scheme-based git shortcuts
+      alias gpush "git push"
+      alias gpull "git pull"
+      function ghpr
+        set -l args
+        set index (contains --index -- -d $argv)
+        if [ $status -eq 0 ]
+          set -a args "--draft"
+          set -e argv[$index]
+        end
+        set idx (contains --index -- -b $argv)
+        if [ $status -eq 0 ]
+          set body_idx (math $idx + 1)
+          if [ $body_idx -le $(count $argv) ]
+            set -a args "--body"
+            set -a args "$argv[$body_idx]"
+            set -e argv[$idx]
+            set -e argv[$idx]
+          else
+            set_color yellow
+            echo "-b provided without body"
+            return
+          end
+        end
+        gh pr create $argv -f $args
+      end
+      function ghc
+        git clone "https://github.com/$argv[1]" $argv[2..-1]
+      end
+      function orgc
+        ghc "discovery-digital/$argv[1]" $argv[2..-1]
+      end
     '';
     functions = {
       nixbuildconf.body = ''
