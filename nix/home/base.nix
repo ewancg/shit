@@ -7,18 +7,19 @@
   ...
 }:
 with pkgs;
-let
-  pure = pkgs.fishPlugins.pure.overrideAttrs (old: rec {
-    name = "pure-${version}";
-    version = "4.11.2";
-    src = fetchFromGitHub {
-      owner = "pure-fish";
-      repo = "pure";
-      rev = "v${version}";
-      hash = "sha1-+Mt5rTeyRP4yTstOuc+yJZwTVJs=";
-    };
-  });
-in
+#let
+# they published a fix https://github.com/pure-fish/pure/releases/tag/v4.11.3
+#  pure = pkgs.fishPlugins.pure.overrideAttrs (old: rec {
+#    name = "pure-${version}";
+#    version = "4.11.2";
+#    src = fetchFromGitHub {
+#      owner = "pure-fish";
+#      repo = "pure";
+#      rev = "v${version}";
+#      hash = "sha1-+Mt5rTeyRP4yTstOuc+yJZwTVJs=";
+#    };
+#  });
+#in
 {
   #services.darkman = {
   #  enable = true;
@@ -114,20 +115,21 @@ in
       fishPlugins.z # common directories
       fishPlugins.bass # source bash stuff
       # fishPlugins.fishtape
-      # fishPlugins.fzf-fish # ctrl j file search
+      # still broken 7/22
+      #fishPlugins.fzf-fish # ctrl j file search
       fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-      #fishPlugins.clownfish # "mock" command
 
-      # out of date as of 5/27/25
-      # fishPlugins.pure
-      pure
+      # was out of date as of 5/27/25
+      # fixed as of 7/22
+      # pure
+      fishPlugins.pure
     ];
     # ++ lib.optionals pkgs.stdenv.isLinux [
     #fishPlugins.async-prompt # broken on macos
     #];
 
     sessionVariables = {
-      EDITOR = "code --wait --new-window";
+      EDITOR = "zeditor --new";
     };
 
     file = {
@@ -205,10 +207,10 @@ in
     # sensibleOnTop = true;
 
     plugins = with tmuxPlugins; [
-      sensible
+      # sensible
       yank
       cpu
-      gruvbox
+      # gruvbox
       #{
       #    plugin = tmuxPlugins.catppuccin;
       #    extraConfig = ''
@@ -239,7 +241,7 @@ in
       #      set -agF status-right "#{E:@catppuccin_status_battery}"
       #    '';
       #  }
-      battery # seeing battery in remote session
+      # battery # seeing battery in remote session
       tmux-powerline # statusbar
       {
         plugin = resurrect;
@@ -248,15 +250,15 @@ in
           set -g @resurrect-capture-pane-contents 'on'
         '';
       }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-boot 'on'
-          set -g @continuum-boot-options 'alacritty,fullscreen'
-          set -g @continuum-save-interval '5' # save every 5 minutes
-        '';
-      }
+      # {
+      #   plugin = continuum;
+      #   extraConfig = ''
+      #     set -g @continuum-restore 'on'
+      #     set -g @continuum-boot 'on'
+      #     set -g @continuum-boot-options 'alacritty,fullscreen'
+      #     set -g @continuum-save-interval '5' # save every 5 minutes
+      #   '';
+      # }
     ];
 
     extraConfig = ''
@@ -265,24 +267,24 @@ in
       unbind C-b
 
       # https://github.com/hasundue/tmux-gruvbox-material/blob/master/dark-soft.conf
-      set -g status-justify "left"
-      set -g status "on"
-      set -g status-left-style "none"
-      set -g message-command-style "fg=#ddc7a1,bg=#5b534d"
-      set -g status-right-style "none"
-      set -g pane-active-border-style "fg=#a89984"
-      set -g status-style "none,bg=#3c3836"
-      set -g message-style "fg=#ddc7a1,bg=#5b534d"
-      set -g pane-border-style "fg=#5b534d"
-      set -g status-right-length "100"
-      set -g status-left-length "100"
-      setw -g window-status-activity-style "none"
-      setw -g window-status-separator ""
-      setw -g window-status-style "none,fg=#ddc7a1,bg=#3c3836"
-      set -g status-left "#[fg=#32302f,bg=#a89984,bold] #S #[fg=#a89984,bg=#3c3836,nobold,nounderscore,noitalics]"
-      set -g status-right "#[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] %Y-%m-%d  %H:%M #[fg=#a89984,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#32302f,bg=#a89984,bold] #h "
-      setw -g window-status-format "#[fg=#ddc7a1,bg=#3c3836] #I #[fg=#ddc7a1,bg=#3c3836] #W "
-      setw -g window-status-current-format "#[fg=#3c3836,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] #I #[fg=#ddc7a1,bg=#5b534d] #W #[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]"
+      # set -g status-justify "left"
+      # set -g status "on"
+      # set -g status-left-style "none"
+      # set -g message-command-style "fg=#ddc7a1,bg=#5b534d"
+      # set -g status-right-style "none"
+      # set -g pane-active-border-style "fg=#a89984"
+      # set -g status-style "none,bg=#3c3836"
+      # set -g message-style "fg=#ddc7a1,bg=#5b534d"
+      # set -g pane-border-style "fg=#5b534d"
+      # set -g status-right-length "100"
+      # set -g status-left-length "100"
+      # setw -g window-status-activity-style "none"
+      # setw -g window-status-separator ""
+      # setw -g window-status-style "none,fg=#ddc7a1,bg=#3c3836"
+      # set -g status-left "#[fg=#32302f,bg=#a89984,bold] #S #[fg=#a89984,bg=#3c3836,nobold,nounderscore,noitalics]"
+      # set -g status-right "#[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] %Y-%m-%d  %H:%M #[fg=#a89984,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#32302f,bg=#a89984,bold] #h "
+      # setw -g window-status-format "#[fg=#ddc7a1,bg=#3c3836] #I #[fg=#ddc7a1,bg=#3c3836] #W "
+      # setw -g window-status-current-format "#[fg=#3c3836,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] #I #[fg=#ddc7a1,bg=#5b534d] #W #[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]"
 
       set -g prefix 
       set -g escape-time 1
@@ -332,9 +334,9 @@ in
       set -gx pure_symbol_git_stash 'stash'
       set -gx PURE_GIT_DOWN_ARROW '↓'
       set -gx PURE_GIT_UP_ARROW '↑'
-      set -gx pure_symbol_reverse_prompt '<><'
-      set -gx pure_symbol_prompt '><>'
-      set -gx pure_enable_single_line_prompt false
+      set -gx pure_symbol_reverse_prompt '..'
+      set -gx pure_symbol_prompt '..'
+      set -gx pure_enable_single_line_prompt true
       set --universal pure_check_for_new_release false
 
       set -gx pure_shorten_prompt_current_directory_length 1
@@ -386,7 +388,7 @@ in
             return
           end
         end
-        gh pr create $argv -f $args
+        gh pr create -f $argv $args
       end
       function ghc
         git clone "https://github.com/$argv[1]" $argv[2..-1]
