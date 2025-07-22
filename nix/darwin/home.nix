@@ -2,7 +2,7 @@
   home-manager = {
 
     backupFileExtension = "backup.darwin";
-    useGlobalPkgs = true;
+    useGlobalPkgs = false;
     useUserPackages = true;
     sharedModules = [
       mac-app-util.homeManagerModules.default
@@ -12,6 +12,7 @@
       # These must be matched inside of where they're used    
       ../home/base.nix
       ./aerospace.nix
+      ./zed.nix
       {
         home = {
           homeDirectory = nixpkgs.lib.mkForce "/Users/egreen";

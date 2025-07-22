@@ -45,84 +45,83 @@ in
   home = {
     stateVersion = "24.05";
 
-    packages =
-      [
-        # cli tools
-        python3
-        ffmpeg
-        bchunk
-        choose
-        datamash
-        fastfetch
-        file
-        gojq
+    packages = [
+      # cli tools
+      python3
+      ffmpeg
+      bchunk
+      choose
+      datamash
+      fastfetch
+      file
+      gojq
 
-        killall
-        p7zip
-        unzip
-        unrar
+      killall
+      p7zip
+      unzip
+      unrar
 
-        # virt
+      # virt
 
-        # Nix
-        direnv
-        nil
-        nix-index
-        nixpkgs-fmt
+      # Nix
+      direnv
+      nil
+      nix-index
+      nixpkgs-fmt
 
-        # Essential libraries and utilities
-        git
-        gnupg
-        wget
+      # Essential libraries and utilities
+      git
+      gnupg
+      wget
 
-        fish
-        tmux
-        fd
-        fzf
-        tree
+      fish
+      tmux
+      fd
+      fzf
+      tree
 
-        # Whatever
-        imagemagick
+      # Whatever
+      imagemagick
 
-        # Not Windows fonts
-        corefonts
-        fira-code
-        fira-code-symbols
-        font-awesome
-        liberation_ttf
-        jetbrains-mono
-        mplus-outline-fonts.githubRelease
-        noto-fonts
-        open-sans
-        ubuntu-sans-mono
-        ubuntu_font_family
-        ucs-fonts
-        vistafonts
-        zilla-slab
+      # Not Windows fonts
+      corefonts
+      fira-code
+      fira-code-symbols
+      font-awesome
+      liberation_ttf
+      jetbrains-mono
+      mplus-outline-fonts.githubRelease
+      noto-fonts
+      open-sans
+      ubuntu-sans-mono
+      ubuntu_font_family
+      ucs-fonts
+      vistafonts
+      zilla-slab
 
-        # Conflict
-        # proggyfonts
-        # broke 11/23
-        #dina-font
-      ]
-      ++ (with pkgs.nerd-fonts; [
-        # Nerdfonts
-        jetbrains-mono
-        ubuntu-sans
-        ubuntu-mono
-      ])
-      ++ [
-        fishPlugins.z # common directories
-        fishPlugins.bass # source bash stuff
-        # fishPlugins.fishtape
-        # fishPlugins.fzf-fish # ctrl j file search
-        fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-        #fishPlugins.clownfish # "mock" command
+      # Conflict
+      # proggyfonts
+      # broke 11/23
+      #dina-font
+    ]
+    ++ (with pkgs.nerd-fonts; [
+      # Nerdfonts
+      jetbrains-mono
+      ubuntu-sans
+      ubuntu-mono
+    ])
+    ++ [
+      fishPlugins.z # common directories
+      fishPlugins.bass # source bash stuff
+      # fishPlugins.fishtape
+      # fishPlugins.fzf-fish # ctrl j file search
+      fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+      #fishPlugins.clownfish # "mock" command
 
-        # out of date as of 5/27/25
-        # fishPlugins.pure
-        pure
-      ];
+      # out of date as of 5/27/25
+      # fishPlugins.pure
+      pure
+    ];
     # ++ lib.optionals pkgs.stdenv.isLinux [
     #fishPlugins.async-prompt # broken on macos
     #];
@@ -344,9 +343,28 @@ in
       set -gx FZF_LEGACY_KEYBINDS 0
       set -gx FZF_COMPLETE 1
 
+      # scheme-based cargo shortcuts
+
+      alias crun "RUST_LOG="debug" cargo r --"
+      alias crelease "RUST_LOG="info" cargo r --release --"
+      alias cb "cargo build"
+      alias ct "cargo test"
+
+      alias sqlxp "cargo sqlx prepare"
+      alias sqlxdd "sqlx database drop"
+      alias sqlxds "sqlx database setup"
+      alias sqlxreset 'string match -q "*y*" "$(printf "%s\n%s" "y" "N" | fzf --header "Clear database at \'$DATABASE_URL\' and prepare queries?" --print-query)" && echo 'y' | sqlxdd  && sqlxds && sqlxp'
+
+      alias llvmc "cargo llvm-cov"
+
       # scheme-based git shortcuts
       alias gpush "git push"
       alias gpull "git pull"
+      alias gc "git commit"
+      alias gcam "git commit -am"
+      alias gri "git rebase -i"
+      alias grh 'string match -q "*y*" "$(printf "%s\n%s" "y" "N" | fzf --header "Hard reset?" --print-query)" && git reset --hard'
+
       function ghpr
         set -l args
         set index (contains --index -- -d $argv)

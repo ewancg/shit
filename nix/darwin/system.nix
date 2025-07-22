@@ -1,4 +1,10 @@
-{ pkgs, inputs, config, lib, ... }:
+{
+  pkgs,
+  inputs,
+  config,
+  lib,
+  ...
+}:
 let
   rust = with pkgs; [
     cargo
@@ -57,7 +63,7 @@ in
 
     # Clouds
     # lens
-  
+
     # depends on vfkit which i cant get
     #podman
 
@@ -67,7 +73,7 @@ in
     # awscli
     awscli2
 
-    # Docker runtime 
+    # Docker runtime
     colima
     # Docker compose plugin
     docker-compose
@@ -97,13 +103,14 @@ in
 
     # python311Packages.python-lsp-server
 
-
     # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
     # gimme-aws-creds
     # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
     inputs.awsctx.defaultPackage.${pkgs.system}
-  ]
-  ;
+
+    # timezones broken by default...
+    tzdata
+  ];
 
   environment.shells = [
     pkgs.fish
@@ -111,7 +118,6 @@ in
     pkgs.bashInteractive
     pkgs.zsh
   ];
-
 
   # Required for home-manager.users.* to work
   users.users.egreen = {
