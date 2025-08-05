@@ -266,33 +266,33 @@ with pkgs;
       set -g default-shell "${lib.getExe fish}"
       unbind C-b
 
-      # https://github.com/hasundue/tmux-gruvbox-material/blob/master/dark-soft.conf
-      # set -g status-justify "left"
-      # set -g status "on"
-      # set -g status-left-style "none"
-      # set -g message-command-style "fg=#ddc7a1,bg=#5b534d"
-      # set -g status-right-style "none"
-      # set -g pane-active-border-style "fg=#a89984"
-      # set -g status-style "none,bg=#3c3836"
-      # set -g message-style "fg=#ddc7a1,bg=#5b534d"
-      # set -g pane-border-style "fg=#5b534d"
-      # set -g status-right-length "100"
-      # set -g status-left-length "100"
-      # setw -g window-status-activity-style "none"
-      # setw -g window-status-separator ""
-      # setw -g window-status-style "none,fg=#ddc7a1,bg=#3c3836"
-      # set -g status-left "#[fg=#32302f,bg=#a89984,bold] #S #[fg=#a89984,bg=#3c3836,nobold,nounderscore,noitalics]"
-      # set -g status-right "#[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] %Y-%m-%d  %H:%M #[fg=#a89984,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#32302f,bg=#a89984,bold] #h "
-      # setw -g window-status-format "#[fg=#ddc7a1,bg=#3c3836] #I #[fg=#ddc7a1,bg=#3c3836] #W "
-      # setw -g window-status-current-format "#[fg=#3c3836,bg=#5b534d,nobold,nounderscore,noitalics]#[fg=#ddc7a1,bg=#5b534d] #I #[fg=#ddc7a1,bg=#5b534d] #W #[fg=#5b534d,bg=#3c3836,nobold,nounderscore,noitalics]"
+      set -g default-terminal 'alacritty'
+      set -as terminal-overrides ",alacritty*:Tc"
+
+      set -g status-justify "left"
+      set -g status "on"
+      set -g status-left-style "none"
+      set -g message-command-style "fg=#ddc7a1,bg=#5b534d"
+      set -g status-right-style "none"
+      set -g pane-active-border-style "fg=#CDC0A2,bg=#CDC0A2"
+      set -g status-style "none,bg=#E9DEB9"
+      set -g message-style "fg=#ddc7a1,bg=#5b534d"
+      set -g pane-border-style "fg=#5b534d"
+      set -g status-right-length "100"
+      set -g status-left-length "100"
+      setw -g window-status-activity-style "none"
+      setw -g window-status-separator ""
+      setw -g window-status-style "fg=#282828,bg=#E9DEB9"
+      set -g status-left "#[fg=#F8F5DA,bg=#2D6476,bold] #S "
+      set -g status-right "#[fg=#5b534d,bg=#E9DEB9] %Y-%m-%d | %H:%M #[fg=#85436F,bg=#CEC1A1,bold] #h "
+      setw -g window-status-format "#[fg=#282828,bg=#E9DEB9] #I#[fg=#282828,bg=#E9DEB9] #{b:pane_current_path} "
+      setw -g window-status-current-format "#[fg=#2D6476,bg=#F8F5DA] #I#[fg=#282828,bg=#F8F5DA] #{b:pane_current_path} "
+
+      set-option -g automatic-rename-format '#{b:pane_current_path}'
 
       set -g prefix 
       set -g escape-time 1
       set -g mouse on
-      set -g default-terminal "tmux-256color"
-
-      # set-window-option -g window-active-style bg=terminal
-      # set-window-option -g window-style bg="#1c1c1c"
 
       set -ga terminal-features "*:hyperlinks".
 
@@ -345,17 +345,22 @@ with pkgs;
       set -gx FZF_LEGACY_KEYBINDS 0
       set -gx FZF_COMPLETE 1
 
+
+      function poll
+        string match -q "*y*" "$(printf "%s\n%s" "y" "N" | fzf --header "$1" --print-query)"
+      end
+
       # scheme-based cargo shortcuts
 
-      alias crun "RUST_LOG="debug" cargo r --"
-      alias crelease "RUST_LOG="info" cargo r --release --"
+      alias crun "RUST_LOG=debug cargo r --"
+      alias crelease "RUST_LOG=info cargo r --release --"
       alias cb "cargo build"
       alias ct "cargo test"
 
       alias sqlxp "cargo sqlx prepare"
       alias sqlxdd "sqlx database drop"
       alias sqlxds "sqlx database setup"
-      alias sqlxreset 'string match -q "*y*" "$(printf "%s\n%s" "y" "N" | fzf --header "Clear database at \'$DATABASE_URL\' and prepare queries?" --print-query)" && echo 'y' | sqlxdd  && sqlxds && sqlxp'
+      alias sqlxreset 'poll "Clear database at \'$DATABASE_URL\' and prepare queries?" && echo 'y' | sqlxdd  && sqlxds && sqlxp'
 
       alias llvmc "cargo llvm-cov"
 
@@ -363,9 +368,12 @@ with pkgs;
       alias gpush "git push"
       alias gpull "git pull"
       alias gc "git commit"
+      alias ga "git add"
+      alias grm "git rm"
+      alias grmf "poll "Force remove $argv?" git rm -rf"
       alias gcam "git commit -am"
       alias gri "git rebase -i"
-      alias grh 'string match -q "*y*" "$(printf "%s\n%s" "y" "N" | fzf --header "Hard reset?" --print-query)" && git reset --hard'
+      alias grh 'poll "Hard reset?" && git reset --hard'
 
       function ghpr
         set -l args
