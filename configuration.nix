@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  memory = "5632";
+  memory = "8192";
   gamePort = 22810;
   #	rconPort = 25575;
   coreProtect = builtins.fetchurl {
@@ -16,15 +16,38 @@ let
   socket = "${socketPath}/computer.sock";
 in
 {
-  system.stateVersion = "25.11";
-  boot.kernelParams = [ "hugepagesz=${memory}" "hugepages=15" ];
-
   imports = [
-    "${modulesPath}/virtualisation/amazon-image.nix"
+    (modulesPath + "/installer/scan/not-detected.nix")
+    (modulesPath + "/profiles/qemu-guest.nix")
+    ./disk.nix
   ];
-  ec2.efi = true;
 
-  environment.systemPackages = with pkgs; [
+  # No longer on EC2
+  # imports = [
+  #   "${modulesPath}/virtualisation/amazon-image.nix"
+  # ];
+  # ec2.efi = true;
+
+  boot.loader.grub = {
+    # no need to set devices, disko will add all devices that have a EF02 partition to the list already
+    # devices = [ ];
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
+  services.openssh.enable = true;
+
+  users.users.root.openssh.authorizedKeys.keys =
+  [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK8BM+H8L3SOsLJrbF+LDjDdNNaNc8K9KVnxdz+eYdzU"
+  ];
+
+  system.stateVersion = "25.11";
+  boot.kernelParams = [ "hugepagesz=${memory}" "hugepages=8" ];
+
+  environment.systemPackages = with pkgs; map lib.lowPrio [
+    curl
+    gitMinimal
+
     tmux
     temurin-bin-24
   ];
