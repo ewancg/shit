@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  memory = 14336;
+  memory = "5632";
   gamePort = 22810;
   #	rconPort = 25575;
   coreProtect = builtins.fetchurl {
@@ -69,6 +69,8 @@ in
         FNL2 = "25d1b66a-e2d7-4884-b9b0-9e77e31cd4c3";
         DrFartus = "46a067f3-ea18-483d-b96b-511c17f77f8d";
         RM_Runix = "9583e2fd-d544-43c1-89e5-4b7dfd8a729f";
+        OneSaladPlease = "1a8b9e68-9748-42de-908e-987203c90a42";
+        oho = "f6d26347-c594-4ef3-b452-0ce42698bb94";
       };
 
       serverProperties = {
