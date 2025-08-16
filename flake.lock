@@ -145,7 +145,20 @@
         "flake-utils": "flake-utils",
         "nix-minecraft": "nix-minecraft",
         "nixos-facter-modules": "nixos-facter-modules",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_2",
+        "secrets": "secrets"
+      }
+    },
+    "secrets": {
+      "locked": {
+        "lastModified": 1755305656,
+        "narHash": "sha256-/biErn2WEf83GjffkYNOIW7wywSEiHSUGcEEaq8EXfw=",
+        "path": "/mnt/c/msys64/home/ewan/shit/secrets",
+        "type": "path"
+      },
+      "original": {
+        "path": "/mnt/c/msys64/home/ewan/shit/secrets",
+        "type": "path"
       }
     },
     "systems": {

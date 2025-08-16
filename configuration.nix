@@ -2,16 +2,13 @@
 , pkgs
 , lib
 , modulesPath
+, secrets
 , ...
 }:
 let
-  memory = "8192";
-  gamePort = 22810;
-  #	rconPort = 25575;
-  coreProtect = builtins.fetchurl {
-    url = "https://ci.ecocitycraft.com/job/CoreProtect/lastSuccessfulBuild/artifact/target/CoreProtect-23.0.jar";
-    sha256 = "sha256:0q39n2p99sakr2h1lv3vwrn5d87zv4a8vj8sgmz8lm82q5l6jhf9";
-  };
+  memoryMiB = secrets.minecraft.memoryMiB;
+  memoryJavaArg = "${builtins.toString memoryMiB}M";
+
   socketPath = "/run/minecraft";
   socket = "${socketPath}/computer.sock";
 in
@@ -21,6 +18,22 @@ in
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
   ];
+
+  security.sudo.wheelNeedsPassword = false;
+
+  # # Secrets
+  # sops.defaultSopsFile = ./secrets.yaml;
+  # # This will automatically import SSH keys as age keys
+  # sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  # # This will generate a new key if the key specified above does not exist
+  # sops.age.generateKey = true;
+  # # This is the actual specification of the secrets.
+  # sops.secrets."rcon-password" = {};
+  #
+  # sops.secrets."secrets.yaml" = {
+  #   restartUnits = [ "minecraft1.service" ];
+  #   # there is also `reloadUnits` which acts like a `reloadTrigger` in a NixOS systemd service
+  # };
 
   # No longer on EC2
   # imports = [
@@ -36,13 +49,11 @@ in
   };
   services.openssh.enable = true;
 
-  users.users.root.openssh.authorizedKeys.keys =
-  [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK8BM+H8L3SOsLJrbF+LDjDdNNaNc8K9KVnxdz+eYdzU"
-  ];
+  users.users.root.openssh.authorizedKeys.keys = [ secrets.adminPubKey ];
+  users.users.minecraft.openssh.authorizedKeys.keys = [ secrets.adminPubKey ];
 
   system.stateVersion = "25.11";
-  boot.kernelParams = [ "hugepagesz=${memory}" "hugepages=8" ];
+  boot.kernelParams = [ "hugepagesz=${builtins.toString memoryMiB}" "hugepages=${builtins.toString (builtins.floor (builtins.div memoryMiB 1024))}" ];
 
   environment.systemPackages = with pkgs; map lib.lowPrio [
     curl
@@ -77,38 +88,66 @@ in
 
       managementSystem.tmux.enable = false;
       managementSystem.systemd-socket.enable = true;
-      # managementSystem.systemd-socket = {
-      #   enable = true;
-      #   stdinSocket.path = server: socket;
-      # };
-
       package = pkgs.paperServers.paper-1_21_7;
 
-      jvmOpts = "-Xms${memory}M -Xmx${memory}M -XX:+UseZGC -XX:+ZGenerational -XX:+UseTransparentHugePages";
+      jvmOpts = "-Xms${memoryJavaArg} -Xmx${memoryJavaArg} -XX:+UseZGC -XX:+ZGenerational -XX:+UseTransparentHugePages";
 
-      whitelist = {
-        EwanGreen4 = "06153161-7095-4a75-8fe9-26a762000325";
-        EwanGreen05 = "0f520ab0-7237-43d5-9440-bbce8c8275eb";
-        FNL2 = "25d1b66a-e2d7-4884-b9b0-9e77e31cd4c3";
-        DrFartus = "46a067f3-ea18-483d-b96b-511c17f77f8d";
-        RM_Runix = "9583e2fd-d544-43c1-89e5-4b7dfd8a729f";
-        OneSaladPlease = "1a8b9e68-9748-42de-908e-987203c90a42";
-        oho = "f6d26347-c594-4ef3-b452-0ce42698bb94";
-      };
+      # Disabled since CoreProtect is enabled
+      # whitelist = secrets.minecraft.whitelist;
 
       serverProperties = {
-        server-port = gamePort;
+        server-port = secrets.minecraft.gamePort;
+
+        enable-rcon = true;
+        rcon-port = secrets.minecraft.rconPort;
+        rcon-password = secrets.minecraft.rconPassword;
+
         motd = "GET READY TO PLAY";
 
         gamemode = "survival";
         simulation-distance = 20;
 
-        white-list = true;
+        white-list = false;
       };
 
-      # symlinks = {
-      #   "plugins/CoreProtect.jar" = coreProtect;
-      # };
+      symlinks = import ./plugins.nix { inherit pkgs; };
+      files = {
+        # "Essentials/config.yml" = {
+        #
+        # };
+
+        "EssentialsDiscord/config.yml".value = {
+          token = secrets.discord.applicationToken;
+          guild = secrets.discord.server.id;
+
+          channels = {
+            primary = secrets.discord.server.generalChannelId;
+            staff = secrets.discord.server.staffChannelId;
+          };
+
+          message-types = {
+            chat =  "primary";
+            join =  "primary";
+            leave = "primary";
+            death = "primary";
+            kick =  "staff";
+            mute =  "staff";
+          };
+        };
+
+        # Permissions will be stored and managed via. database instead of config file.
+        "LuckPerms/config.yml".value = {
+          storage-method = "postgresql";
+          data = {
+            address = "localhost";
+            database = secrets.postgres.database;
+            username = secrets.postgres.user;
+            password = secrets.postgres.password;
+          };
+
+          auto-op = true;
+        };
+      };
     };
   };
 }
