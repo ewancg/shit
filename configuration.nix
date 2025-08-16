@@ -88,7 +88,7 @@ in
 
       managementSystem.tmux.enable = false;
       managementSystem.systemd-socket.enable = true;
-      package = pkgs.paperServers.paper-1_21_7;
+      package = pkgs.paperServers.paper-1_21_8;
 
       jvmOpts = "-Xms${memoryJavaArg} -Xmx${memoryJavaArg} -XX:+UseZGC -XX:+ZGenerational -XX:+UseTransparentHugePages";
 

@@ -118,7 +118,7 @@ nix flake lock --update-input secrets
 ### Plugin Configuration
 The following command will generate a `plugins.nix` with [nix-minecraft](https://github.com/infinidoge/nix-minecraft)-compatible definitions. It takes plugin names from Modrinth to create the plugin definitions used by the main config. The file also acts as a lockfile in that it specifies plugin versions and URLs.
 ```
-nix run github:BatteredBunny/nix-minecraft-plugin-upgrade -- --loader paper --game-version 1.21.7 --project coreprotect --project worldedit --project multiverse-core --project multiverse-inventories --project multiverse-signportals --project essentialsx --project vault --project essentialsx-discord --project luckperms > plugins.nix
+nix run github:BatteredBunny/nix-minecraft-plugin-upgrade -- --loader paper --game-version 1.21.8 --project coreprotect --project worldedit --project multiverse-core --project multiverse-inventories --project multiverse-signportals --project essentialsx --project vault --project essentialsx-discord --project luckperms > plugins.nix
 ```
 
 ### Updating (rebuild)
