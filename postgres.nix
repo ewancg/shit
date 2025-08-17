@@ -12,8 +12,8 @@ in {
 
     # Remote management
     enableTCPIP = true;
-    port = port;
     settings = {
+      port = port;
       listen_addresses = "*";
     };
 
@@ -28,12 +28,8 @@ in {
     }];
 
     authentication = pkgs.lib.mkOverride 10 ''
-      #type database DBuser origin-address auth-method
-      local all       all     trust
-      # ipv4
-      host  all      all     127.0.0.1/32   trust
-      # ipv6
-      host all       all     ::1/128        trust
+      local     all     all     peer
+      host      all     all     all     trust
     '';
 
     initialScript = pkgs.writeText "script" ''

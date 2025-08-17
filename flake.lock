@@ -79,11 +79,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1752718801,
-        "narHash": "sha256-g1cxd979ygXfFygtq/lSq8tWpVZP5S68tWGm0jn6AN4=",
+        "lastModified": 1755309798,
+        "narHash": "sha256-eE0NI54C8Agj7xVpO+lwJG74u6dzID8HWxCP2sA5U/Y=",
         "owner": "Infinidoge",
         "repo": "nix-minecraft",
-        "rev": "830a8af4deff672682db461a002ce7a429d04afe",
+        "rev": "cedd99dd11cb48b4fdf40d69fbcba42acab1b629",
         "type": "github"
       },
       "original": {
@@ -94,11 +94,11 @@
     },
     "nixos-facter-modules": {
       "locked": {
-        "lastModified": 1755092700,
-        "narHash": "sha256-knQiR+/3d9RQR6rIDUORO6ZBITleDKDqS4r/pl327WU=",
+        "lastModified": 1755424785,
+        "narHash": "sha256-OSBoOi9KNOc7R2uVSW9Xmm1gdZXi2k6VQwgxzntqeKg=",
         "owner": "numtide",
         "repo": "nixos-facter-modules",
-        "rev": "7641b72e58c59ebb3c753fc36ff8ee3506ae8e05",
+        "rev": "2d0757d6e392cf0da406c9f51647a0eed68ad550",
         "type": "github"
       },
       "original": {
@@ -125,11 +125,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1748190013,
-        "narHash": "sha256-R5HJFflOfsP5FBtk+zE8FpL8uqE7n62jqOsADvVshhE=",
+        "lastModified": 1755186698,
+        "narHash": "sha256-wNO3+Ks2jZJ4nTHMuks+cxAiVBGNuEBXsT29Bz6HASo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "62b852f6c6742134ade1abdd2a21685fd617a291",
+        "rev": "fbcf476f790d8a217c3eab4e12033dc4a0f6d23c",
         "type": "github"
       },
       "original": {
@@ -151,8 +151,8 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1755305656,
-        "narHash": "sha256-/biErn2WEf83GjffkYNOIW7wywSEiHSUGcEEaq8EXfw=",
+        "lastModified": 1755463774,
+        "narHash": "sha256-pjxbJytvOxJ3jXUaH6swdSMBd1O93taQtEfXgvQsJkY=",
         "path": "/mnt/c/msys64/home/ewan/shit/secrets",
         "type": "path"
       },

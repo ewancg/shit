@@ -37,15 +37,13 @@
       nixosConfigurations.ewangreen = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         specialArgs = {
-          # inherit (secrets) secrets inputs nixpkgs;
-          inherit inputs nixpkgs;
-          secrets = builtins.trace "SECRETS VALUE: ${builtins.toJSON secrets.secrets}"
-                    secrets.secrets;
+          inherit (secrets) secrets inputs nixpkgs;
         };
         modules = [
           disko.nixosModules.disko
           ./configuration.nix
           ./postgres.nix
+          ./backups.nix
           nix-minecraft.nixosModules.minecraft-servers
           {
             nixpkgs.overlays = [ inputs.nix-minecraft.overlay ];

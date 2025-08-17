@@ -47,7 +47,13 @@ in
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      # Allow inheriting remote accessor's relevant variables
+      AcceptEnv = "LANG LC_* MCA_*";
+    };
+  };
 
   users.users.root.openssh.authorizedKeys.keys = [ secrets.adminPubKey ];
   users.users.minecraft.openssh.authorizedKeys.keys = [ secrets.adminPubKey ];
@@ -112,11 +118,35 @@ in
 
       symlinks = import ./plugins.nix { inherit pkgs; };
       files = {
-        # "Essentials/config.yml" = {
-        #
-        # };
+        "config/Essentials/config.yml".value = {
+          notify-no-new-mail = false;
+          per-player-locale = true;
 
-        "EssentialsDiscord/config.yml".value = {
+          message-colors = {
+            primary = "#AEEFD1";
+            secondary = "#FFAFAF";
+          };
+
+          # Name related
+          ops-name-color = "none";
+          max-nick-length = "25";
+          nickname-prefix = "";
+          real-names-on-list = true;
+
+          auto-afk-timeout = 10;
+          broadcast-afk-message = false;
+          send-info-after-death = true;
+
+          update-check = false;
+
+          backup = {
+            interval = secrets.backup.intervalMinutes;
+            always-run = false;
+            command = "/srv/minecraft/backup";
+          };
+        };
+
+        "config/EssentialsDiscord/config.yml".value = {
           token = secrets.discord.applicationToken;
           guild = secrets.discord.server.id;
 
@@ -136,7 +166,8 @@ in
         };
 
         # Permissions will be stored and managed via. database instead of config file.
-        "LuckPerms/config.yml".value = {
+        "config/LuckPerms/config.yml".value = {
+          server = "computer1";
           storage-method = "postgresql";
           data = {
             address = "localhost";
@@ -144,10 +175,56 @@ in
             username = secrets.postgres.user;
             password = secrets.postgres.password;
           };
-
           auto-op = true;
         };
       };
     };
   };
+
+  # Server monitor script (two-pane input/output with tmux)
+  systemd.tmpfiles.rules = [
+    "d /run/minecraft 0777 minecraft minecraft -"
+    "f /run/minecraft/monitor 0755 minecraft - - ${pkgs.writeScript "mc-monitor" ''
+      #!/usr/bin/env bash
+      if [ ! -d "/srv/minecraft/$1" ]; then
+          [[ -z "$1" ]] && echo "No Minecraft server name provided." || echo "No Minecraft server with the given name."
+          exit
+      fi
+
+      SESSION="mc-monitor-$1"
+      tmux kill-session -t "$SESSION" 2>/dev/null
+
+      # logs in the top pane
+      tmux new-session -d -s "$SESSION" "bash -c 'printf \"\e]0;output\a\"; exec journalctl --output cat -f -u \"*$1*\"'"
+      # input in the bottom pane
+      tmux split-window -v -t "$SESSION" "bash -c '
+        printf \"\e]0;input\a\";
+        stty sane;
+        printf \"\e[2K\r\";
+        while true; do
+          trap \"exit 0\" INT;
+          IFS= read -er cmd;
+          printf \"\e[2K\r\";
+          echo \"\$cmd\" > /run/minecraft/$1.stdin;
+        done
+      '"
+      tmux resize-pane -t "$SESSION:0.1" -y 1
+
+      tmux set-option -t "$SESSION" pane-border-status top
+      tmux set-option -t "$SESSION" pane-border-format "┤ #{pane_title} ├"
+
+      tmux set-option -t "$SESSION" status on
+      tmux set-option -t "$SESSION" status-interval 60
+      tmux set-option -t "$SESSION" status-left-length 0
+      tmux set-option -t "$SESSION" status-right-length 0
+      tmux set-option -t "$SESSION" status-format[0] "#[align=centre]#S"
+
+      # session termination
+      tmux set-hook -t "$SESSION" pane-exited "kill-session -t $SESSION"
+
+      tmux set-option -t "$SESSION" mouse off
+
+      tmux attach -t "$SESSION"
+    ''} $@"
+  ];
 }
