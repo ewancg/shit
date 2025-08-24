@@ -24,20 +24,18 @@ in {
 
     ensureUsers = [{
       name = user;
-      ensureClauses.superuser = true;
     }];
 
+    # only minecraft itself and SSH tunnels
     authentication = pkgs.lib.mkOverride 10 ''
-      local     all     all     peer
-      host      all     all     all     trust
+      local     ${database}       all           trust
+      host      ${database}       ${user}       127.0.0.1/32        trust
+      host      ${database}       ${user}       ::1/128             trust
     '';
 
     initialScript = pkgs.writeText "script" ''
-      alter user ${user} with password ${password};
+      alter user postgres with password '${password}';
+      alter user ${user} with password '${password}';
     '';
-  };
-
-  networking.firewall = {
-    allowedTCPPorts = [ port ];
   };
 }

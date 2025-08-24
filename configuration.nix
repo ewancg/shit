@@ -6,8 +6,8 @@
 , ...
 }:
 let
-  memoryMiB = secrets.minecraft.memoryMiB;
-  memoryJavaArg = "${builtins.toString memoryMiB}M";
+  totalMinecraftMemoryMiB = lib.lists.foldl' (acc: server: acc + server.memoryMiB) 0 (lib.attrValues secrets.minecraft.servers);
+  serverNames = [ "computer1" "family" ];
 
   socketPath = "/run/minecraft";
   socket = "${socketPath}/computer.sock";
@@ -59,7 +59,7 @@ in
   users.users.minecraft.openssh.authorizedKeys.keys = [ secrets.adminPubKey ];
 
   system.stateVersion = "25.11";
-  boot.kernelParams = [ "hugepagesz=${builtins.toString memoryMiB}" "hugepages=${builtins.toString (builtins.floor (builtins.div memoryMiB 1024))}" ];
+  boot.kernelParams = [ "hugepagesz=${builtins.toString totalMinecraftMemoryMiB}" "hugepages=${builtins.toString (builtins.floor (builtins.div totalMinecraftMemoryMiB 1024))}" ];
 
   environment.systemPackages = with pkgs; map lib.lowPrio [
     curl
@@ -86,99 +86,7 @@ in
     #user = "root";
     user = "minecraft";
 
-    servers.computer1 = {
-      enable = true;
-      autoStart = true;
-      restart = "no";
-      enableReload = true;
-
-      managementSystem.tmux.enable = false;
-      managementSystem.systemd-socket.enable = true;
-      package = pkgs.paperServers.paper-1_21_8;
-
-      jvmOpts = "-Xms${memoryJavaArg} -Xmx${memoryJavaArg} -XX:+UseZGC -XX:+ZGenerational -XX:+UseTransparentHugePages";
-
-      # Disabled since CoreProtect is enabled
-      # whitelist = secrets.minecraft.whitelist;
-
-      serverProperties = {
-        server-port = secrets.minecraft.gamePort;
-
-        enable-rcon = true;
-        rcon-port = secrets.minecraft.rconPort;
-        rcon-password = secrets.minecraft.rconPassword;
-
-        motd = "GET READY TO PLAY";
-
-        gamemode = "survival";
-        simulation-distance = 20;
-
-        white-list = false;
-      };
-
-      symlinks = import ./plugins.nix { inherit pkgs; };
-      files = {
-        "config/Essentials/config.yml".value = {
-          notify-no-new-mail = false;
-          per-player-locale = true;
-
-          message-colors = {
-            primary = "#AEEFD1";
-            secondary = "#FFAFAF";
-          };
-
-          # Name related
-          ops-name-color = "none";
-          max-nick-length = "25";
-          nickname-prefix = "";
-          real-names-on-list = true;
-
-          auto-afk-timeout = 10;
-          broadcast-afk-message = false;
-          send-info-after-death = true;
-
-          update-check = false;
-
-          backup = {
-            interval = secrets.backup.intervalMinutes;
-            always-run = false;
-            command = "/srv/minecraft/backup";
-          };
-        };
-
-        "config/EssentialsDiscord/config.yml".value = {
-          token = secrets.discord.applicationToken;
-          guild = secrets.discord.server.id;
-
-          channels = {
-            primary = secrets.discord.server.generalChannelId;
-            staff = secrets.discord.server.staffChannelId;
-          };
-
-          message-types = {
-            chat =  "primary";
-            join =  "primary";
-            leave = "primary";
-            death = "primary";
-            kick =  "staff";
-            mute =  "staff";
-          };
-        };
-
-        # Permissions will be stored and managed via. database instead of config file.
-        "config/LuckPerms/config.yml".value = {
-          server = "computer1";
-          storage-method = "postgresql";
-          data = {
-            address = "localhost";
-            database = secrets.postgres.database;
-            username = secrets.postgres.user;
-            password = secrets.postgres.password;
-          };
-          auto-op = true;
-        };
-      };
-    };
+    servers = lib.genAttrs serverNames (name: import (./mc-servers + "/${name}/config.nix") { inherit pkgs config secrets; });
   };
 
   # Server monitor script (two-pane input/output with tmux)

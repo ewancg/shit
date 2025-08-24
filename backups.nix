@@ -13,11 +13,11 @@ in {
 
     "f /run/minecraft/backup 0755 minecraft - - ${pkgs.writeScript "mc-backup" ''
       #!/usr/bin/env bash
-      cd /srv/minecraft
+      cd /run/minecraft
 
       # restore with
       # psql -X -f perms_database postgres
-      pg_dumpall > perms_database
+      "${pkgs.postgresql}/bin/pg_dumpall" > perms_database
 
       ${git} add -A
       ${git} commit -m "$(TZ="${secrets.backup.timezone}" date "+%b %d %y, %r %Z")"
@@ -35,8 +35,6 @@ in {
     ''}"
 
     "f /srv/minecraft/.gitignore 0644 minecraft - - ${pkgs.writeText "mc-backup-gitignore" ''
-      backup
-      monitor
       session.lock
     ''}"
 
@@ -50,9 +48,8 @@ in {
 
           cd /srv/minecraft
           if [ ! -d ".git" ]; then
-            ${git} init
+            ${git} init -b ${secrets.backup.gitBranch}
             ${git} remote add origin ${secrets.backup.gitRepo}
-            ${git} switch ${secrets.backup.gitBranch}
             ${git} pull
           fi
         '';

@@ -3,3 +3,6 @@
 
 # Secrets
 secrets/
+
+# no need to be public tbh
+*.envrc

@@ -1,0 +1,244 @@
+#!/usr/bin/env fish
+
+# mc-admin; remote management tool for a Minecraft server
+
+# ---
+
+function help
+    printf "usage: $(status basename) [command] [...] \n%s" '
+command:
+
+  minecraft commands:
+    [i | interactive]
+      gain interactive access to the Minecraft server
+    [R | read]
+      show latest Minecraft output until exited
+    [W | write] ...
+      send following input as a Minecraft server command
+    [r | dump]
+      dump Minecraft logs (for grep, etc)
+    [b | backup]
+      create a backup of all Minecraft worlds and the permissions DB with MCA_BACKUP_SCRIPT
+    [restart]
+      restart the server (a successful rebuild should reload all possible configs)
+
+  system commands:
+    [e | enter]
+        gain interactive access to the remote system
+    [s | system] ...
+        send following input as a command to the remote system
+
+  deployment commands:
+    [install] [--test]
+        install MCA_DERIVATION_NAME from the current directory\'s flake onto the remote system
+        --test validates the hardware configuration under local QEMU instead of deploying
+    [rebuild]
+        update inputs and perform nixos-rebuild on the remote server with MCA_DERIVATION_NAME from
+        the current directory\'s flake
+    [update-config]
+        update secrets flake input
+    [update-inputs]
+        update external inputs
+    [update-plugins] [--stdout]
+        creates a new plugins.nix for MCA_SERVER_NAME from MCA_PLUGINS and MCA_SERVER_VERSION
+        --stdout ignores MCA_SERVER_NAME and will output directly instead of creating a file
+
+  miscellaneous commands:
+    [h | help | *]
+        show this text
+    [v | version]
+        show version info
+
+env:
+    MCA_SSH_HOST
+        remote hostname
+    MCA_SSH_PORT
+        remote SSH port
+    MCA_SERVER_NAME
+        name of the Minecraft server instance
+    MCA_SERVER_VERSION
+        version of the Minecraft server instance
+    MCA_PLUGINS
+        list of Modrinth plugin project names, for update-plugins
+
+    MCA_SOURCE_BASEDIR
+        the local directory where the remote\'s NixOS config is stored, to prevent accidental
+        deployments from a different source
+    MCA_DERIVATION_NAME
+        name of the Nix derivation containing the Minecraft installation\'s lib.nixosSystem
+    MCA_BACKUP_SCRIPT
+        location of the backup script on the remote server (for backup)
+    MCA_BACKUP_SCRIPT
+        location of the monitor script on the remote server (for interactive)
+'
+end
+
+function error
+    argparse --ignore-unknown --stop-nonopt 'h' -- $argv; or exit
+    [ ! -z "$_flag_h" ] && set help "$(help)" '\n'
+
+    printf "%s: %s\n%s" "$(set_color red)error$(set_color normal)" "$argv" "$help"
+    exit
+end
+
+function assert_env
+    [ -n "$$argv[1]" ] || error "environment variable $argv[1] is required"
+    set $argv[1] (string trim "$$argv[1]")
+end
+
+function assert_flake
+    assert_env MCA_SOURCE_BASEDIR
+    assert_env MCA_DERIVATION_NAME
+
+    [ $(string match -r "[$MCA_SOURCE_BASEDIR].*" "$PWD") ] || error "not in source directory (MCA_SOURCE_BASEDIR is '$MCA_SOURCE_BASEDIR')"
+    [ ! -f "$MCA_SOURCE_BASEDIR/flake.nix" ] && error "no flake detected"
+end
+
+function execute_ssh
+    assert_env MCA_SSH_HOST
+    assert_env MCA_SSH_PORT
+
+    ssh -o LogLevel=QUIET -o ServerAliveInterval=60 -o "SendEnv TERM" $MCA_SSH_HOST -p $MCA_SSH_PORT -t $argv
+end
+
+switch $argv[1];
+case 'i' 'interactive'
+    assert_env MCA_SERVER_NAME
+    assert_env MCA_MONITOR_SCRIPT
+    echo "Connecting to $MCA_SERVER_NAME..."
+    execute_ssh "$MCA_MONITOR_SCRIPT $MCA_SERVER_NAME"
+
+case 'R' 'read'
+    assert_env MCA_SERVER_NAME
+    execute_ssh "journalctl --output cat -fxeu '*$MCA_SERVER_NAME*'"
+
+case 'W' 'write'
+    [ -z "$argv[2]" ] && error "'write' requires a command"
+    assert_env MCA_SERVER_NAME
+    execute_ssh "printf \"$argv[2..-1]\n\" > /run/minecraft/$MCA_SERVER_NAME.stdin"
+
+case 'r' 'dump'
+    assert_env MCA_SERVER_NAME
+    execute_ssh "journalctl --output cat -xeu '*$MCA_SERVER_NAME*'"
+
+case 'b' 'backup'
+    assert_env MCA_BACKUP_SCRIPT
+    execute_ssh "$MCA_BACKUP_SCRIPT"
+
+case 'e' 'enter'
+    set _continue true
+    while $_continue
+        set _errfile (mktemp)
+        execute_ssh 2> $_errfile
+        set _status $status
+        switch "$_status"
+        case 0 2 130
+            set _continue false
+
+        case '*'
+            cat $_errfile | string trim | read _err
+            [ -z "$_err" ] || set _err (printf ":\n\t%s" "$_err" | string collect)
+            printf "%s (%s)%s\n" "Remote host disconnected" "$_status" "$_err"
+            read --nchars 1 -l response --prompt-str="Reconnect? (Y/n) " || return 1
+            switch $response
+                case '' ' ' y Y
+                    set _continue true
+                case n N
+                    set _continue false
+                case '*'
+                    error "unrecognized input"
+            end
+
+        end
+    end
+
+case 's' 'system'
+    [ -z "$argv[2]" ] && error "'system' requires a command"
+    execute_ssh "$argv[2..-1]"
+
+case 'restart'
+    assert_env MCA_SERVER_NAME
+    execute_ssh systemctl restart "*computer1*"
+
+case 'update-inputs'
+    # Get all inputs except matching patterns and update them
+    nix --option warn-dirty false flake metadata  --quiet --json | jq -r --arg regex "^(secrets)(_[0-9]+)?\$" \
+      '.locks.nodes | keys[] | select(test($regex) | not)'
+
+case 'update-config'
+    nix flake update secrets
+
+case 'rebuild'
+    assert_flake
+    assert_env MCA_SSH_HOST
+    assert_env MCA_SSH_PORT
+
+    NIX_SSHOPTS="-p $MCA_SSH_PORT" nixos-rebuild --flake "$MCA_SOURCE_BASEDIR#$MCA_DERIVATION_NAME" --target-host "$MCA_SSH_HOST" --build-host "$MCA_SSH_HOST"  switch --fast
+    execute_ssh "systemd-tmpfiles --clean && systemd-tmpfiles --create"
+
+case 'update-plugins'
+    assert_env MCA_SERVER_VERSION
+
+    # it's populated and contains multiple items, but it's not a fish list
+    if [ -z "$(set -q MCA_PLUGINS[2])" ] && [ "$(string match '* *' "$MCA_PLUGINS")" ]
+        set _plugins "$(string trim "$MCA_PLUGINS")"
+        set -e MCA_PLUGINS
+        set MCA_PLUGINS "$(string split ' ' --no-empty -- $_plugins)"
+    end
+
+    assert_env MCA_PLUGINS
+
+    set -e _projects
+    set _pipe_to /dev/stdout
+
+    for i in $MCA_PLUGINS
+        set -a _projects --project $i
+    end
+
+    if [ -z "$argv[2]" ] || [ "$argv[2]" != "--stdout" ]
+        assert_flake
+        assert_env MCA_SERVER_NAME
+        assert_env MCA_SOURCE_BASEDIR
+        set _pipe_to "$MCA_SOURCE_BASEDIR/mc-servers/$MCA_SERVER_NAME/plugins.nix"
+        printf "%s:\n  %s\n" "Updating plugins for '$MCA_SERVER_NAME' on $MCA_SERVER_VERSION" "$(string join ', ' $MCA_PLUGINS)"
+    end
+
+    nix run github:BatteredBunny/nix-minecraft-plugin-upgrade -- --loader paper --game-version "$MCA_SERVER_VERSION" $_projects > $_pipe_to
+
+
+case 'install'
+    assert_flake
+    set -q SSHPASS[1] || set SSHPASS ""
+
+    read --nchars 1 -l response --prompt-str="this will overwrite all of your worlds and stored permissions. continue? (y/n)" || return 1
+    switch $response
+        case y Y
+            echo "installing Minecraft NixOS image from working directory"
+        case n N
+            return 1
+        case '*'
+            error "unrecognized input"
+            return 1
+    end
+
+    nix flake update
+    set anywhere nix run github:nix-community/nixos-anywhere -- --flake "$MCA_SOURCE_BASEDIR#$MCA_DERIVATION_NAME" --env-password --target-host "$MCA_SSH_HOST" -p "$MCA_SSH_PORT"
+    echo $anywhere --generate-hardware-config nixos-facter ./facter.json
+    if [ $argv[2] == "--test" ]
+        echo $anywhere --vm-test
+    else
+        echo $anywhere
+    end
+
+case 'h' 'help'
+    help
+    exit
+
+case 'v' 'version'
+    echo "$(status basename) 1.0"
+    exit
+
+case '*'
+    error -h "unknown command"
+
+end

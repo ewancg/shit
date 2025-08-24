@@ -21,28 +21,43 @@ All obvious configuration options for the remote server will be sourced from an 
 {
   outputs = { self }: {
     secrets = {
-      # Your SSH public key
-      adminPubKey = "SSH pub key; string";
-      minecraft = {
-        memoryMiB = integer;
-        gamePort = integer;
-        rconPort = integer;
-        rconPassword = "string";
+      adminPubKey = "string";
 
-        ops = {
-          # Any amount of users
-          UserName = "UUID; string"
+      backup = {
+        timezone = "timezone";
+        intervalMinutes = integer;
+        gitUsername = "string";
+        gitEmail = "string";
+        gitBranch = "string";
+        gitRepo = "string";
+        gitAuth = "username:password";
+      };
+
+      tailscale = {
+        oauthClientID = "string";
+        oauthClientSecret = "string";
+      };
+
+      minecraft = {
+        servers = {
+          name = {
+            memoryMiB = integer;
+            gamePort = integer;
+
+            whitelist = {
+              Name = "uuid";
+              ...
+            };
+          };
           ...
         };
 
-        whitelist = {
-          # Any amount of users
-          UserName = "UUID; string"
+        ops = {
+          Name = "uuid";
           ...
         };
       };
 
-      # Required for EssentialsX Discord bridge
       discord = {
         applicationToken = "string";
         server = {
@@ -53,7 +68,6 @@ All obvious configuration options for the remote server will be sourced from an 
         };
       };
 
-      # Storage backend for LuckPerms, with remote access
       postgres = {
         port = integer;
         user = "string";

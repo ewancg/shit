@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754971456,
-        "narHash": "sha256-p04ZnIBGzerSyiY2dNGmookCldhldWAu03y0s3P8CB0=",
+        "lastModified": 1755499523,
+        "narHash": "sha256-Bh+S72huB2jFEPsOGlFXKFn7/VaV864IqxOcqaZZue0=",
         "owner": "nix-community",
         "repo": "disko",
-        "rev": "8246829f2e675a46919718f9a64b71afe3bfb22d",
+        "rev": "f64ab1525b34d5d9202f5801db36f364075abde1",
         "type": "github"
       },
       "original": {
@@ -79,11 +79,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1755309798,
-        "narHash": "sha256-eE0NI54C8Agj7xVpO+lwJG74u6dzID8HWxCP2sA5U/Y=",
+        "lastModified": 1755483699,
+        "narHash": "sha256-dj5cNx+WvDv5fbsE4h/Q6UuTttc/BHBE3BVGVn2TUNk=",
         "owner": "Infinidoge",
         "repo": "nix-minecraft",
-        "rev": "cedd99dd11cb48b4fdf40d69fbcba42acab1b629",
+        "rev": "aa5ed59e2570c7adfd6f5ca6ec08fff3140d7565",
         "type": "github"
       },
       "original": {
@@ -151,8 +151,8 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1755463774,
-        "narHash": "sha256-pjxbJytvOxJ3jXUaH6swdSMBd1O93taQtEfXgvQsJkY=",
+        "lastModified": 1755994403,
+        "narHash": "sha256-N1ieoBdYuNWWMXVaol5LD2jNhoH2u3MhAeZck1XVjqo=",
         "path": "/mnt/c/msys64/home/ewan/shit/secrets",
         "type": "path"
       },
