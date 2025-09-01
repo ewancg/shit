@@ -3,24 +3,7 @@
 { pkgs, ... }:
 with pkgs;
 let
-  # graal-pkgs = import (builtins.fetchTarball {
-  #       sha256 = "1l2hq1n1jl2l64fdcpq3jrfphaz10sd1cpsax3xdya0xgsncgcsi";
-  #       url = "https://github.com/NixOS/nixpkgs/archive/9957cd48326fe8dbd52fdc50dd2502307f188b0d.tar.gz";
-  #   }) {};
   graalvm-ce = pkgs.graalvm-ce;
-
-  vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
-
-  # for Wayland
-  my-vlc = (symlinkJoin {
-    name = "my-vlc";
-    paths = [ vlc ];
-    buildInputs = [ makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/vlc \
-        --unset DISPLAY
-    '';
-  });
 
   my-discord = (symlinkJoin {
     name = "my-discord";
@@ -37,15 +20,15 @@ let
   });
 
   # Ugly hack. Not needed anymore
-  # my-ts3client = (symlinkJoin {
-  #   name = "my-ts3client";
-  #   paths = [ teamspeak_client ];
-  #   buildInputs = [ makeWrapper ];
-  #   postBuild = ''
-  #     wrapProgram $out/bin/ts3client \
-  #       --set QT_SCALE_FACTOR "1.5"
-  #   '';
-  # });
+  my-ts3client = (symlinkJoin {
+    name = "my-ts3client";
+    paths = [ teamspeak_client ];
+    buildInputs = [ makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/ts3client \
+        --set QT_SCALE_FACTOR "1.35"
+    '';
+  });
 
   my-prismlauncher = (prismlauncher.override {
     # deprecated https://github.com/NixOS/nixpkgs/commit/2a5017a5550a32dfdf4000bd8fa2fea89e6a0f95
@@ -60,12 +43,6 @@ let
   my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix { 
     withMinecraftPatch = true; 
   };
-
-  my-obs = (pkgs.wrapOBS {
-    plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval
-    ];
-  });
 
   qtcreator-fhs = (pkgs.buildFHSEnv {
     name = "qtcreator-fhs";
@@ -91,11 +68,8 @@ in
     # Communication
     my-discord
     ripcord
-    #my-ts3client
-    teamspeak_client
-    thunderbird
-    teams-for-linux
-    slack
+    my-ts3client
+    #teamspeak_client
 
     # Games
     taterclient-ddnet
@@ -111,22 +85,9 @@ in
     steam
 
     # Multimedia
-    mpv
-    my-vlc
-    spotify
     spot
     psst
     strawberry
-    vlc-plugin-pipewire
-    okular
-    photoflare
-
-    easyeffects
-    alsa-scarlett-gui
-    headsetcontrol
-    pwvucontrol
-    qpwgraph
-
     nicotine-plus
     spotifyd
     transmission_4
@@ -137,19 +98,10 @@ in
     ptcollab
     vmpk
 
-    my-obs
-    normcap # OCR
-
     # Productivity, misc.
     protonvpn-gui
-    zerotierone
-
-    blueman
-    firefox
-    fsearch
-    gimp
-    nautilus
-    obsidian
+    protonmail-bridge
+    protonmail-desktop
 
     gnome-boxes
 
@@ -157,8 +109,7 @@ in
 
     qdirstat
 
-    # Java
-    # graal-pkgs
+    zed-editor
   ];
 
   xdg.configFile = {
@@ -169,11 +120,5 @@ in
     "QtProject/qtcreator/styles".source = ../../dot/config/qtcreator/styles;
     "QtProject/qtcreator/themes".source = ../../dot/config/qtcreator/themes;
     #"QtProject/qtcreator/.clang-format".source = ../../dot/.clang-format;
-  };
-
-  # VSCode
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ firefox pkg-config ]);
   };
 }

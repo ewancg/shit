@@ -57,15 +57,20 @@ label.module, #tray {
     border-color: @red;
 }
 
-#mpris.spotify {
+#mpris.spotify,
+#mpris.spot {
     color: @green;
 }
-#mpris.firefox, #mpris.vlc {
+
+#mpris.firefox,
+#mpris.vlc {
     color: @peach;
 }
+
 #mpris.mpv {
     color: @mauve;
 }
+
 #mpris.default {
     color: @blue;
 }

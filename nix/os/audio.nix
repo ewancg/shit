@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -18,15 +17,14 @@
       "monitor.alsa.properties" = {
         # Use ALSA-Card-Profile devices. They use UCM or the profile
         # configuration to configure the device and mixer settings.
-        alsa.use-acp = true;
+        # alsa.use-acp = true;
         # Use UCM instead of profile when available. Can be disabled
         # to skip trying to use the UCM profile.
-        # "alsa.use-ucm" = true;
+        "alsa.use-ucm" = true;
       };
     };
 
     bluetoothEnhancements = {
-
       # disable switching to duplex mode
        "module-allow-priority" = false;
        "bluetooth.autoswitch-to-headset-profile" = {
@@ -84,8 +82,10 @@
           "bap_source"
           "hsp_hs"
           "hsp_ag"
-          #"hfp_hf"
-          #"hfp_ag"
+
+          # comment to enable duplex mode
+          "hfp_hf"
+          "hfp_ag"
         ];
       };
     };

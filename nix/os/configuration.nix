@@ -29,6 +29,7 @@ in
     # Home Manager accommodations
     ../home/desktop-accommodations.nix
     ../home/apps-accommodations.nix
+    ../home/office-accommodations.nix
     ../home/base-accommodations.nix
   ];
 
@@ -41,7 +42,7 @@ in
     # linux/system
     libnotify
     at
-    kde-cli-tools
+    kdePackages.kde-cli-tools
     patchelf
     bridge-utils
     libvirt
@@ -84,6 +85,12 @@ in
     variant = "colemak";
   };
 
+  services.seatd = {
+    enable = true;
+  };
+  
+  services.cachix-agent.enable = true;
+
   nix = {
     package = pkgs.nixVersions.stable;
 
@@ -92,6 +99,10 @@ in
     '';
     #settings.experimental-features = [ "nix-command" "flakes" ];
 
+    settings = {
+          substituters = ["https://hyprland.cachix.org"];
+          trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    };
     optimise = {
       automatic = true;
       dates = [ "03:45" ];
@@ -103,21 +114,21 @@ in
     };
   };
 
-  fileSystems."/mnt/music" = {
-    device = "ewan@slave.local:/mnt/music";
-    fsType = "sshfs";
-    options = [
-      "reconnect"
-      "nodev"
-      "nofail"
-      "noatime"
-      "allow_other"
-      "transform_symlinks"
-      "ServerAliveInterval=1"
-      "Compression=no" # Required, for some reason
-      "IdentityFile=/home/ewan/.ssh/id_ed25519"
-    ];
-  };
+  # fileSystems."/mnt/music" = {
+  #   device = "ewan@slave.local:/mnt/music";
+  #   fsType = "sshfs";
+  #   options = [
+  #     "reconnect"
+  #     "nodev"
+  #     "nofail"
+  #     "noatime"
+  #     "allow_other"
+  #     "transform_symlinks"
+  #     "ServerAliveInterval=1"
+  #     "Compression=no" # Required, for some reason
+  #     "IdentityFile=/home/ewan/.ssh/id_ed25519"
+  #   ];
+  # };
 
   # https://nixos.wiki/wiki/MPD#PipeWire
   #services.mpd.user = "ewan";
@@ -136,8 +147,9 @@ in
   security.pam.u2f.enable = true;
   #security.pam.u2f.authFile = /etc/u2f_mappings;
   security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
-  #security.pam.u2f.interactive = true;
-
+  security.pam.u2f.settings.interactive = false;
+  security.pam.u2f.control = "sufficient";
+  
   services.displayManager = {
     enable = true;
 
@@ -266,7 +278,11 @@ in
   #swapDevices = [{ device = "/var/swapfile"; size = 64 * 1024; }];
   #boot.resumeDevice = "/dev/nvme1n1p1";
   # hibernate
-  boot.kernelParams = [ "mem_sleep_default=deep" ];
+  boot.kernelParams = [
+    "mem_sleep_default=deep"
+    # For mouse & audio interface idle
+    "usbcore.autosuspend=120"
+  ];
   # suspend-then-hibernate
   systemd.sleep.extraConfig = ''
     HibernateDelaySec=30m

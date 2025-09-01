@@ -17,20 +17,14 @@ in
     packages = [
       # Theming
       adw-gtk3
-      arc-icon-theme
-      arc-theme
-      ayu-theme-gtk
-      breeze-gtk
       catppuccin-gtk
       catppuccin-kvantum
       gradience
       kdePackages.breeze
       kdePackages.qtstyleplugin-kvantum
       libsForQt5.qtstyleplugin-kvantum
-      lightly-boehs
       libsForQt5.qt5ct
       kdePackages.qt6ct
-      solarc-gtk-theme
       themechanger
       yaru-theme
 
@@ -58,7 +52,7 @@ in
       # Fonts
       segoe-ui-variable-fonts
       cantarell-fonts
-      
+
       ## Windows fonts
       #wine64Packages.fonts
       #winePackages.fonts

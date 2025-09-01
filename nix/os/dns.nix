@@ -57,6 +57,8 @@
   services.dnscrypt-proxy2 = {
     enable = true;
     settings = {
+      # 1.1.1.1 important; neither of the other 2 worked for me in canyon
+      bootstrap_resolvers = [ "1.1.1.1:53" "9.9.9.9:53" "8.8.8.8:53" ];
       ipv6_servers = true;
       require_dnssec = true;
 
@@ -71,9 +73,12 @@
         minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
       };
 
+      
+
       server_names = [
+        "mullvad-base-doh"
         "dnscry.pt-denver-ipv4"
-        "cisco-ipv6-doh"
+        "dnscry.pt-denver-ipv6"
       ];
 
       # Defined above

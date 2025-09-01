@@ -22,8 +22,16 @@
     # Docker
     ../docker.nix
 
+    # Odd things for games
+    ../games.nix
+
+    # 6/19/25: breaks config by creating address conflict; not using anyway; disabling
+    # dnsmasq: failed to create listening socket for 192.168.122.1: Address already in use
     # VM host configuration
-    ./virtualization.nix
+    # ./virtualization.nix
+  ];
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
   ];
 
   fileSystems."/" =

@@ -2,7 +2,7 @@
   home-manager = {
 
     backupFileExtension = "backup.darwin";
-    useGlobalPkgs = true;
+    useGlobalPkgs = false;
     useUserPackages = true;
     sharedModules = [
       mac-app-util.homeManagerModules.default

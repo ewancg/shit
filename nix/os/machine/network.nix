@@ -7,6 +7,9 @@
 
     # Apple AirPlay 2 settings
     ../uxplay.nix
+
+    # File sync
+    ../syncthing.nix
   ];
 
   networking = {
@@ -22,8 +25,13 @@
     };
 
     networkmanager = {
-      enable = true;
+      enable = false;
       dhcp = "dhcpcd";
+    };
+
+    wireless = {
+      enable = true;
+      networks."NETGEAR55".psk = "helpfultrumpet596";
     };
 
     nftables = {
@@ -56,18 +64,18 @@
 
   # Connection sharing
   # Set a static IP on the "downstream" interface
-  networking.interfaces."enp13s0f4u2u1" = {
-    useDHCP = false;
-    ipv4.addresses = [{
-      address = "10.0.0.1";
-      prefixLength = 24;
-    }];
-  };
-  networking.firewall.trustedInterfaces = [ "enp13s0f4u2u1" ];
-  networking.firewall.extraForwardRules = ''
-    type nat hook postrouting priority srcnat; policy accept;
-    oifname { "enp13s0f4u2u1" } masquerade
-  '';
+  # networking.interfaces."enp13s0f4u2u1" = {
+  #   useDHCP = false;
+  #   ipv4.addresses = [{
+  #     address = "10.0.0.1";
+  #     prefixLength = 24;
+  #   }];
+  # };
+  #networking.firewall.trustedInterfaces = [ "enp13s0f4u2u1" ];
+  #networking.firewall.extraForwardRules = ''
+  #  type nat hook postrouting priority srcnat; policy accept;
+  #  oifname { "enp13s0f4u2u1" } masquerade
+  #'';
   # networking.firewall.extraCommands = ''
   #   # Set up SNAT on packets going from downstream to the wider internet
   #   iptables -t nat -A POSTROUTING -o eno1 -j MASQUERADE

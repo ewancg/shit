@@ -1,10 +1,13 @@
-{ pkgs, ... }:
-{
+{pkgs, inputs, ...}: let
+  pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in {
   services.xserver.enable = true;
 
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     #systemd.enable = true;
     #  package = hyprland.
   };
@@ -97,6 +100,16 @@
 
   # Brightness control
   hardware.brillo.enable = true;
+
+  hardware.graphics = {
+    # i want no video please
+    enable = true;
+    package = pkgs-unstable.mesa;
+    package32 = pkgs-unstable.pkgsi686Linux.mesa;
+
+    # if you also want 32-bit support (e.g for Steam)
+    enable32Bit = true;
+  };
 
   environment.systemPackages = (with pkgs; [
     #hyprlock

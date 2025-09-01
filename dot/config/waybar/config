@@ -62,6 +62,8 @@
             "player-icons": {
                 "firefox": "\uf269",
                 "spotify": "\uf1bc",
+                "psst-gui": "\uf1bc",
+                "spot": "\uf1bc",
                 "default": "\uf144"
             },
             "title-len": 65,

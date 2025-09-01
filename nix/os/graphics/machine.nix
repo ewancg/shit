@@ -93,7 +93,8 @@
     __GL_GSYNC_ALLOWED = 1;
     __GL_VRR_ALLOWED = 1; # Change if problematic; should work on 555
 
-
+    OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
+    
     VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
   };
   boot.blacklistedKernelModules = [

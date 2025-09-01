@@ -32,19 +32,6 @@
     nftables = {
       enable = true;
     };
-
-    # https://nixos.wiki/wiki/Networking
-    # consider NAT port forwards
-    firewall = {
-      allowedTCPPortRanges = [
-        # KDE Connect
-        { from = 1714; to = 1764; }
-      ];
-      allowedUDPPortRanges = [
-        # KDE Connect
-        { from = 1714; to = 1764; }
-      ];
-    };
   };
   # DNS
   services.dnscrypt-proxy2 = {

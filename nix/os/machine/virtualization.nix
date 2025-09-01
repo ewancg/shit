@@ -81,7 +81,7 @@ in
   };
   programs.virt-manager.enable = true;
   users.users.ewan.extraGroups = [ "libvirtd" ];
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs;[
     virt-viewer
   ];
 

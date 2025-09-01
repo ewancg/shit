@@ -15,15 +15,17 @@ case $1 in
   "poweroff") 
     ;&
   "reboot") 
-    timeout=50
-    export verb="$1"
-    export start="$(expr $(date +%s) + $timeout)"
+    timeout=10
+    verb="$1"
+    start="$(expr $(date +%s) + $timeout)"
 
     eww close-all
 
     show_backdrop
     export outfile="/tmp/timeout-timer"
     rm -rf "$outfile"
+
+    export start
     eww-display-countdown "$outfile" &
     eww-toggle-window prompt default --arg uid="$(uuidgen)" --arg verb="$verb"
     notify-send "eww-toggle-window prompt default --arg uid='$(uuidgen)' --arg verb='$verb'"
