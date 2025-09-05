@@ -26,28 +26,28 @@
 
     bluetoothEnhancements = {
       # disable switching to duplex mode
-       "module-allow-priority" = false;
-       "bluetooth.autoswitch-to-headset-profile" = {
-          description = "Whether to autoswitch to BT headset profile or not";
-          type = "bool";
-          default = false; # change this to false
+      "module-allow-priority" = false;
+      "bluetooth.autoswitch-to-headset-profile" = {
+        description = "Whether to autoswitch to BT headset profile or not";
+        type = "bool";
+        default = false; # change this to false
       };
       "monitor.bluez.rules" = [{
-          matches = [
-            {
-              "device.name" = "~bluez_card.*";
-              "device.product.id" = "*";
-              "device.vendor.id" = "*";
-            }
-          ];
-          actions = {
-            update-props = {
-              # Set quality to high quality instead of the default of auto
-              "bluez5.*.ldac.quality" = "hq";
-              "bluez5.a2dp.aac.bitratemode" = "5";
-              "device.profile" = "a2dp-sink";
-            };
+        matches = [
+          {
+            "device.name" = "~bluez_card.*";
+            "device.product.id" = "*";
+            "device.vendor.id" = "*";
+          }
+        ];
+        actions = {
+          update-props = {
+            # Set quality to high quality instead of the default of auto
+            "bluez5.*.ldac.quality" = "hq";
+            "bluez5.a2dp.aac.bitratemode" = "5";
+            "device.profile" = "a2dp-sink";
           };
+        };
       }];
 
       "monitor.bluez.properties" = {

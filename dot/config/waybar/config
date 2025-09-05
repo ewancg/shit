@@ -126,7 +126,7 @@
     {
         "height": 28,
         "layer": "top",
-        "output": "Acer Technologies B326HK T1NAA0038522",
+        "output": [ "Acer Technologies B326HK T1NAA0038522", "XYM MNN 0x00000055" ],
         "modules-left": [
             "hyprland/workspaces"
         ],

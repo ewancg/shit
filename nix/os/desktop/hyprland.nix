@@ -1,10 +1,13 @@
-{pkgs, inputs, ...}: let
+{ pkgs, inputs, ... }:
+let
   pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-in {
+in
+{
   services.xserver.enable = true;
 
   programs.hyprland = {
     enable = true;
+    withUWSM = true;
     xwayland.enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
@@ -79,7 +82,7 @@ in {
   #};
 
   # Enable list view in Nautilus
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.nautilus.preferences]
     default-folder-viewer='list-view'
   '';

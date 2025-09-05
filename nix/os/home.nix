@@ -1,4 +1,5 @@
 { nixpkgs, spicetify-nix, ... }: {
+
   home-manager = {
 
     backupFileExtension = "backup";

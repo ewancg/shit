@@ -1,49 +1,31 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-utils.url = "github:numtide/flake-utils";
-
     home-manager.url = "github:nix-community/home-manager";
-
-    ## machine only
-    nixvirt.url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
-
-    ## desktop nixoses
     hyprland.url = "github:hyprwm/Hyprland";
 
-    ## work laptop top only
-    awsctx.url = "github:john2143/dotfiles/7bd638d74e9c5809396bbdbd7b6c497de1a50ec6?dir=awsctx";
-    gimme-aws-creds.url = "github:Nike-Inc/gimme-aws-creds";
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixvirt.url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    mac-app-util.url = "github:hraban/mac-app-util";
-    netkit.url = "github:icebox-nix/netkit.nix";
-    nix-darwin.url = "github:LnL7/nix-darwin";
-    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
   };
 
   outputs =
     { self
-    , nixpkgs
+    , disko
+    , flake-utils
     , home-manager
     , hyprland
+    , nixpkgs
     , nixvirt
-    , nix-darwin
-    , nix-homebrew
-    , homebrew-core
-    , homebrew-cask
-    , mac-app-util
-      #, vfkit-tap
-    , netkit
-    , flake-utils
-    , gimme-aws-creds
-    , awsctx
+    , stylix
     , ...
     } @inputs: {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
@@ -52,10 +34,18 @@
           inherit nixvirt inputs home-manager nixpkgs;
         };
         modules = [
+          disko.nixosModules.disko
+          home-manager.nixosModules.home-manager
+          #({ imports = [ stylix.homeModules.stylix];
+          #  disabledModules = [ 
+          #    "${inputs.stylix}/modules/gtk/hm.nix"
+          #    "${inputs.stylix}/modules/gnome-text-editor/hm.nix"
+          #    "${inputs.stylix}/modules/eog/hm.nix"
+          #    "${inputs.stylix}/modules/gnome/hm.nix"
+          #     ];
+          #})
           ./nix/os/configuration.nix
           ./nix/os/machine/system.nix
-          home-manager.nixosModules.home-manager
-#          netkit.nixosModule
           ./nix/os/home.nix
         ];
       };
@@ -63,24 +53,24 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs nixpkgs; };
         modules = [
+          home-manager.nixosModules.home-manager
+          stylix.homeModules.stylix
           ./nix/os/configuration.nix
           ./nix/os/elbozo/system.nix
-          home-manager.nixosModules.home-manager
-#          netkit.nixosModule
           ./nix/os/home.nix
         ];
       };
-      darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        specialArgs = { inherit inputs nixpkgs mac-app-util; };
-        modules = [
-          ./nix/darwin/system.nix
-          nix-homebrew.darwinModules.nix-homebrew
-          home-manager.darwinModules.home-manager
-          mac-app-util.darwinModules.default
-          ./nix/darwin/home.nix
-        ];
-      };
+      # darwinConfigurations.D430N0H49X = nix-darwin.lib.darwinSystem {
+      #   system = "aarch64-darwin";
+      #   specialArgs = { inherit inputs nixpkgs mac-app-util; };
+      #   modules = [
+      #     nix-homebrew.darwinModules.nix-homebrew
+      #     home-manager.darwinModules.home-manager
+      #     mac-app-util.darwinModules.default
+      #     ./nix/darwin/system.nix
+      #     ./nix/darwin/home.nix
+      #   ];
+      # };
     };
 }
 

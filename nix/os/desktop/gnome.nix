@@ -1,32 +1,32 @@
 { pkgs, ... }:
 {
   # Enable the GNOME Desktop Environment.
-  services.xserver.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services.xserver.enable = false;
 
   # Apply a triple buffering patch for mutter which improves performance
-  nixpkgs.overlays = [
-    # GNOME 46: triple-buffering-v4-46
-    (final: prev: {
-      gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
-        mutter = gnomePrev.mutter.overrideAttrs (old: {
-          src = pkgs.fetchFromGitLab {
-            domain = "gitlab.gnome.org";
-            owner = "vanvugt";
-            repo = "mutter";
-            rev = "triple-buffering-v4-46";
-            hash = "sha256-nz1Enw1NjxLEF3JUG0qknJgf4328W/VvdMjJmoOEMYs=";
-          };
-        });
-      });
-    })
-  ];
+  #nixpkgs.overlays = [
+  #  # GNOME 46: triple-buffering-v4-46
+  #  (final: prev: {
+  #    gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
+  #      mutter = gnomePrev.mutter.overrideAttrs (old: {
+  #        src = pkgs.fetchFromGitLab {
+  #          domain = "gitlab.gnome.org";
+  #          owner = "vanvugt";
+  #          repo = "mutter";
+  #          rev = "triple-buffering-v4-46";
+  #          hash = "sha256-nz1Enw1NjxLEF3JUG0qknJgf4328W/VvdMjJmoOEMYs=";
+  #        };
+  #      });
+  #    });
+  #  })
+  #];
   nixpkgs.config.allowAliases = false;
 
   # Enable list view in Nautilus and fractional scaling in Mutter
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.nautilus.preferences]
     default-folder-viewer='list-view'
     
@@ -105,7 +105,7 @@
       nautilus-python
 
       # GNOME & desktop integration
-      dconf-editor
+      #dconf-editor
       gnome-tweaks
       yaru-theme
 

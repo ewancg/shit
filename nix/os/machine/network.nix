@@ -29,9 +29,11 @@
       dhcp = "dhcpcd";
     };
 
-    wireless = {
+    wireless = let psk = "helpfultrumpet596"; in {
       enable = true;
-      networks."NETGEAR55".psk = "helpfultrumpet596";
+      networks."NETGEAR55".psk = psk;
+      networks."NETGEAR55-5G-1".psk = psk;
+      networks."NETGEAR55-5G-2".psk = psk;
     };
 
     nftables = {
@@ -86,7 +88,7 @@
     settings = {
       interfaces-config = {
         interfaces = [
-#          "enp13s0f4u2u1"
+          #          "enp13s0f4u2u1"
         ];
       };
       lease-database = {

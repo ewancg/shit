@@ -33,13 +33,14 @@ in
     name = "egreen";
   };
 
-  home-manager.users.egreen = {
-    home = {
-      homeDirectory = "/Users/egreen";
-      username = "egreen";
+  home-manager = {
+    users.egreen = {
+      home = {
+        homeDirectory = "/Users/egreen";
+        username = "egreen";
+      };
     };
   };
-
   nix = {
     # package = pkgs.nix;
     # idk

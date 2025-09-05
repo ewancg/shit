@@ -20,6 +20,9 @@ let
   };
 in
 {
+
+  system.stateVersion = "24.05";
+
   imports = [
     # All hardware, network and miscellaneous system-level declarations
 
@@ -32,9 +35,6 @@ in
     ../home/office-accommodations.nix
     ../home/base-accommodations.nix
   ];
-
-  # Careful..
-  system.stateVersion = "24.05";
 
   # temp
   services.logrotate.checkConfig = false;
@@ -55,6 +55,7 @@ in
     mkinitcpio-nfs-utils
     nfs-utils
     sshfs-fuse
+    sshpass
     udisks
     v4l-utils
     lshw
@@ -88,7 +89,7 @@ in
   services.seatd = {
     enable = true;
   };
-  
+
   services.cachix-agent.enable = true;
 
   nix = {
@@ -100,8 +101,8 @@ in
     #settings.experimental-features = [ "nix-command" "flakes" ];
 
     settings = {
-          substituters = ["https://hyprland.cachix.org"];
-          trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+      substituters = [ "https://hyprland.cachix.org" ];
+      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
     };
     optimise = {
       automatic = true;
@@ -149,13 +150,13 @@ in
   security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
   security.pam.u2f.settings.interactive = false;
   security.pam.u2f.control = "sufficient";
-  
+
   services.displayManager = {
     enable = true;
 
-    defaultSession = "hyprland";
+    defaultSession = "hyprland-uwsm";
   };
-  services.xserver.displayManager = {
+  services.displayManager = {
     gdm.enable = true;
   };
 
@@ -175,7 +176,20 @@ in
       };
     };
   };
-  security.polkit.enable = true;
+
+  security.polkit = {
+    enable = true;
+    extraConfig = ''
+    polkit.addAdminRule(function(action, subject) {
+      if( subject.isInGroup("wheel") ) {
+        return ["unix-user:"+subject.user];
+      }
+      else {
+        return [polkit.Result.NO];
+      }
+    });
+    '';
+  };
 
   security.pam.services = {
     login.enableGnomeKeyring = true;
@@ -192,8 +206,7 @@ in
   };
 
   users = {
-    groups.ewan = {
-    };
+    groups.ewan = { };
     users.ewan = {
       group = "ewan";
       home = "/home/ewan";
@@ -202,8 +215,7 @@ in
       description = "Ewan Green";
       extraGroups = [ "networkmanager" "wheel" "video" ];
     };
-    groups.egreen = {
-    };
+    groups.egreen = { };
     users.egreen = {
       group = "egreen";
       home = "/home/egreen";
@@ -237,6 +249,10 @@ in
       Type = "oneshot";
     };
   };
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
 
   # Apps
   # Fishy 

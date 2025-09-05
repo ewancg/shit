@@ -1,8 +1,8 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
-{ pkgs, ... }:
-with pkgs;
-{
+{ config, pkgs, ... }:
+with pkgs; {
+  imports = [ ./hyprland.nix ];
   home = {
     stateVersion = "24.05";
 
@@ -95,8 +95,53 @@ with pkgs;
     allowUnfree = true;
   };
 
+  
+  #stylix.enable = true;
+  #stylix.autoEnable = false;
+  #stylix.targets.gnome-text-editor.enable = false;
+#
+  #stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  #stylix.fonts = {
+  #  serif = {
+  #    package = pkgs.source-serif-pro;
+  #    name = "Source Serif Pro";
+  #  };
+#
+  #  sansSerif = {
+  #    package = (pkgs.callPackage ../misc/san-francisco-font/default.nix { });
+  #    name = "San Francisco Text";
+  #  };
+#
+  #  monospace = {
+  #    package = pkgs.nerd-fonts.jetbrains-mono;
+  #    name = "JetBrainsMono NerdFont";
+  #  };
+#
+  #  emoji = {
+  #    package = pkgs.noto-fonts-emoji;
+  #    name = "Noto Color Emoji";
+  #  };
+  #};
+#
+  #stylix.targets.waybar.enable = true;
+  #stylix.targets.vscode.enable = false;
+
   xdg.configFile = {
-    "alacritty".source = ../../dot/config/alacritty;
+    "alacritty" = {
+      recursive = true;
+      source = ../../dot/config/alacritty;
+    };
+  };
+
+  programs.alacritty.settings.colors =
+  with config.scheme.withHashtag; let default = {
+      black = base00; white = base07;
+      inherit red green yellow blue cyan magenta;
+    };
+  in {
+    primary = { background = base00; foreground = base07; };
+    cursor = { text = base02; cursor = base07; };
+    normal = default; bright = default; dim = default;
   };
 
   programs.fish = {
@@ -189,9 +234,67 @@ with pkgs;
 
   programs.tmux = {
     enable = true;
+#    extraConfig = with config.scheme.withHashtag; ''
+#      # COLOUR (base16)
+#
+#      # base00: " #282828 "
+#      # base01: " #3c3836 "
+#      # base02: " #504945 "
+#      # base03: " #665c54 "
+#      # base04: " #928374 "
+#      # base05: " #ebdbb2 "
+#      # base06: " #fbf1c7 "
+#      # base07: " #f9f5d7 "
+#      # base08: " #cc241d "
+#      # base09: " #d65d0e "
+#      # base0A: " #d79921 "
+#      # base0B: " #98971a "
+#      # base0C: " #689d6a "
+#      # base0D: " #458588 "
+#      # base0E: " #b16286 "
+#      # base0F: " #9d0006 "
+#      # base10: " #2a2520 "
+#      # base11: " #1d1d1d "
+#      # base12: " #fb4934 "
+#      # base13: " #fabd2f "
+#      # base14: " #b8bb26 "
+#      # base15: " #8ec07c "
+#      # base16: " #83a598 "
+#      # base17: " #d3869b "
+#
+#      # default statusbar colors
+#      set-option -g status-style "fg=#${base04},bg=#${base00}"
+#
+#      # default window title colors
+#      set-window-option -g window-status-style "fg=${base05},bg=${base02}"
+#
+#      # active window title colors
+#      set-window-option -g window-status-current-style "fg= #${base14},bg=${base01}"
+#
+#      # pane border
+##      set-option -g pane-border-style "fg= #3c3836"
+# #     set-option -g pane-active-border-style "fg= #504945"
+#
+#      # message text
+#  #    set-option -g message-style "fg= #d5c4a1,bg= #3c3836"
+#
+#      # pane number display
+# #     set-option -g display-panes-active-colour "#b8bb26"
+#  #    set-option -g display-panes-colour "#fabd2f"
+#
+#      # clock
+#  #    set-window-option -g clock-mode-colour "#b8bb26"
+#
+#      # copy mode highligh
+#   #   set-window-option -g mode-style "fg= #bdae93,bg= #504945"
+#
+#      # bell
+#   #   set-window-option -g window-status-bell-style "fg= #3c3836,bg= #fb4934"
+#    '';
     plugins = with tmuxPlugins; [
       sensible
-      catppuccin # colors
+      gruvbox
+      #catppuccin # colors
       battery # seeing battery in remote session
       continuum # tmux session restore
       # vim-tmux-navigator

@@ -4,6 +4,7 @@
 with pkgs;
 let
   segoe-ui-variable-fonts = callPackage ../misc/segoe-ui-variable/default.nix { };
+  san-francisco-fonts = callPackage ../misc/san-francisco-font/default.nix { };
 in
 {
   imports = [
@@ -17,8 +18,11 @@ in
     packages = [
       # Theming
       adw-gtk3
-      catppuccin-gtk
-      catppuccin-kvantum
+      gruvbox-dark-gtk
+      gruvbox-gtk-theme
+      gruvbox-material-gtk-theme
+      # catppuccin-gtk
+      # catppuccin-kvantum
       gradience
       kdePackages.breeze
       kdePackages.qtstyleplugin-kvantum
@@ -51,6 +55,7 @@ in
 
       # Fonts
       segoe-ui-variable-fonts
+      san-francisco-fonts
       cantarell-fonts
 
       ## Windows fonts
@@ -72,21 +77,34 @@ in
     ];
     pointerCursor = {
       gtk.enable = true;
-      name = "Catppuccin-Mocha-Light-Cursors";
-      package = pkgs.catppuccin-cursors.mochaDark;
+      name = "Yaru";
+      package = pkgs.yaru-theme;
     };
   };
 
-  xdg.configFile = {
-    "Kvantum".source = ../../dot/config/Kvantum;
-    "qt5ct".source    = ../../dot/config/qt5ct;
-    "qt6ct".source = ../../dot/config/qt6ct;
-    "wofi".source = ../../dot/config/wofi;
-    "hypr".source = ../../dot/config/hypr;
-    "eww".source = ../../dot/config/eww;
-    "waybar".source = ../../dot/config/waybar;
-    "dunst".source = ../../dot/config/dunst;
-  };
+  xdg.configFile = let 
+  dirs = lib.genAttrs [ "wofi" "eww" "waybar" "dunst" ] (name: { 
+    source = ../../dot/config + "/${name}";
+    recursive = true;
+  });
+  in
+    dirs;
+#    "wofi" = {
+#      recursive = true;
+#      source = ../../dot/config/wofi;
+#    };
+#    "eww" = {
+#      recursive = true;
+#      source = ../../dot/config/eww;
+#    };
+#    "waybar"= {
+#      recursive = true;
+#      source = ../../dot/config/waybar;
+#    };
+#    "dunst" = {
+#      recursive = true;
+#      source = ../../dot/config/dunst;
+#    };
 
   xdg.mimeApps = {
     enable = true;
@@ -138,33 +156,5 @@ in
     #   network.listenAddress = "any"; # if you want to allow non-localhost connections
     #   network.startWhenNeeded = true; # systemd feature: only start MPD service upon connection to its socket
     # };
-  };
-
-  dconf = {
-    enable = true;
-    settings = {
-      # Address "Could not detect a default hypervisor ..."
-      "org/virt-manager/virt-manager/connections" = {
-        autoconnect = [ "qemu:///system" ];
-        uris = [ "qemu:///system" ];
-      };
-
-      "org/gnome/desktop/interface".color-scheme = "prefer-dark";
-      "org/gnome/shell" = {
-        disable-user-extensions = false;
-        enabled-extensions = with pkgs.gnomeExtensions; [
-          gsconnect.extensionUuid
-          tiling-assistant.extensionUuid
-          window-calls.extensionUuid
-          window-calls-extended.extensionUuid
-          #ddnet-friends-panel.extensionUuid
-          user-themes.extensionUuid
-          dash-to-panel.extensionUuid
-          quick-settings-audio-panel.extensionUuid
-          # tray-icons-reloaded.extensionUuid
-          appindicator.extensionUuid
-        ];
-      };
-    };
   };
 }

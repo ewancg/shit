@@ -6,11 +6,11 @@
   environment.systemPackages = [ pkgs.syncthing ];
   services = {
     syncthing = {
-        enable = true;
-        group = "ewan";
-        user = "ewan";
-        dataDir = "/home/ewan/Shared";
-        configDir = "/home/ewan/Shared/.config/syncthing";
+      enable = true;
+      group = "ewan";
+      user = "ewan";
+      dataDir = "/home/ewan/Shared";
+      configDir = "/home/ewan/Shared/.config/syncthing";
     };
   };
 }

@@ -7,6 +7,9 @@
     # Network adapter configuration
     ./network.nix
 
+    # Disk configuration
+    ./disk.nix
+
     # Graphics driver configuration
     ../graphics/machine.nix
 
@@ -29,9 +32,6 @@
     # dnsmasq: failed to create listening socket for 192.168.122.1: Address already in use
     # VM host configuration
     # ./virtualization.nix
-  ];
-  nixpkgs.config.permittedInsecurePackages = [
-    "qtwebengine-5.15.19"
   ];
 
   fileSystems."/" =

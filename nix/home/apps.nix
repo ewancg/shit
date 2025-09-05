@@ -35,13 +35,14 @@ let
     #  withWaylandGLFW = true;
     jdks = [
       graalvm-ce
+      temurin-bin-24
       temurin-bin-21
       temurin-bin-8
       temurin-bin-17
     ];
   });
-  my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix { 
-    withMinecraftPatch = true; 
+  my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix {
+    withMinecraftPatch = true;
   };
 
   qtcreator-fhs = (pkgs.buildFHSEnv {
@@ -103,6 +104,8 @@ in
     protonmail-bridge
     protonmail-desktop
 
+    dbeaver-bin
+    
     gnome-boxes
 
     sysprof
@@ -112,13 +115,20 @@ in
     zed-editor
   ];
 
-  xdg.configFile = {
-    "QtProject/qtcreator" = {
-      recursive = true;
-      source = ../../dot/config/qtcreator;
-    };
-    "QtProject/qtcreator/styles".source = ../../dot/config/qtcreator/styles;
-    "QtProject/qtcreator/themes".source = ../../dot/config/qtcreator/themes;
-    #"QtProject/qtcreator/.clang-format".source = ../../dot/.clang-format;
+  programs.sm64ex = {
+    enable = true;
+    region = "us";
+    baserom = path:../misc/baserom.us.z64;
   };
+
+
+  # xdg.configFile = {
+  #   "QtProject/qtcreator" = {
+  #     recursive = true;
+  #     source = ../../dot/config/qtcreator;
+  #   };
+  #   #"QtProject/qtcreator/styles".source = ../../dot/config/qtcreator/styles;
+  #   #"QtProject/qtcreator/themes".source = ../../dot/config/qtcreator/themes;
+  #   #"QtProject/qtcreator/.clang-format".source = ../../dot/.clang-format;
+  # };
 }

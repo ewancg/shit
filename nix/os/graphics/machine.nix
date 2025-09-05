@@ -13,6 +13,13 @@
     ];
   };
 
+  boot.kernelParams = [
+    "nvidia-drm.modeset=1"
+    "nvidia-drm.fbdev=1"
+    # For mouse & audio interface idle
+    "usbcore.autosuspend=120"
+  ];
+
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -49,7 +56,7 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 
   #  Optimus causes some issues
@@ -79,26 +86,35 @@
   #  };
 
   # 
-  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_drm" "nvidia_uvm" ];
+  boot.initrd.kernelModules = [ 
+    "nvidia" 
+    # "nvidia_modeset" 
+    "nvidia_drm" 
+    "nvidia_uvm" 
+  ];
   boot.extraModulePackages = with config.boot.kernelPackages; [
     nvidia_x11
   ];
 
   environment.variables = {
-    # Nvidia
+    MOZ_DISABLE_RDD_SANDBOX=1;
+    PROTON_ENABLE_NGX_UPDATER=1;
+    GBM_BACKEND = "nvidia-drm";
+    GSK_RENDERER = "ngl";
     NVD_BACKEND = "direct";
     LIBVA_DRIVER_NAME = "nvidia";
-    GBM_BACKEND = "nvidia-drm";
+
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     __GL_GSYNC_ALLOWED = 1;
     __GL_VRR_ALLOWED = 1; # Change if problematic; should work on 555
-
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
-    
+
+    __VK_LAYER_NV_optimus="NVIDIA_only";
     VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
   };
   boot.blacklistedKernelModules = [
     "nouveau"
+    "nvidia_modeset"
   ];
 
   boot.extraModprobeConfig = ''

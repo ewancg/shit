@@ -2,11 +2,11 @@
 
 * {
     min-height: 0;
-    font-family: Cantarell, "Font Awesome 6 Free", sans-serif;
+    font-family: "San Francisco Text", "JetBrainsMono NerdFont", "Font Awesome 6 Free", sans-serif;
 }
 
 #cpu, #disk, #memory, #workspaces *, #custom-power, #wireplumber {
-    font-family: Ubuntu Mono, "Font Awesome 6 Free";
+    font-family: JetBrainsMono NerdFont, "Font Awesome 6 Free";
 }
 
 #workspaces button.focused {
@@ -154,7 +154,7 @@ label.module:hover /*, #tray > *:hover*/ {
 }
 
 menu, tooltip {
-    font-family: Cantarell;
+    font-family: "San Francisco Text";
     background: @surface0;
     color: @subtext0;
     border: 0.0625em solid alpha(@mantle, 0.75);
