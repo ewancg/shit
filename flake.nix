@@ -18,32 +18,35 @@
   };
 
   outputs =
-    { self
-    , disko
-    , flake-utils
-    , home-manager
-    , hyprland
-    , nixpkgs
-    , nixvirt
-    , stylix
-    , ...
-    } @inputs: {
+    {
+      self,
+      disko,
+      flake-utils,
+      home-manager,
+      hyprland,
+      nixpkgs,
+      nixvirt,
+      stylix,
+      ...
+    }@inputs:
+    let
+      util = import ./nix/util.nix;
+    in
+    {
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
-          inherit nixvirt inputs home-manager nixpkgs;
+          inherit
+            nixvirt
+            inputs
+            home-manager
+            nixpkgs
+            util
+            ;
         };
         modules = [
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
-          #({ imports = [ stylix.homeModules.stylix];
-          #  disabledModules = [ 
-          #    "${inputs.stylix}/modules/gtk/hm.nix"
-          #    "${inputs.stylix}/modules/gnome-text-editor/hm.nix"
-          #    "${inputs.stylix}/modules/eog/hm.nix"
-          #    "${inputs.stylix}/modules/gnome/hm.nix"
-          #     ];
-          #})
           ./nix/os/configuration.nix
           ./nix/os/machine/system.nix
           ./nix/os/home.nix
@@ -51,10 +54,12 @@
       };
       nixosConfigurations.elbozo = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs nixpkgs; };
+        specialArgs = {
+          inherit inputs nixpkgs;
+          util = util;
+        };
         modules = [
           home-manager.nixosModules.home-manager
-          stylix.homeModules.stylix
           ./nix/os/configuration.nix
           ./nix/os/elbozo/system.nix
           ./nix/os/home.nix
@@ -73,5 +78,3 @@
       # };
     };
 }
-
-

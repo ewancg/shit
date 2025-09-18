@@ -10,7 +10,8 @@ in
     withUWSM = true;
     xwayland.enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    portalPackage =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     #systemd.enable = true;
     #  package = hyprland.
   };
@@ -33,7 +34,7 @@ in
     #   #  SDL_VIDEODRIVER="wayland";
     # SDL_VIDEODRIVER = "wayland,x11,windows";
     # SDL2_VIDEO_DRIVER = "wayland,x11,windows";
-    # 
+    #
     # CLUTTER_BACKEND="wayland";
     # GDK_BACKEND = "wayland,x11,*";
     # MOZ_ENABLE_WAYLAND=1;
@@ -42,7 +43,7 @@ in
     # QT_AUTO_SCREEN_SCALE_FACTOR=1;
     # QT_QPA_PLATFORM = "wayland;xcb";
     # PROTON_ENABLE_NGX_UPDATER=1;
-    # #WLR_USE_LIBINPUT=1; # 
+    # #WLR_USE_LIBINPUT=1; #
     # XWAYLAND_NO_GLAMOR = 1; # with this you'll need to use gamescope for gaming
     __GL_MaxFramesAllowed = 0;
 
@@ -114,39 +115,42 @@ in
     enable32Bit = true;
   };
 
-  environment.systemPackages = (with pkgs; [
-    #hyprlock
-    #hypridle
-    hyprshade
-    hyprpicker
+  environment.systemPackages = (
+    with pkgs;
+    [
+      #hyprlock
+      #hypridle
+      hyprshade
+      hyprpicker
 
-    # not showkey
-    wev
+      # not showkey
+      wev
 
-    # need for gui auth
-    polkit_gnome
+      # need for gui auth
+      polkit_gnome
 
-    # unsure which atm
-    waybar
-    eww
+      # unsure which atm
+      waybar
+      eww
 
-    wl-clipboard
-    wofi
-    xsel
-    slurp
-    hyprshot
-    dunst
-    #  fnott
+      wl-clipboard
+      wofi
+      xsel
+      slurp
+      hyprshot
+      dunst
+      #  fnott
 
-    blueman
-    networkmanagerapplet
+      blueman
+      # networkmanagerapplet
 
-    playerctl
-    pwvucontrol
-    #    xdg-desktop-portal-hyprland
-    xdg-desktop-portal-gnome
-    gradience
-    adw-gtk3
-    arc-icon-theme
-  ]);
+      playerctl
+      pwvucontrol
+      #    xdg-desktop-portal-hyprland
+      xdg-desktop-portal-gnome
+      gradience
+      adw-gtk3
+      arc-icon-theme
+    ]
+  );
 }

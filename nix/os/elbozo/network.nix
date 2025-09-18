@@ -11,7 +11,7 @@
     # Prefer DoH above
     #nameservers = [
     #  # OpenDNS
-    #  "208.67.222.222" 
+    #  "208.67.222.222"
     #  "208.67.220.220"
     #];
 
@@ -25,7 +25,7 @@
     };
 
     networkmanager = {
-      enable = true;
+      # enable = true;
       dhcp = "dhcpcd";
     };
 

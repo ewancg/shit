@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -10,6 +10,10 @@
 
     # File sync
     ../syncthing.nix
+  ];
+
+  environment.systemPackages = [
+    pkgs.wpa_supplicant_gui
   ];
 
   networking = {
@@ -29,11 +33,9 @@
       dhcp = "dhcpcd";
     };
 
-    wireless = let psk = "helpfultrumpet596"; in {
+    wireless = {
       enable = true;
-      networks."NETGEAR55".psk = psk;
-      networks."NETGEAR55-5G-1".psk = psk;
-      networks."NETGEAR55-5G-2".psk = psk;
+      userControlled.enable = true;
     };
 
     nftables = {
@@ -49,7 +51,10 @@
       ];
       allowedTCPPortRanges = [
         # KDE Connect
-        { from = 1714; to = 1764; }
+        {
+          from = 1714;
+          to = 1764;
+        }
       ];
 
       allowedUDPPorts = [
@@ -58,7 +63,10 @@
       ];
       allowedUDPPortRanges = [
         # KDE Connect
-        { from = 1714; to = 1764; }
+        {
+          from = 1714;
+          to = 1764;
+        }
       ];
 
     };
@@ -110,10 +118,12 @@
         }
       ];
       valid-lifetime = 4000;
-      option-data = [{
-        name = "routers";
-        data = "10.0.0.1";
-      }];
+      option-data = [
+        {
+          name = "routers";
+          data = "10.0.0.1";
+        }
+      ];
     };
   };
 }

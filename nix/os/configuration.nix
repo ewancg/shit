@@ -60,17 +60,24 @@ in
     v4l-utils
     lshw
     dhcpcd
-    usbutils #lsusb
+    usbutils # lsusb
     openssl
     pciutils
     udisks
   ];
 
   hardware.enableAllFirmware = true;
-  boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
+  boot.supportedFilesystems = [
+    "ntfs"
+    "sshfs"
+    "btrfs"
+  ];
 
   # Extra kernel modules
-  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+  boot.kernelModules = [
+    "i2c-dev"
+    "i2c-piix4"
+  ];
 
   # Time zone
   time.timeZone = "America/Denver";
@@ -180,14 +187,14 @@ in
   security.polkit = {
     enable = true;
     extraConfig = ''
-    polkit.addAdminRule(function(action, subject) {
-      if( subject.isInGroup("wheel") ) {
-        return ["unix-user:"+subject.user];
-      }
-      else {
-        return [polkit.Result.NO];
-      }
-    });
+      polkit.addAdminRule(function(action, subject) {
+        if( subject.isInGroup("wheel") ) {
+          return ["unix-user:"+subject.user];
+        }
+        else {
+          return [polkit.Result.NO];
+        }
+      });
     '';
   };
 
@@ -213,7 +220,11 @@ in
       isNormalUser = true;
       initialPassword = "ewan";
       description = "Ewan Green";
-      extraGroups = [ "networkmanager" "wheel" "video" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "video"
+      ];
     };
     groups.egreen = { };
     users.egreen = {
@@ -222,7 +233,11 @@ in
       isNormalUser = true;
       initialPassword = "egreen";
       description = "Ewan Green (Office)";
-      extraGroups = [ "networkmanager" "wheel" "video" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "video"
+      ];
     };
   };
 
@@ -255,21 +270,31 @@ in
   ];
 
   # Apps
-  # Fishy 
+  # Fishy
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
 
+  #nixpkgs.overlays =
+  #  let
+  #    # Change this to a rev sha to pin
+  #    moz-rev = "master";
+  #    moz-url = builtins.fetchTarball {
+  #      url = "https://github.com/mozilla/nixpkgs-mozilla/archive/${moz-rev}.tar.gz";
+  #    };
+  #    nightlyOverlay = (import "${moz-url}/firefox-overlay.nix");
+  #  in
+  #  [
+  #    nightlyOverlay
+  #  ];
+
   # Install firefox.
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    #  package = pkgs.latest.firefox-nightly-bin;
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  # environment.variables = {
-  # 
-  # };
 
   services.flatpak.enable = true;
   # over
@@ -277,7 +302,6 @@ in
   #services.desktopManager.lomiri.enable = true;
   #xdg.portal.enable = true;
   #xdg.portal.extraPortals = (with pkgs;[ xdg-desktop-portal-gtk ]);
-
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;

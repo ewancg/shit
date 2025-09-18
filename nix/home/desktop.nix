@@ -1,6 +1,6 @@
 # desktop.nix; home config for items specific to the NixOS user
 
-{ pkgs, ... }:
+{ pkgs, util, ... }:
 with pkgs;
 let
   segoe-ui-variable-fonts = callPackage ../misc/segoe-ui-variable/default.nix { };
@@ -8,11 +8,67 @@ let
 in
 {
   imports = [
-    #../misc/spicetify.nix
+    ./email.nix
 
-    #./apps.nix
-    #./base.nix
+    ./waybar.nix
+    ./hyprland.nix
+
+    ./qpalette.nix
   ];
+
+  stylix.enable = true;
+  stylix.icons.enable = false;
+
+  gtk = {
+    theme = {
+      name = "adw-gtk3";
+      package = pkgs.adw-gtk3;
+    };
+    iconTheme = {
+      name = "Arc";
+      package = pkgs.arc-icon-theme;
+    };
+    cursorTheme = {
+      name = "Yaru";
+      package = pkgs.yaru-theme;
+    };
+  };
+
+  stylix.targets.hyprland.enable = false;
+  stylix.targets.qt.enable = false;
+  stylix.targets.gtk.enable = false;
+  stylix.targets.gnome-text-editor.enable = false;
+  #stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  stylix.fonts = {
+    serif = {
+      package = san-francisco-fonts;
+      name = "San Francisco Text";
+    };
+    # serif = {
+    #   package = pkgs.source-serif-pro;
+    #   name = "Source Serif Pro";
+    # };
+    sansSerif = {
+      package = san-francisco-fonts;
+      name = "San Francisco Text";
+    };
+    monospace = {
+      package = pkgs.nerd-fonts.jetbrains-mono;
+      name = "JetBrainsMono NerdFont";
+    };
+    emoji = {
+      package = pkgs.noto-fonts-emoji;
+      name = "Noto Color Emoji";
+    };
+
+    sizes = {
+      applications = 11;
+      terminal = 11;
+    };
+  };
+  stylix.targets.waybar.enable = true;
+  #stylix.targets.vscode.enable = false;
 
   home = {
     packages = [
@@ -74,6 +130,8 @@ in
 
       # NixOS
       nix-ld
+
+      wpa_supplicant_gui
     ];
     pointerCursor = {
       gtk.enable = true;
@@ -82,29 +140,38 @@ in
     };
   };
 
-  xdg.configFile = let 
-  dirs = lib.genAttrs [ "wofi" "eww" "waybar" "dunst" ] (name: { 
-    source = ../../dot/config + "/${name}";
-    recursive = true;
-  });
-  in
+  xdg.configFile =
+    let
+      dirs =
+        lib.genAttrs
+          [
+            "wofi"
+            "eww"
+            #"waybar"
+            "dunst"
+          ]
+          (name: {
+            source = ../../dot/config + "/${name}";
+            recursive = true;
+          });
+    in
     dirs;
-#    "wofi" = {
-#      recursive = true;
-#      source = ../../dot/config/wofi;
-#    };
-#    "eww" = {
-#      recursive = true;
-#      source = ../../dot/config/eww;
-#    };
-#    "waybar"= {
-#      recursive = true;
-#      source = ../../dot/config/waybar;
-#    };
-#    "dunst" = {
-#      recursive = true;
-#      source = ../../dot/config/dunst;
-#    };
+  #    "wofi" = {
+  #      recursive = true;
+  #      source = ../../dot/config/wofi;
+  #    };
+  #    "eww" = {
+  #      recursive = true;
+  #      source = ../../dot/config/eww;
+  #    };
+  #    "waybar"= {
+  #      recursive = true;
+  #      source = ../../dot/config/waybar;
+  #    };
+  #    "dunst" = {
+  #      recursive = true;
+  #      source = ../../dot/config/dunst;
+  #    };
 
   xdg.mimeApps = {
     enable = true;

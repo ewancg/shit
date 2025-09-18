@@ -4,21 +4,25 @@ let
   vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
 
   # for Wayland
-  my-vlc = (symlinkJoin {
-    name = "my-vlc";
-    paths = [ vlc ];
-    buildInputs = [ makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/vlc \
-        --unset DISPLAY
-    '';
-  });
+  my-vlc = (
+    symlinkJoin {
+      name = "my-vlc";
+      paths = [ vlc ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/vlc \
+          --unset DISPLAY
+      '';
+    }
+  );
 
-  my-obs = (pkgs.wrapOBS {
-    plugins = with pkgs.obs-studio-plugins; [
-      obs-backgroundremoval
-    ];
-  });
+  my-obs = (
+    pkgs.wrapOBS {
+      plugins = with pkgs.obs-studio-plugins; [
+        obs-backgroundremoval
+      ];
+    }
+  );
 in
 {
   home.packages = with pkgs; [
@@ -44,7 +48,7 @@ in
     blueman
     firefox
     fsearch
-    gimp
+    krita
     nautilus
     obsidian
 
@@ -55,6 +59,11 @@ in
   # VSCode
   programs.vscode = {
     enable = true;
-    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ firefox pkg-config ]);
+    package = pkgs.vscode.fhsWithPackages (
+      ps: with ps; [
+        firefox
+        pkg-config
+      ]
+    );
   };
 }

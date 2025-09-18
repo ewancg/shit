@@ -34,67 +34,6 @@
     # ./virtualization.nix
   ];
 
-  fileSystems."/" =
-    {
-      device = "/dev/disk/by-uuid/d7a32074-19be-43e4-8be0-a00132726527";
-      fsType = "ext4";
-      autoResize = false;
-      options = [
-        "defaults"
-        "nodev"
-        "noatime"
-        "discard"
-        "data=ordered"
-      ];
-    };
-
-  fileSystems."/boot" =
-    {
-      device = "/dev/disk/by-uuid/E0A1-2614";
-      fsType = "vfat";
-      autoResize = false;
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
-
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/8d82561f-b4a6-41fb-a200-3e4039a995de";
-    fsType = "btrfs";
-    neededForBoot = true;
-    autoResize = false;
-    options = [
-      "defaults"
-      "nodev"
-      "noatime"
-      "compress=zstd"
-    ];
-  };
-
-  fileSystems."/mnt/data" = {
-    device = "/dev/disk/by-uuid/71331833-459a-4a50-afab-b07a1800bb63";
-    fsType = "ext4";
-    neededForBoot = true;
-    autoResize = false;
-    options = [
-      "defaults"
-      "nodev"
-      "noatime"
-      "discard"
-      "data=ordered"
-    ];
-  };
-
-  fileSystems."/mnt/work" = {
-    device = "/dev/disk/by-uuid/0A10902A10901F2F";
-    autoResize = false;
-    options = [
-      "defaults"
-      "nodev"
-      "noatime"
-      "discard"
-      "data=ordered"
-    ];
-  };
-
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
@@ -120,12 +59,22 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Compress cold regions of memory
+  zramSwap.enable = true;
+
   # Package ‘zfs-kernel-2.2.4-6.9.8’ marked as broken on unstable as of 10/03/2024
-  boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" ];
+  boot.supportedFilesystems = [
+    "ntfs"
+    "sshfs"
+    "btrfs"
+  ];
   # boot.supportedFilesystems = [ "ntfs" "sshfs" "btrfs" "zfs" ];
 
   # Extra kernel modules
-  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+  boot.kernelModules = [
+    "i2c-dev"
+    "i2c-piix4"
+  ];
 
   # OpenRGB udev rules
   services.hardware.openrgb.enable = true;

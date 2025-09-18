@@ -2,15 +2,20 @@
 
 * {
     min-height: 0;
-    font-family: "San Francisco Text", "JetBrainsMono NerdFont", "Font Awesome 6 Free", sans-serif;
+    font-family: sans-serif, monospace, "Font Awesome 6 Free";
 }
 
-#cpu, #disk, #memory, #workspaces *, #custom-power, #wireplumber {
-    font-family: JetBrainsMono NerdFont, "Font Awesome 6 Free";
+#cpu,
+#disk,
+#memory,
+#workspaces *,
+#custom-power,
+#wireplumber {
+    font-family: monospace, "Font Awesome 6 Free";
 }
 
 #workspaces button.focused {
-    background: #64727D;
+    background: #64727d;
     border-bottom: 3px solid white;
 }
 
@@ -44,7 +49,8 @@ window#waybar {
     color: @text;
 }
 
-label.module, #tray {
+label.module,
+#tray {
     border-bottom-width: 0.125rem;
     border-bottom-style: solid;
     padding: 0 0.625rem;
@@ -78,7 +84,8 @@ label.module, #tray {
 #bluetooth.off,
 #network.disconnected,
 #wireplumber.muted,
-#mpris.paused, #mpris.stopped {
+#mpris.paused,
+#mpris.stopped {
     color: @subtext0;
     border-color: @subtext0;
 }
@@ -107,7 +114,8 @@ label.module:hover /*, #tray > *:hover*/ {
     border-bottom-color: @sky;
     color: @sky;
 }
-.modules-right > :nth-last-child(2), #tray {
+.modules-right > :nth-last-child(2),
+#tray {
     border-bottom-color: @sapphire;
     color: @sapphire;
 }
@@ -133,7 +141,7 @@ label.module:hover /*, #tray > *:hover*/ {
 
 #battery.charging {
     color: white;
-    background-color: #26A65B;
+    background-color: #26a65b;
 }
 
 @keyframes blink {
@@ -153,8 +161,9 @@ label.module:hover /*, #tray > *:hover*/ {
     animation-direction: alternate;
 }
 
-menu, tooltip {
-    font-family: "San Francisco Text";
+menu,
+tooltip {
+    font-family: sans-serif;
     background: @surface0;
     color: @subtext0;
     border: 0.0625em solid alpha(@mantle, 0.75);
@@ -179,7 +188,8 @@ tooltip label {
     color: @text;
 }
 
-#custom-spacer, #custom-spacer:hover {
+#custom-spacer,
+#custom-spacer:hover {
     border-bottom: none;
     border-bottom-color: transparent;
     background-color: transparent;
