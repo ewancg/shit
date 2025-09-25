@@ -14,8 +14,8 @@ function volume-notify {
     # $1 volume
     display_volume="$(gojq -n "$1 * 100" | awk '{printf "%.0f", $1}')"
 
-    dunstify -a "changeVolume" -u low -i -audio-volume-high -h string:x-dunst-stack-tag:"$msg_tag" \
-    -h string:frcolor:#45475a -h string:bgcolor:#181825 -h string:hlcolor:#f9e2af \
+    dunstify -a "changeVolume" -u low -i audio-volume-high -h string:x-dunst-stack-tag:"$msg_tag" \
+    -h string:hlcolor:"$(get-color 07)" \
     -h int:value:"$display_volume" "vol: $display_volume% $2"
     exit
 }
@@ -33,8 +33,8 @@ case "$1" in
         [ "$2" == "up" ] && export operation="$volume_step"
         [ "$2" == "down" ] && export operation="-$volume_step"
 
-        expected_volume="$(printf "%s\n" "$(gojq -n "$current_volume + ${operation}")" "1.0" | datamash min 1)"        
-        
+        expected_volume="$(printf "%s\n" "$(gojq -n "$current_volume + ${operation}")" "1.0" | datamash min 1)"
+
         if [ "$is_unmuted" == "1" ] && [ "$(gojq -n "$expected_volume >= 0.0")" == "true" ]; then
             if [ "$2" != "" ] && [ "$2" != "mute" ]; then
                 wpctl set-volume "$audio_device" "$expected_volume"
@@ -42,14 +42,14 @@ case "$1" in
             volume-notify "$expected_volume"
             exit
         else
-            if [ "$2" == "mute" ]; then 
+            if [ "$2" == "mute" ]; then
                 wpctl set-mute "$audio_device" "$is_unmuted"
                 if [ "$is_unmuted" == "0" ]; then
                     volume-notify "$current_volume" "(unmuted)"
                     exit
                 fi
             fi
-            dunstify -a "changeVolume" -u low -i audio-volume-muted -h string:x-dunst-stack-tag:"$msgTag" "muted" 
+            dunstify -a "changeVolume" -u low -i audio-volume-muted -h string:x-dunst-stack-tag:"$msgTag" "muted"
         fi
     ;;
 "brightness")

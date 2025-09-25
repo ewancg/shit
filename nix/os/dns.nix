@@ -1,7 +1,10 @@
 { lib, ... }:
 {
   networking = {
-    nameservers = [ "127.0.0.1" "::1" ];
+    nameservers = [
+      "127.0.0.1"
+      "::1"
+    ];
     dhcpcd.enable = true;
     dhcpcd.extraConfig = "nohook resolv.conf";
     networkmanager.dns = "none";
@@ -32,11 +35,11 @@
   # Prefer DoH below
   # nameservers = [
   #   # OpenDNS
-  #   "208.67.222.222" 
+  #   "208.67.222.222"
   #   "208.67.220.220"
   # ];
 
-  # For whatever reason, the proxy is not able to open this file even when we set the mode. 
+  # For whatever reason, the proxy is not able to open this file even when we set the mode.
   # https://github.com/DNSCrypt/dnscrypt-proxy/blob/master/dnscrypt-proxy/example-forwarding-rules.txt
   environment.etc."nixos/services/forwarding-rules.txt" = {
     mode = "0644";
@@ -54,11 +57,15 @@
     '';
   };
 
-  services.dnscrypt-proxy2 = {
+  services.dnscrypt-proxy = {
     enable = true;
     settings = {
       # 1.1.1.1 important; neither of the other 2 worked for me in canyon
-      bootstrap_resolvers = [ "1.1.1.1:53" "9.9.9.9:53" "8.8.8.8:53" ];
+      bootstrap_resolvers = [
+        "1.1.1.1:53"
+        "9.9.9.9:53"
+        "8.8.8.8:53"
+      ];
       ipv6_servers = true;
       require_dnssec = true;
 
@@ -72,8 +79,6 @@
         # From https://github.com/DNSCrypt/dnscrypt-resolvers/
         minisign_key = "RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3";
       };
-
-
 
       server_names = [
         "mullvad-base-doh"

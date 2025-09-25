@@ -6,7 +6,6 @@
 }:
 let
   col = config.lib.stylix.colors;
-  eww-toggle-window = "${pkgs.bash}/bin/bash ${../../dot/local/bin/eww-toggle-window}";
   h2d = util.hexColorToDecimalTriplet;
 in
 {
@@ -31,8 +30,8 @@ in
                 "hyprland/window"
             ],
             "modules-right": [
-                "wireplumber",
                 "hyprland/language",
+                "wireplumber",
                 "bluetooth",
                 "network",
                 "tray",
@@ -46,7 +45,7 @@ in
             "custom/power": {
                 "format": "<small>ewan</small>",
                 "tooltip": false,
-                "on-click": "${eww-toggle-window} power-menu"
+                "on-click": "${util.script "eww-toggle-window"} power-menu '''''' default"
             },
             "hyprland/workspaces": {
                 "show-special": true,
@@ -124,7 +123,7 @@ in
             "wireplumber": {
                 "format": "{icon} <small>{volume}%</small>",
                 "format-muted": "\uf6a9",
-                "on-click": "${eww-toggle-window} volume default --arg x=$(expr $(hyprctl cursorpos | awk '{print $1-1;}') - 40)",
+                "on-click": "${util.script "eww-toggle-window"} volume \"--arg x=$(expr `hyprctl cursorpos | awk '{print $1-0}'` - 96)\" default",
                 "on-click-right": "pwvucontrol",
                 "format-icons": {
                     "default": [
@@ -388,7 +387,8 @@ in
     }
 
     #mpris.spotify,
-    #mpris.spot {
+    #mpris.spot,
+    #mpris.psst {
         color: #${col.base0B};
     }
 

@@ -1,6 +1,6 @@
 {
   lib,
-  inputs,
+  stylix,
   util,
   ...
 }:
@@ -13,7 +13,7 @@
 
     users.ewan = lib.mkMerge [
       # These must be matched inside of where they're used
-      inputs.stylix.homeModules.stylix
+      stylix.homeModules.stylix
       ../home/desktop.nix
       ../home/apps.nix
       ../home/office.nix

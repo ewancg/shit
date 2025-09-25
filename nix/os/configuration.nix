@@ -1,4 +1,11 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  secrets,
+  firefox,
+  util,
+  ...
+}:
 
 let
   english = "en_US.UTF-8";
@@ -6,7 +13,6 @@ let
     # LC_ALL            = "";
     LANG = english;
     LANGUAGE = english;
-
     LC_ADDRESS = english;
     LC_CTYPE = english;
     LC_IDENTIFICATION = english;
@@ -39,6 +45,9 @@ in
   # temp
   services.logrotate.checkConfig = false;
   environment.systemPackages = with pkgs; [
+    # nixos
+    nh
+
     # linux/system
     libnotify
     at
@@ -51,7 +60,6 @@ in
     binutils
     btrfs-progs
     fuse
-    gamescope
     mkinitcpio-nfs-utils
     nfs-utils
     sshfs-fuse
@@ -100,7 +108,8 @@ in
   services.cachix-agent.enable = true;
 
   nix = {
-    package = pkgs.nixVersions.stable;
+    package = pkgs.lixPackageSets.stable.lix;
+    # package = pkgs.nixVersions.stable;
 
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -154,9 +163,28 @@ in
 
   security.pam.u2f.enable = true;
   #security.pam.u2f.authFile = /etc/u2f_mappings;
-  security.pam.u2f.settings.authfile = "/etc/u2f_mappings";
+
+  security.pam.u2f.settings.authfile = "${
+    let
+      m = secrets.u2fMappings;
+      text =
+        if builtins.isString m then
+          m
+        else if builtins.isAttrs m then
+          (lib.concatMapAttrsStringSep "\n" (
+            name: value: with value; "${name}:${keyHandle},${userKey},${coseType},${options}"
+          ) secrets.u2fMappings)
+          + "\n"
+        else
+          throw "secrets.u2fMappings was neither a string or attribute set.";
+    in
+    pkgs.writeText "u2f_mappings" text
+  }";
   security.pam.u2f.settings.interactive = false;
   security.pam.u2f.control = "sufficient";
+
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.hyprland.enableGnomeKeyring = true;
 
   services.displayManager = {
     enable = true;
@@ -167,7 +195,6 @@ in
     gdm.enable = true;
   };
 
-  services.gnome.gnome-keyring.enable = true;
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
       description = "polkit-gnome-authentication-agent-1";
@@ -213,17 +240,22 @@ in
   };
 
   users = {
+    mutableUsers = false;
     groups.ewan = { };
+
+    users.root.hashedPasswordFile = (util.password "root");
+
     users.ewan = {
       group = "ewan";
       home = "/home/ewan";
       isNormalUser = true;
-      initialPassword = "ewan";
+      hashedPasswordFile = (util.password "ewan");
       description = "Ewan Green";
       extraGroups = [
         "networkmanager"
         "wheel"
         "video"
+        "ewan"
       ];
     };
     groups.egreen = { };
@@ -231,12 +263,13 @@ in
       group = "egreen";
       home = "/home/egreen";
       isNormalUser = true;
-      initialPassword = "egreen";
+      hashedPasswordFile = (util.password "egreen");
       description = "Ewan Green (Office)";
       extraGroups = [
         "networkmanager"
         "wheel"
         "video"
+        "egreen"
       ];
     };
   };
@@ -274,23 +307,10 @@ in
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
 
-  #nixpkgs.overlays =
-  #  let
-  #    # Change this to a rev sha to pin
-  #    moz-rev = "master";
-  #    moz-url = builtins.fetchTarball {
-  #      url = "https://github.com/mozilla/nixpkgs-mozilla/archive/${moz-rev}.tar.gz";
-  #    };
-  #    nightlyOverlay = (import "${moz-url}/firefox-overlay.nix");
-  #  in
-  #  [
-  #    nightlyOverlay
-  #  ];
-
   # Install firefox.
   programs.firefox = {
     enable = true;
-    #  package = pkgs.latest.firefox-nightly-bin;
+    package = firefox.packages.${pkgs.system}.firefox-nightly-bin;
   };
 
   # Allow unfree packages
@@ -308,8 +328,15 @@ in
 
   programs.steam = {
     enable = true;
-    package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
+
+  # programs.steam = {
+  #   enable = true;
+  #   package = with pkgs; steam.override { extraPkgs = pkgs: [ attr ]; };
+  # };
 
   # alacritty for nautilus
   programs.nautilus-open-any-terminal.enable = true;

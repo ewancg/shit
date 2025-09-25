@@ -1,7 +1,7 @@
 { pkgs, ... }:
 with pkgs;
 let
-  vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
+  #  vlc-plugin-pipewire = callPackage ../misc/vlc-plugin-pipewire/default.nix { };
 
   # for Wayland
   my-vlc = (
@@ -28,14 +28,13 @@ in
   home.packages = with pkgs; [
     # Communication
     teams-for-linux
-    thunderbird
     slack
 
     # Multimedia
     mpv
     my-vlc
     spotify
-    vlc-plugin-pipewire
+    #    vlc-plugin-pipewire
     photoflare
 
     easyeffects
@@ -47,7 +46,6 @@ in
 
     blueman
     firefox
-    fsearch
     krita
     nautilus
     obsidian

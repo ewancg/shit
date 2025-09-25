@@ -1,67 +1,70 @@
 # home/apps.nix; home config for apps (specific to the NixOS user, because work/personal rift
 
-{ pkgs, ... }:
+{ pkgs, util, ... }:
 with pkgs;
 let
-  graalvm-ce = pkgs.graalvm-ce;
+  my-discord = (
+    symlinkJoin {
+      name = "my-discord";
+      paths = [ vesktop ];
+      postBuild = ''
+        for size in 32 64 128 256 512 1024; do
+          dim="$size"x"$size"
+          rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+          ${lib.getExe imagemagick} ${../misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+        done
+        rm $out/share/applications/vesktop.desktop
+        cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
+      '';
+    }
+  );
 
-  my-discord = (symlinkJoin {
-    name = "my-discord";
-    paths = [ vesktop ];
-    postBuild = ''
-      for size in 32 64 128 256 512 1024; do
-        dim="$size"x"$size"
-        rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-        ${lib.getExe imagemagick} ${../misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-      done
-      rm $out/share/applications/vesktop.desktop
-      cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
-    '';
-  });
+  my-ts3client = (
+    symlinkJoin {
+      name = "my-ts3client";
+      paths = [ teamspeak_client ];
+      buildInputs = [
+        makeWrapper
+        pkgs.libsForQt5.qt5.qtwayland
+      ];
+      postBuild = ''
+        wrapProgram $out/bin/ts3client \
+          --add-flags "-platform wayland" \
+          --set QT_WAYLAND_CLIENT_BUFFER_INTEGRATION "wayland-xcomposite-egl"
+      '';
+    }
+  );
 
-  # Ugly hack. Not needed anymore
-  my-ts3client = (symlinkJoin {
-    name = "my-ts3client";
-    paths = [ teamspeak_client ];
-    buildInputs = [ makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/ts3client \
-        --set QT_SCALE_FACTOR "1.35"
-    '';
-  });
-
-  my-prismlauncher = (prismlauncher.override {
-    # deprecated https://github.com/NixOS/nixpkgs/commit/2a5017a5550a32dfdf4000bd8fa2fea89e6a0f95
-    #  withWaylandGLFW = true;
-    jdks = [
-      graalvm-ce
-      temurin-bin-24
-      temurin-bin-21
-      temurin-bin-8
-      temurin-bin-17
-    ];
-  });
+  my-prismlauncher = (
+    prismlauncher.override {
+      jdks = util.jdks;
+    }
+  );
   my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix {
     withMinecraftPatch = true;
   };
 
-  qtcreator-fhs = (pkgs.buildFHSEnv {
-    name = "qtcreator-fhs";
+  qtcreator-fhs = (
+    pkgs.buildFHSEnv {
+      name = "qtcreator-fhs";
 
-    targetPkgs = pkgs: (with pkgs; [
-      qtcreator
-      cmake
-      stdenv.cc
-      qt5.qtbase.bin
-      qt5.qtbase.dev
-      qt5.qttools.bin
-      qt5.qttools.dev
-      qt5.qmake
-      gdb
-    ]);
+      targetPkgs =
+        pkgs:
+        (with pkgs; [
+          qtcreator
+          cmake
+          stdenv.cc
+          qt5.qtbase.bin
+          qt5.qtbase.dev
+          qt5.qttools.bin
+          qt5.qttools.dev
+          qt5.qmake
+          gdb
+        ]);
 
-    runScript = pkgs.lib.getExe pkgs.qtcreator;
-  });
+      runScript = pkgs.lib.getExe pkgs.qtcreator;
+    }
+  );
 in
 {
   # VLC plugin path
@@ -83,7 +86,6 @@ in
     openrct2
     path-of-building
     rpcs3
-    steam
 
     # Multimedia
     spot
@@ -105,7 +107,7 @@ in
     protonmail-desktop
 
     dbeaver-bin
-    
+
     gnome-boxes
 
     sysprof
@@ -114,13 +116,6 @@ in
 
     zed-editor
   ];
-
-  programs.sm64ex = {
-    enable = true;
-    region = "us";
-    baserom = path:../misc/baserom.us.z64;
-  };
-
 
   # xdg.configFile = {
   #   "QtProject/qtcreator" = {

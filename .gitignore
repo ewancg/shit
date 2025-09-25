@@ -2,7 +2,7 @@
 .DS_Store
 
 # Secrets
-secret/
+secrets/flake.nix
 
 # NixOS (nixos-rebuild)
 result/
@@ -20,3 +20,5 @@ result
 *.includes
 !qtcreator/styles/
 !qtcreator/themes/
+
+*.z64

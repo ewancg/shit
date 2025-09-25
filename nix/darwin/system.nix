@@ -1,4 +1,11 @@
-{ pkgs, inputs, config, lib, ... }:
+{
+  pkgs,
+  awsctx,
+  homebrew-core,
+  homebrew-cask,
+  vfkit-tap,
+  ...
+}:
 let
   rust = with pkgs; [
     cargo
@@ -50,8 +57,7 @@ in
     #extraOptions = ''
     #  experimental-features = nix-command flakes
     #'';
-    #settings.experimental-features = [ "nix-command" "flakes" ];
-    settings.experimental-features = "nix-command flakes";
+    settings.experimental-features = "nix-command flakes pipe-operators";
 
     optimise = {
       automatic = true;
@@ -62,48 +68,51 @@ in
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    ## gui
-    vscode
+  environment.systemPackages =
+    with pkgs;
+    [
+      ## gui
+      vscode
 
-    # Clouds
-    lens
+      # Clouds
+      lens
 
-    # depends on vfkit which i cant get
-    #podman
+      # depends on vfkit which i cant get
+      #podman
 
-    ## the rest
-    git
-    github-cli
-    awscli
+      ## the rest
+      git
+      github-cli
+      awscli
 
-    # Shell
-    #tmux
-    #fish
-    #starship # prompt
+      # Shell
+      #tmux
+      #fish
+      #starship # prompt
 
-    # dataing
-    dasel
-    jq
+      # dataing
+      dasel
+      jq
 
-    fzf
-    tree
-    alacritty
-    nixpkgs-fmt
-    nil
-    direnv
+      fzf
+      tree
+      alacritty
+      nixpkgs-fmt
+      nil
+      direnv
 
-    #nodePackages.nodejs
-    nodejs_22
-    # nodePackages.npm
+      #nodePackages.nodejs
+      nodejs_22
+      # nodePackages.npm
 
-    python311Packages.python-lsp-server
+      python311Packages.python-lsp-server
 
-    # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
-    # gimme-aws-creds
-    # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
-    inputs.awsctx.defaultPackage.${pkgs.system}
-  ] ++ rust;
+      # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
+      # gimme-aws-creds
+      # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
+      awsctx.defaultPackage.${pkgs.system}
+    ]
+    ++ rust;
 
   environment.shells = [
     pkgs.fish
@@ -127,9 +136,9 @@ in
 
     # Optional: Declarative tap management
     taps = {
-      "homebrew/homebrew-core" = inputs.homebrew-core;
-      "homebrew/homebrew-cask" = inputs.homebrew-cask;
-      #  # "cfergeau/homebrew-crc" =  inputs.vfkit-tap;
+      "homebrew/homebrew-core" = homebrew-core;
+      "homebrew/homebrew-cask" = homebrew-cask;
+      #  # "cfergeau/homebrew-crc" =  vfkit-tap;
     };
 
     # Optional: Enable fully-declarative tap management

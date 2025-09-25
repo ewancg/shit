@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, util, ... }:
 
 {
   imports = [
@@ -12,8 +12,9 @@
     ../syncthing.nix
   ];
 
-  environment.systemPackages = [
-    pkgs.wpa_supplicant_gui
+  environment.systemPackages = with pkgs; [
+    # wpa_supplicant_gui
+    networkmanagerapplet
   ];
 
   networking = {
@@ -28,15 +29,35 @@
       persistent = true;
     };
 
-    networkmanager = {
-      enable = false;
-      dhcp = "dhcpcd";
+    wireless.iwd.settings = {
+      IPv6 = {
+        Enabled = true;
+      };
+      Settings = {
+        AutoConnect = true;
+      };
     };
 
-    wireless = {
+    networkmanager = {
       enable = true;
-      userControlled.enable = true;
+      wifi.backend = "iwd";
+      dhcp = "dhcpcd";
+      dispatcherScripts =
+        let
+          script = (util.script "network-event");
+          source = (builtins.trace script script);
+        in
+        [
+          {
+            inherit source;
+          }
+        ];
     };
+
+    # wireless = {
+    #   enable = true;
+    #   userControlled.enable = true;
+    # };
 
     nftables = {
       enable = true;
