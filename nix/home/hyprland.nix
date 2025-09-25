@@ -1,24 +1,32 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  util,
+  ...
+}:
 let
   col = config.lib.stylix.colors;
-  m1 = {
+  samsungLF32TU87 = {
     desc = "Samsung Electric Company LF32TU87 HCPRA08903";
     mode = "903.40 3840 4168 4592 5344 2160 2161 2164 2254 +hsync -vsync";
     pos = "0x0";
     scale = "1.33";
   };
-  m2 = {
+  xymMNN = {
     desc = "XYM MNN 0x00000055";
     mode = "921.87 2560 2792 3080 3600 1600 1601 1604 1742 +hsync -vsync";
     pos = "auto-center-down";
     scale = "1.33";
   };
-  #m2 = {
-  #  desc = "Acer Technologies B326HK T1NAA0038522";
-  #  mode = "903.40 3840 4168 4592 5344 2160 2161 2164 2254 -hsync -vsync";
-  #  pos = "auto-right";
-  #  scale = "1.33";
-  #};
+  _acerB326HK = {
+    desc = "Acer Technologies B326HK T1NAA0038522";
+    mode = "903.40 3840 4168 4592 5344 2160 2161 2164 2254 -hsync -vsync";
+    pos = "auto-right";
+    scale = "1.33";
+  };
+  m1 = samsungLF32TU87;
+  m2 = xymMNN;
+  # m2 = _acerB326HK;
 in
 {
   home.sessionVariables = {
@@ -90,22 +98,43 @@ in
       group = {
         insert_after_current = false;
 
-        "col.border_locked_active" = "rgb(121212)";
-        "col.border_locked_inactive" = "rgb(121212)";
+        "col.border_active" = "rgba(${col.base0D}bb)";
+        "col.border_inactive" = "rgba(${col.base03}bb)";
+        "col.border_locked_active" = "rgba(${col.base0B}bb)";
+        "col.border_locked_inactive" = "rgba(${col.base03}bb)";
 
         groupbar = {
-          "col.active" = "rgb(8caaee)";
-          "col.inactive" = "rgb(303446)";
+          "col.active" = "rgba(${col.base01}dd)";
+          "col.inactive" = "rgba(${col.base00}dd)";
+          "col.locked_active" = "rgba(${col.base09}dd)";
+          "col.locked_inactive" = "rgba(${col.base00}dd)";
 
-          height = 8;
+          height = 24;
+          keep_upper_gap = false;
           render_titles = true;
-          font_family = "San Francisco Text";
+          gradients = true;
 
-          # gradients = true
-          # rounding = 2
           # round_only_edges = true
-          # gaps_in = 1
-          # gaps_out = 1
+          gradient_round_only_edges = true;
+          gradient_rounding = 10;
+          gradient_rounding_power = 2.5;
+
+          font_family = "San Francisco Text";
+          font_size = 14;
+          text_color = "rgb(${col.base07})";
+          text_color_inactive = "rgb(${col.base05})";
+          font_weight_active = "semibold";
+          font_weight_inactive = "medium";
+
+          indicator_height = 0;
+          # # this just pushes it in on either side to avoid looking awkward next to the rounder gradients
+          # rounding = 6;
+          # rounding_power = 0;
+          # indicator_height = 2;
+          # indicator_gap = 1;
+
+          gaps_in = 2;
+          gaps_out = 2;
         };
 
       };
@@ -160,10 +189,12 @@ in
         "immediate, onworkspace:w[t1]"
         "bordersize 0, floating:0, onworkspace:w[t1]"
         "rounding 0, floating:0, onworkspace:w[t1]"
-        "bordersize 0, floating:0, onworkspace:w[tg1]"
-        "rounding 0, floating:0, onworkspace:w[tg1]"
         "bordersize 0, floating:0, onworkspace:f[1]"
         "rounding 0, floating:0, onworkspace:f[1]"
+
+        "noscreenshare on, class:vesktop"
+        "noscreenshare on, class:ts3client"
+        "noscreenshare on, class:thunderbird"
 
         "suppressevent maximize, class:.*" # You'll probably like this.
         "bordercolor rgba(${col.base0D}bb), floating:1" # Blue
@@ -248,6 +279,7 @@ in
       bind = [
         "$mod SHIFT, C, exec, hyprpicker -nra"
         "$mod SHIFT, S, exec, hyprshot -m region -o ~/Pictures/Screenshots/"
+        "$mod SHIFT, R, exec, ${util.script "reset-window-positions"}"
         "$mod, Q, exec, [float; size 873 427] $terminal"
         "$mod, F, exec, $fileManager"
         "$mod SHIFT, F, exec, $fileSearch"
@@ -271,7 +303,8 @@ in
         "$mod SHIFT, grave, movetoworkspace, special:magic"
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
-        "$mod, L, togglegroup"
+        "$mod, G, togglegroup"
+        "$mod, L, lockactivegroup"
         "$mod, 1, moveworkspacetomonitor, 1  monitor:desc:${m1.desc}"
         "$mod, 2, moveworkspacetomonitor, 2  monitor:desc:${m1.desc}"
         "$mod, 3, moveworkspacetomonitor, 3  monitor:desc:${m1.desc}"
@@ -320,9 +353,9 @@ in
         "$mod, F12, pass, ^(TeamSpeak 3)$"
         "$mod CTRL, F12, pass, ^(TeamSpeak 3)$"
         "$mod, F13, sendshortcut, CTRL SHIFT, M,[^(vesktop)$]"
-        ",XF86AudioRaiseVolume, exec, ${pkgs.bash}/bin/bash ${../../dot/local/bin/dunst-status-change} volume up"
-        ",XF86AudioLowerVolume, exec, ${pkgs.bash}/bin/bash ${../../dot/local/bin/dunst-status-change} volume down"
-        ",XF86AudioMute, exec, ${pkgs.bash}/bin/bash ${../../dot/local/bin/dunst-status-change} volume mute"
+        ",XF86AudioRaiseVolume, exec, ${util.script "dunst-status-change"} volume up"
+        ",XF86AudioLowerVolume, exec, ${util.script "dunst-status-change"} volume down"
+        ",XF86AudioMute, exec, ${util.script "dunst-status-change"} volume mute"
         ",XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
         ",XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next"
         ",XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous"
@@ -346,7 +379,8 @@ in
 
       workspace = [
         "w[t1], gapsout:0, gapsin:0"
-        "w[tg1], gapsout:0, gapsin:0"
+        #"w[tg1], gapsout:0, gapsin:0"
+        "w[tg1], gapsout:4, gapsin:2"
         "f[1], gapsout:0, gapsin:0"
         "1, persistent:true, monitor:desc:${m1.desc}, default:true"
         "2, persistent:true, monitor:desc:${m1.desc}"
@@ -361,15 +395,14 @@ in
       ];
 
       exec-once = [
-        "[workspace 1 silent] firefox & steam -silent"
+        "[workspace 1 silent] firefox & steam -silent & easyeffects -w"
         "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        "blueman-applet & nm-applet"
         "PATH=${pkgs.bash}/bin:$PATH waybar & eww daemon --no-daemonize & dunst"
-        "blueman-applet" # nm-applet & gammastep-indicator"
+        "[workspace m silent] spotify"
         "[workspace 2 silent] obsidian"
-        "[workspace special silent] vesktop"
-        "[workspace special silent] spotify"
+        "[workspace m silent] pgrep easyeffects && sleep 2 && vesktop; ts3client"
         "[workspace 7 silent] hydroxide serve; sleep 2; thunderbird"
-
       ];
     };
   };

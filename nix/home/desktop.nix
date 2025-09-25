@@ -1,6 +1,10 @@
 # desktop.nix; home config for items specific to the NixOS user
 
-{ pkgs, util, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 with pkgs;
 let
   segoe-ui-variable-fonts = callPackage ../misc/segoe-ui-variable/default.nix { };
@@ -8,17 +12,18 @@ let
 in
 {
   imports = [
+    ./dunst.nix
     ./email.nix
-
-    ./waybar.nix
+    ./fsearch.nix
+    ./eww.nix
     ./hyprland.nix
-
     ./qpalette.nix
+    ./waybar.nix
+    ./wofi.nix
   ];
 
   stylix.enable = true;
   stylix.icons.enable = false;
-
   gtk = {
     theme = {
       name = "adw-gtk3";
@@ -39,7 +44,9 @@ in
   stylix.targets.gtk.enable = false;
   stylix.targets.gnome-text-editor.enable = false;
   #stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+  # https://github.com/ada-lovecraft/base16-nord-scheme/raw/refs/heads/master/nord.yaml
   stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
   stylix.fonts = {
     serif = {
       package = san-francisco-fonts;
@@ -132,6 +139,57 @@ in
       nix-ld
 
       wpa_supplicant_gui
+
+      # Create a runtime mechanism to read Stylix base16 (or 24) colors
+      (
+        let
+          colorSetToBashCases = (
+            col:
+            builtins.concatStringsSep "\n" (
+              builtins.map
+                (
+                  name:
+                  let
+                    key = (if (builtins.substring 0 4 name) == "base" then builtins.substring 4 (-1) name else name);
+                  in
+                  "\"${key}\") printf '${col.withHashtag.${name}}';;"
+                )
+                (
+                  let
+                    filter = (
+                      str:
+                      (builtins.substring 0 4 str) == "base"
+                      || builtins.elem str [
+                        "red"
+                        "orange"
+                        "yellow"
+                        "green"
+                        "cyan"
+                        "blue"
+                        "magenta"
+                        "brown"
+                        "bright-red"
+                        "bright-yellow"
+                        "bright-green"
+                        "bright-cyan"
+                        "bright-blue"
+                        "bright-magenta"
+                      ]
+                    );
+                    output = builtins.filter filter (builtins.attrNames col);
+                  in
+                  output
+                )
+            )
+          );
+        in
+        writeShellScriptBin "get-color" ''
+          case "$1" in
+          ${colorSetToBashCases config.lib.stylix.colors}
+          esac
+          shift
+        ''
+      )
     ];
     pointerCursor = {
       gtk.enable = true;
@@ -140,38 +198,23 @@ in
     };
   };
 
-  xdg.configFile =
-    let
-      dirs =
-        lib.genAttrs
-          [
-            "wofi"
-            "eww"
-            #"waybar"
-            "dunst"
-          ]
-          (name: {
-            source = ../../dot/config + "/${name}";
-            recursive = true;
-          });
-    in
-    dirs;
-  #    "wofi" = {
-  #      recursive = true;
-  #      source = ../../dot/config/wofi;
-  #    };
-  #    "eww" = {
-  #      recursive = true;
-  #      source = ../../dot/config/eww;
-  #    };
-  #    "waybar"= {
-  #      recursive = true;
-  #      source = ../../dot/config/waybar;
-  #    };
-  #    "dunst" = {
-  #      recursive = true;
-  #      source = ../../dot/config/dunst;
-  #    };
+  # No current need to arbitrarily emplace dotfiles, but this is a powerful little snippet
+  #xdg.configFile =
+  #  let
+  #    dirs =
+  #      lib.genAttrs
+  #        [
+  #          "wofi"
+  #          "eww"
+  #          "waybar"
+  #          "dunst"
+  #        ]
+  #        (name: {
+  #          source = ../../dot/config + "/${name}";
+  #          recursive = true;
+  #        });
+  #  in
+  #  dirs;
 
   xdg.mimeApps = {
     enable = true;

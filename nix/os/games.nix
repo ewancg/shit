@@ -2,10 +2,20 @@
 {
   programs.gamescope = {
     enable = true;
-    capSysNice = true;
-    args = [
-      "--rt"
-    ];
+    capSysNice = false;
+    #package = (
+    #  pkgs.gamescope.overrideAttrs (old: {
+    #    src = pkgs.fetchFromGitHub {
+    #      owner = "ColinKinloch";
+    #      repo = "gamescope";
+    #      rev = "dont_want_no_scrgb";
+    #      hash = "sha256-vEN5RdDLxlBG1VEqxe+7FOmHtLfck1/MfbL3LqItzzw=";
+    #    };
+    #  })
+    #);
+    #args = [
+    #  "--rt"
+    #];
   };
 
   environment.systemPackages = with pkgs; [

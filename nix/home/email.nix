@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
-
-  home.packages = [ pkgs.hydroxide ];
+  home.packages = with pkgs; [
+    hydroxide
+    thunderbird
+  ];
 }

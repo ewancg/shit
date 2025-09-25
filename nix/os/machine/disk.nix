@@ -90,10 +90,10 @@
                       ];
                     };
                     # if I need this, it's already over
-                    "/swap" = {
-                      mountpoint = "/swap";
-                      swap.swapfile.size = "24G";
-                    };
+                    # "/swap" = {
+                    #   mountpoint = "/swap";
+                    #   swap.swapfile.size = "24G";
+                    # };
                   };
                 };
               };
@@ -103,10 +103,6 @@
       };
     };
   };
-
-  swapDevices = [
-    "/swap/swapfile"
-  ];
 
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/var/log".neededForBoot = true;

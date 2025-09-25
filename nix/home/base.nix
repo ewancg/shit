@@ -1,6 +1,6 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
-{ config, pkgs, ... }:
+{ pkgs, util, ... }:
 with pkgs;
 {
   home = {
@@ -8,6 +8,7 @@ with pkgs;
 
     packages = [
       # cli tools
+      atuin
       python3
       ffmpeg
       bchunk
@@ -94,14 +95,90 @@ with pkgs;
     };
   };
 
-  nixpkgs.config = {
-    allowUnfree = true;
+  nixpkgs.config.allowUnfree = true;
+
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      terminal.shell = "tmux";
+      general.live_config_reload = true;
+
+      window = (
+        pkgs.lib.mkForce {
+          dynamic_title = true;
+          dimensions = {
+            columns = 130;
+            lines = 28;
+          };
+          decorations = "Full";
+          opacity = 0.5;
+          level = "AlwaysOnTop";
+          resize_increments = true;
+        }
+      );
+
+      # Handled by tmux
+      scrolling.history = 0;
+
+      cursor = {
+        style = {
+          shape = "Beam";
+          blinking = "Off";
+        };
+        blink_interval = 500;
+        thickness = 0.1;
+      };
+
+      font = (
+        pkgs.lib.mkForce {
+          normal = {
+            family = "JetBrainsMono NerdFont Propo";
+            style = "Light";
+          };
+          bold = {
+            family = "JetBrainsMono NerdFont Propo";
+            style = "Semibold";
+          };
+          italic = {
+            family = "JetBrainsMono NerdFont Propo";
+            style = "Regular Italic";
+          };
+          bold_italic = {
+            family = "JetBrainsMono NerdFont Propo";
+            style = "Semibold Italic";
+          };
+          size = 9.5625;
+        }
+      );
+
+      mouse.bindings = [
+        {
+          mouse = "Right";
+          mods = "None";
+          action = "Copy";
+        }
+      ];
+
+      keyboard.bindings = [
+        {
+          key = "Alt";
+          mods = "Control";
+          chars = ''\uE000'';
+        }
+      ];
+    };
   };
 
-  xdg.configFile = {
-    "alacritty" = {
-      recursive = true;
-      source = ../../dot/config/alacritty;
+  programs.nix-index.enableFishIntegration = true;
+  programs.atuin = {
+    enable = true;
+    settings = {
+      auto_sync = true;
+      sync_frequency = "5m";
+      sync_address = "https://api.atuin.sh";
+      search_mode = "fuzzy";
+      inline_height = "0";
+      style = "auto";
     };
   };
 
@@ -113,6 +190,8 @@ with pkgs;
       set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
       set -gx FZF_LEGACY_KEYBINDS 0
       set -gx FZF_COMPLETE 1
+
+      set -U fish_greeting
     '';
     functions = {
       nixbuildconf.body = ''
