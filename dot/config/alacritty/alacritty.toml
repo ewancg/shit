@@ -1,18 +1,23 @@
 
+<<<<<<< HEAD
 #general.import = [
 #	"~/.config/alacritty/catpuccin_mocha.toml"
 #]
+=======
+general.import = ["~/.config/alacritty/catpuccin_mocha.toml"]
+>>>>>>> origin/main
 
-terminal.shell = "tmux"
 general.live_config_reload = true
+
+env = { TERM = "alacritty-direct" }
 
 [window]
 dynamic_title = true
 dimensions = { columns = 130, lines = 28 }
 decorations = "Full"
 
-opacity = 1
-blur =  false
+opacity = 0.947
+blur = true
 
 resize_increments = true
 
@@ -20,11 +25,20 @@ resize_increments = true
 history = 0 # Handled by tmux
 
 [font]
+<<<<<<< HEAD
 normal = { family = 		"JetBrainsMono NerdFont", style = "Regular"}
 bold = { family = 			"JetBrainsMono NerdFont", style = "Bold"}
 italic = { family = 		"JetBrainsMono NerdFont", style = "Regular Italic"}
 bold_italic = { family = 	"JetBrainsMono NerdFont", style = "Bold Italic"}
 size = 9.5625
+=======
+size = 11
+
+normal = { family = "UbuntuMono Nerd Font", style = "Regular" }
+bold = { family = "UbuntuMono Nerd Font", style = "Bold" }
+italic = { family = "UbuntuMono Nerd Font", style = "Regular Italic" }
+bold_italic = { family = "UbuntuMono Nerd Font", style = "Bold Italic" }
+>>>>>>> origin/main
 
 [cursor]
 style = { shape = "Beam", blinking = "Off" }
@@ -32,9 +46,7 @@ blink_interval = 500
 thickness = 0.1
 
 [mouse]
-bindings = [
-	{ mouse = "Right", mods = "None", action = "Copy" },
-]
+bindings = [{ mouse = "Right", mods = "None", action = "Copy" }]
 
 [[keyboard.bindings]]
 key = "Alt"

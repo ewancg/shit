@@ -1,8 +1,49 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
 { pkgs, util, ... }:
-with pkgs;
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with pkgs;
+#let
+# they published a fix https://github.com/pure-fish/pure/releases/tag/v4.11.3
+#  pure = pkgs.fishPlugins.pure.overrideAttrs (old: rec {
+#    name = "pure-${version}";
+#    version = "4.11.2";
+#    src = fetchFromGitHub {
+#      owner = "pure-fish";
+#      repo = "pure";
+#      rev = "v${version}";
+#      hash = "sha1-+Mt5rTeyRP4yTstOuc+yJZwTVJs=";
+#    };
+#  });
+#in
+{
+  #services.darkman = {
+  #  enable = true;
+  #  darkModeScripts = {
+  #    alacritty-theme = ''
+  #      ln -fs ${config.xdg.configHome}/alacritty/gruvbox_material_medium_dark.toml ${config.xdg.configHome}/alacritty/_active.toml
+  #    '';
+  #  };
+  #  lightModeScripts = {
+  #    alacritty-theme = ''
+  #      ln -fs ${config.xdg.configHome}/alacritty/gruvbox_material_hard_light.toml ${config.xdg.configHome}/alacritty/_active.toml
+  #    '';
+  #  };
+  #  settings = {
+  #    usegeoclue = true;
+  #  };
+  #};
+
+  xdg.configFile.alacritty = {
+    source = ../../dot/config/alacritty;
+    recursive = true;
+  };
+
   home = {
     stateVersion = "24.05";
 
@@ -36,7 +77,6 @@ with pkgs;
       gnupg
       wget
 
-      alacritty
       fish
       tmux
       fd
@@ -44,15 +84,14 @@ with pkgs;
       tree
 
       # Whatever
-      neovim
       imagemagick
-      nethogs
 
       # Not Windows fonts
       corefonts
       fira-code
       fira-code-symbols
       liberation_ttf
+      jetbrains-mono
       mplus-outline-fonts.githubRelease
       noto-fonts
       open-sans
@@ -76,20 +115,72 @@ with pkgs;
       # fishPlugins.fzf-fish # ctrl j file search
       fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
       fishPlugins.clownfish # "mock" command
+      fishPlugins.pure
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [
       fishPlugins.async-prompt # broken on macos
+
     ];
+    # ++ lib.optionals pkgs.stdenv.isLinux [
+    #fishPlugins.async-prompt # broken on macos
+    #];
 
     sessionVariables = {
-      EDITOR = "code --wait --new-window";
+      EDITOR = "zeditor --new";
     };
 
     file = {
-      ".tmux.conf".source = ../../dot/.tmux.conf;
       ".local/bin" = {
         recursive = true;
         source = ../../dot/local/bin;
+      };
+      ".config/alacritty/_active.toml" = {
+        source = ../../dot/config/alacritty/gruvbox-material-hard-light.toml;
+      };
+      ".config/alacritty/alacritty.toml" = {
+        text = ''
+          terminal.shell = { program = "${lib.getExe pkgs.tmux}", args = ["-u"] }
+          [general]
+          live_config_reload = true
+          import = [ "${config.xdg.configHome}/alacritty/_active.toml", "~/.config/alacritty/dynamic-settings.toml" ]
+
+          [window]
+          dynamic_title = true
+          dimensions = { columns = 130, lines = 28 }
+          dynamic_padding = true
+          decorations = "Buttonless"
+
+          # opacity = 0.91
+          opacity = 1
+          blur = true
+
+          resize_increments = true
+
+          [scrolling]
+          history = 0 # Handled by tmux
+
+          [font]
+          size = 11.5
+
+          normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+          bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+          italic = { family = "JetBrainsMono Nerd Font", style = "Regular Italic" }
+          bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
+
+          [cursor]
+          style = { shape = "Beam", blinking = "Off" }
+          blink_interval = 500
+          thickness = 0.1
+
+          [mouse]
+          bindings = [{ mouse = "Right", mods = "None", action = "Copy" }]
+
+          [[keyboard.bindings]]
+          key = "Alt"
+          mods = "Control"
+          chars = "\uE000"
+        '';
+
       };
       "dev".source = ../shells;
     };
@@ -170,28 +261,110 @@ with pkgs;
   };
 
   programs.nix-index.enableFishIntegration = true;
+
   programs.atuin = {
     enable = true;
+    enableFishIntegration = true;
     settings = {
       auto_sync = true;
       sync_frequency = "5m";
       sync_address = "https://api.atuin.sh";
       search_mode = "fuzzy";
       inline_height = "0";
-      style = "auto";
+      key_path = "${config.home.homeDirectory}/secrets/ATUIN_KEY";
+      ctrl_n_shortcuts = true;
+      enter_accept = true;
+      filter_mode = "session";
     };
   };
-
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
       direnv hook fish | source
+
+      set -gx pure_enable_nixdevshell true
+      set -gx pure_symbol_nixdevshell_prefix '󱄅 '
+
+      # too clunky
+      set -gx pure_enable_k8s false
+      set -gx pure_symbol_k8s_prefix ' '
+
+      set -gx pure_enable_aws_profile true
+
+      set -gx pure_symbol_git_stash 'stash'
+      set -gx PURE_GIT_DOWN_ARROW '↓'
+      set -gx PURE_GIT_UP_ARROW '↑'
+      set -gx pure_symbol_reverse_prompt '..'
+      set -gx pure_symbol_prompt '..'
+      set -gx pure_enable_single_line_prompt true
+      set --universal pure_check_for_new_release false
+
+      set -gx pure_shorten_prompt_current_directory_length 1
 
       set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
       set -gx FZF_LEGACY_KEYBINDS 0
       set -gx FZF_COMPLETE 1
 
       set -U fish_greeting
+
+      function poll
+        string match -q "*y*" "$(printf "%s\n%s" "y" "N" | fzf --header "$1" --print-query)"
+      end
+
+      # scheme-based cargo shortcuts
+
+      alias crun "RUST_LOG=debug cargo r --"
+      alias crelease "RUST_LOG=info cargo r --release --"
+      alias cb "cargo build"
+      alias ct "cargo test"
+
+      alias sqlxp "cargo sqlx prepare"
+      alias sqlxdd "sqlx database drop"
+      alias sqlxds "sqlx database setup"
+      alias sqlxreset 'poll "Clear database at \'$DATABASE_URL\' and prepare queries?" && echo 'y' | sqlxdd  && sqlxds && sqlxp'
+
+      alias llvmc "cargo llvm-cov"
+
+      # scheme-based git shortcuts
+      alias gpush "git push"
+      alias gpull "git pull"
+      alias gc "git commit"
+      alias ga "git add"
+      alias grm "git rm"
+      alias grmf "poll "Force remove $argv?" git rm -rf"
+      alias gcam "git commit -am"
+      alias gri "git rebase -i"
+      alias grh 'poll "Hard reset?" && git reset --hard'
+
+      function ghpr
+        set -l args
+        set index (contains --index -- -d $argv)
+        if [ $status -eq 0 ]
+          set -a args "--draft"
+          set -e argv[$index]
+        end
+        set idx (contains --index -- -b $argv)
+        if [ $status -eq 0 ]
+          set body_idx (math $idx + 1)
+          if [ $body_idx -le $(count $argv) ]
+            set -a args "--body"
+            set -a args "$argv[$body_idx]"
+            set -e argv[$idx]
+            set -e argv[$idx]
+          else
+            set_color yellow
+            echo "-b provided without body"
+            return
+          end
+        end
+        gh pr create -f $argv $args
+      end
+      function ghc
+        git clone "https://github.com/$argv[1]" $argv[2..-1]
+      end
+      function orgc
+        ghc "discovery-digital/$argv[1]" $argv[2..-1]
+      end
     '';
     functions = {
       nixbuildconf.body = ''
@@ -221,25 +394,6 @@ with pkgs;
         kubectl config use-context $new_env
       '';
 
-      replace-all.body = ''
-        set -f find $argv[1]
-        set -f rep $argv[2]
-        set -f filter $argv[3]
-        if test $filter
-            echo "Replacing /$find/ with /$rep/ with extra $filter"
-            rg --files-with-matches $filter | rg $find --files-with-matches | xargs sed -i "s/$find/$rep/g"
-        else
-            echo "Replacing /$find/ with /$rep/"
-            rg $find --files-with-matches | xargs sed -i "s/$find/$rep/g"
-        end
-      '';
-
-      sk.body = ''
-        set -x SIGNING_KEY (gpg --list-secret-keys --keyid-format long | grep $EMAIL -B 3 | grep "(work|github|disco|1E7452EAEE)" -B 3 | grep sec | string split "/" | tail -n 1 | string match -r '[0-9A-F]+')
-        echo "Set Signing key to $SIGNING_KEY"
-        git config --global user.signingkey $SIGNING_KEY > /dev/null
-      '';
-
       envsource.body = ''
         set -f envfile "$argv"
         if not test -f "$envfile"
@@ -262,14 +416,14 @@ with pkgs;
     };
 
     # borked
-    #plugins = with fishPlugins; [
-    #  z # common directories
-    #  bass # source bash stuff
-    #  fzf-fish # ctrl j file search
-    #  async-prompt # yep
-    #  autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-    #  clownfish # "mock" command
-    #];
+    plugins = with fishPlugins; [
+      z # common directories
+      bass # source bash stuff
+      fzf-fish # ctrl j file search
+      async-prompt # yep
+      autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+      clownfish # "mock" command
+    ];
   };
 
   programs.tmux = {

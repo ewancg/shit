@@ -40,31 +40,43 @@ let
       jdks = util.jdks;
     }
   );
+
+  # for Wayland
+  # my-vlc = (
+  #   symlinkJoin {
+  #     name = "my-vlc";
+  #     paths = [ vlc ];
+  #     buildInputs = [ makeWrapper ];
+  #     postBuild = ''
+  #       wrapProgram $out/bin/vlc \
+  #         --unset DISPLAY
+  #     '';
+  #   }
+  # );
+
   my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix {
     withMinecraftPatch = true;
   };
 
-  qtcreator-fhs = (
-    pkgs.buildFHSEnv {
-      name = "qtcreator-fhs";
-
-      targetPkgs =
-        pkgs:
-        (with pkgs; [
-          qtcreator
-          cmake
-          stdenv.cc
-          qt5.qtbase.bin
-          qt5.qtbase.dev
-          qt5.qttools.bin
-          qt5.qttools.dev
-          qt5.qmake
-          gdb
-        ]);
-
-      runScript = pkgs.lib.getExe pkgs.qtcreator;
-    }
-  );
+  # qtcreator-fhs = (
+  #   pkgs.buildFHSEnv {
+  #     name = "qtcreator-fhs";
+  #       targetPkgs =
+  #       pkgs:
+  #       (with pkgs; [
+  #         qtcreator
+  #         cmake
+  #         stdenv.cc
+  #         qt5.qtbase.bin
+  #         qt5.qtbase.dev
+  #         qt5.qttools.bin
+  #         qt5.qttools.dev
+  #         qt5.qmake
+  #         gdb
+  #       ]);
+  #       runScript = pkgs.lib.getExe pkgs.qtcreator;
+  #   }
+  # );
 in
 {
   # VLC plugin path
@@ -109,6 +121,8 @@ in
     dbeaver-bin
 
     gnome-boxes
+
+    alacritty
 
     sysprof
 

@@ -131,6 +131,7 @@ in
       grim
       playerctl
       traceroute
+      nethogs
 
       # Linux system
       glibcLocales

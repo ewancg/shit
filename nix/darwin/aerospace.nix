@@ -1,8 +1,8 @@
 # this is a home manager module
 
-{ ... }: {
+{ pkgs, ... }: {
   home = {
-    packages = [ aerospace ];
+    packages = with pkgs; [ aerospace ];
     file.aerospace = {
       target = ".aerospace.toml";
       text = ''
@@ -15,12 +15,12 @@
         ]
 
         [gaps]
-        inner.horizontal = 15
-        inner.vertical   = 15
-        outer.left       = 15
-        outer.bottom     = 15
-        outer.top        = 15
-        outer.right      = 15
+        inner.horizontal = 4
+        inner.vertical   = 4
+        outer.left       = 0
+        outer.bottom     = 0
+        outer.top        = 0
+        outer.right      = 0
 
         [mode.main.binding]
         alt-j = 'focus down'

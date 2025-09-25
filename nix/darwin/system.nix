@@ -1,9 +1,15 @@
 {
   pkgs,
+<<<<<<< HEAD
   awsctx,
   homebrew-core,
   homebrew-cask,
   vfkit-tap,
+=======
+  inputs,
+  config,
+  lib,
+>>>>>>> origin/main
   ...
 }:
 let
@@ -20,17 +26,22 @@ in
 {
   imports = [
     ./nix-darwin-activation.nix
+    ./touch-id.nix
+
+    # ../misc/ollama.nix
 
     # Home Manager accommmodations
     ../home/base-accommodations.nix
+
+    # nvim config
+    ../home/neovim.nix
   ];
   system.stateVersion = 5;
-
-  security.pam.enableSudoTouchIdAuth = true;
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.hostPlatform = "aarch64-darwin";
 
+<<<<<<< HEAD
   services.nix-daemon.enable = true;
 
   # Required for home-manager.users.* to work
@@ -48,6 +59,8 @@ in
       };
     };
   };
+=======
+>>>>>>> origin/main
   nix = {
     # package = pkgs.nix;
     # idk
@@ -67,6 +80,7 @@ in
       options = "--delete-older-than 10d";
     };
   };
+<<<<<<< HEAD
 
   environment.systemPackages =
     with pkgs;
@@ -76,14 +90,40 @@ in
 
       # Clouds
       lens
+=======
+  environment.systemPackages = with pkgs; [
+    ## gui
+    vscode
+    jetbrains.rust-rover
+    zed-editor
+    bruno
+
+    # Clouds
+    # lens
+>>>>>>> origin/main
 
       # depends on vfkit which i cant get
       #podman
 
+<<<<<<< HEAD
       ## the rest
       git
       github-cli
       awscli
+=======
+    ## the rest
+    git
+    github-cli
+    # awscli
+    awscli2
+
+    # Docker runtime
+    colima
+    # Docker compose plugin
+    docker-compose
+    # Docker build plugin (default is legacy)
+    docker-buildx
+>>>>>>> origin/main
 
       # Shell
       #tmux
@@ -94,17 +134,26 @@ in
       dasel
       jq
 
+<<<<<<< HEAD
       fzf
       tree
       alacritty
       nixpkgs-fmt
       nil
       direnv
+=======
+    fzf
+    tree
+    nixpkgs-fmt
+    nil
+    direnv
+>>>>>>> origin/main
 
       #nodePackages.nodejs
       nodejs_22
       # nodePackages.npm
 
+<<<<<<< HEAD
       python311Packages.python-lsp-server
 
       # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
@@ -113,16 +162,80 @@ in
       awsctx.defaultPackage.${pkgs.system}
     ]
     ++ rust;
+=======
+    k9s
+
+    # python311Packages.python-lsp-server
+
+    # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
+    # gimme-aws-creds
+    # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
+    inputs.awsctx.defaultPackage.${pkgs.system}
+
+    # timezones broken by default...
+    tzdata
+  ];
+>>>>>>> origin/main
 
   environment.shells = [
     pkgs.fish
     pkgs.bash
+    pkgs.bashInteractive
     pkgs.zsh
   ];
+
+  # Required for home-manager.users.* to work
+  users.users.egreen = {
+    description = "Ewan Green";
+    shell = pkgs.bashInteractive;
+    home = "/Users/egreen";
+    name = "egreen";
+  };
 
   # Enable zsh in order to add /run/current-system/sw/bin to $PATH, because the Nix installer on macOS only hooks into bashrc & zshrc
   programs.zsh.enable = true;
   programs.fish.enable = true;
+
+  # idk
+  environment.loginShellInit = ''
+    export SHELL="$(dscl . -read /Users/$(id -un) UserShell | awk '{print $2}')"
+  '';
+  #programs.tmux = {
+  #  shell = "${lib.getExe pkgs.fish}";
+  #  terminal = "${lib.getExe pkgs.alacritty}";
+
+  #  enable = true;
+  #  enableFzf = true;
+  #  enableSensible = true;
+
+  #  extraConfig = ''
+  #  set -gu default-command
+  #  set -g default-shell "$SHELL"
+  #'';
+  #};
+  #programs.zsh = {
+  #  interactiveShellInit = ''
+  #    export SHELL="$(dscl . -read /Users/$(id -un) UserShell | awk '{print $2}')"
+  #    set PPID="$(ps -o ppid -p $$ | sed -n '2 p')"
+  #    if [[ "basename `$(ps -o comm -p $PPID | sed -n '2 p')`" != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+  #    then
+  #      export SHELL="$(dscl . -read /Users/$(id -un) UserShell | awk '{print $2}')"
+  #      [[ -o login ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+  #      exec $SHELL $LOGIN_OPTION
+  #      # shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+  #      # exec ${lib.getExe pkgs.fish} $LOGIN_OPTION
+  #    fi
+  #  '';
+  #};
+  programs.fish = {
+    shellInit = ''
+      for p in /run/current-system/sw/bin
+        if not contains $p $fish_user_paths
+          set -g fish_user_paths $p $fish_user_paths
+        end
+      end
+    '';
+  };
 
   nix-homebrew = {
     # Install Homebrew under the default prefix
