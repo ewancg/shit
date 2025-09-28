@@ -22,10 +22,10 @@
     gamescope
   ];
 
-  # security.wrappers.gamescope = {
-  #   source = "/run/current-system/sw/bin/gamescope";
-  #   capabilities = "CAP_SYS_NICE=eip";
-  #   owner = "root";
-  #   group = "";
-  # };
+  security.wrappers.gamescope = {
+    source = "/run/current-system/sw/bin/gamescope";
+    capabilities = "CAP_SYS_NICE=eip";
+    owner = "root";
+    group = "";
+  };
 }

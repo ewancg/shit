@@ -14,8 +14,8 @@ in
   imports = [
     ./dunst.nix
     ./email.nix
-    ./fsearch.nix
     ./eww.nix
+    ./fsearch.nix
     ./hyprland.nix
     ./qpalette.nix
     ./waybar.nix

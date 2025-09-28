@@ -85,6 +85,7 @@ in
     my-discord
     ripcord
     my-ts3client
+    telegram-desktop
     #teamspeak_client
 
     # Games
@@ -108,6 +109,7 @@ in
     transmission_4
     transmission-remote-gtk
 
+    reaper
     bitwig-studio
     guitarix
     ptcollab

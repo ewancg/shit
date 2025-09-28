@@ -1,6 +1,5 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
-{ pkgs, util, ... }:
 {
   config,
   lib,
@@ -22,23 +21,6 @@ with pkgs;
 #  });
 #in
 {
-  #services.darkman = {
-  #  enable = true;
-  #  darkModeScripts = {
-  #    alacritty-theme = ''
-  #      ln -fs ${config.xdg.configHome}/alacritty/gruvbox_material_medium_dark.toml ${config.xdg.configHome}/alacritty/_active.toml
-  #    '';
-  #  };
-  #  lightModeScripts = {
-  #    alacritty-theme = ''
-  #      ln -fs ${config.xdg.configHome}/alacritty/gruvbox_material_hard_light.toml ${config.xdg.configHome}/alacritty/_active.toml
-  #    '';
-  #  };
-  #  settings = {
-  #    usegeoclue = true;
-  #  };
-  #};
-
   xdg.configFile.alacritty = {
     source = ../../dot/config/alacritty;
     recursive = true;
@@ -108,28 +90,22 @@ with pkgs;
       # broke 11/23
       #dina-font
     ]
-    ++ [
-      fishPlugins.z # common directories
-      fishPlugins.bass # source bash stuff
-      # fishPlugins.fishtape_3
-      # fishPlugins.fzf-fish # ctrl j file search
-      fishPlugins.autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-      fishPlugins.clownfish # "mock" command
-      fishPlugins.pure
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      fishPlugins.async-prompt # broken on macos
-
-    ];
-    # ++ lib.optionals pkgs.stdenv.isLinux [
-    #fishPlugins.async-prompt # broken on macos
-    #];
+    ++ (with fishPlugins; [
+      z # common directories
+      bass # source bash stuff
+      fzf-fish # ctrl j file search
+      async-prompt # yep
+      autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
+      clownfish # "mock" command
+      pure # prompt
+    ]);
 
     sessionVariables = {
       EDITOR = "zeditor --new";
     };
 
     file = {
+      # todo: link scripts
       ".local/bin" = {
         recursive = true;
         source = ../../dot/local/bin;
@@ -137,52 +113,6 @@ with pkgs;
       ".config/alacritty/_active.toml" = {
         source = ../../dot/config/alacritty/gruvbox-material-hard-light.toml;
       };
-      ".config/alacritty/alacritty.toml" = {
-        text = ''
-          terminal.shell = { program = "${lib.getExe pkgs.tmux}", args = ["-u"] }
-          [general]
-          live_config_reload = true
-          import = [ "${config.xdg.configHome}/alacritty/_active.toml", "~/.config/alacritty/dynamic-settings.toml" ]
-
-          [window]
-          dynamic_title = true
-          dimensions = { columns = 130, lines = 28 }
-          dynamic_padding = true
-          decorations = "Buttonless"
-
-          # opacity = 0.91
-          opacity = 1
-          blur = true
-
-          resize_increments = true
-
-          [scrolling]
-          history = 0 # Handled by tmux
-
-          [font]
-          size = 11.5
-
-          normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
-          bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
-          italic = { family = "JetBrainsMono Nerd Font", style = "Regular Italic" }
-          bold_italic = { family = "JetBrainsMono Nerd Font", style = "Bold Italic" }
-
-          [cursor]
-          style = { shape = "Beam", blinking = "Off" }
-          blink_interval = 500
-          thickness = 0.1
-
-          [mouse]
-          bindings = [{ mouse = "Right", mods = "None", action = "Copy" }]
-
-          [[keyboard.bindings]]
-          key = "Alt"
-          mods = "Control"
-          chars = "\uE000"
-        '';
-
-      };
-      "dev".source = ../shells;
     };
   };
 
@@ -271,7 +201,7 @@ with pkgs;
       sync_address = "https://api.atuin.sh";
       search_mode = "fuzzy";
       inline_height = "0";
-      key_path = "${config.home.homeDirectory}/secrets/ATUIN_KEY";
+      #key_path = "${config.home.homeDirectory}/secrets/ATUIN_KEY";
       ctrl_n_shortcuts = true;
       enter_accept = true;
       filter_mode = "session";
@@ -294,8 +224,8 @@ with pkgs;
       set -gx pure_symbol_git_stash 'stash'
       set -gx PURE_GIT_DOWN_ARROW '↓'
       set -gx PURE_GIT_UP_ARROW '↑'
-      set -gx pure_symbol_reverse_prompt '..'
-      set -gx pure_symbol_prompt '..'
+      set -gx pure_symbol_reverse_prompt '<><'
+      set -gx pure_symbol_prompt '><>'
       set -gx pure_enable_single_line_prompt true
       set --universal pure_check_for_new_release false
 
@@ -414,16 +344,6 @@ with pkgs;
         end < "$envfile"
       '';
     };
-
-    # borked
-    plugins = with fishPlugins; [
-      z # common directories
-      bass # source bash stuff
-      fzf-fish # ctrl j file search
-      async-prompt # yep
-      autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
-      clownfish # "mock" command
-    ];
   };
 
   programs.tmux = {

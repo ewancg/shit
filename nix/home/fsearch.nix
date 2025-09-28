@@ -1,22 +1,21 @@
 { pkgs, ... }:
 {
-  systemd.services = {
-    fsearch-schedule-index-update = {
-      wantedBy = [ "basic.target" ];
-      description = "FSearch - Periodically update database";
-      timerConfig = {
-        OnBootSec = "10min";
-        OnUnitActiveSec = "30min";
-      };
+  systemd.user.timers."fsearch-index-update" = {
+    Install.WantedBy = [ "basic.target" ];
+    Unit.Description = "FSearch - Periodically update database";
+    Timer = {
+      OnBootSec = "10min";
+      OnUnitActiveSec = "30min";
     };
-    fsearch-index-update = {
-      wantedBy = [ "default.target" ];
-      description = "Update FSearch's file index";
-      serviceConfig = {
-        ExecStart = ''${pkgs.fsearch}/bin/fsearch --update-database'';
-      };
+  };
+  systemd.user.services."fsearch-index-update" = {
+    Install.WantedBy = [ "default.target" ];
+    Unit.Description = "Update FSearch's file index";
+    Service = {
+      Environment = "G_MESSAGES_DEBUG=all";
+      ExecStart = ''${pkgs.fsearch}/bin/fsearch --update-database'';
     };
   };
 
-  environment.systemPackages = [ pkgs.fsearch ];
+  home.packages = [ pkgs.fsearch ];
 }

@@ -192,6 +192,7 @@ in
         "bordersize 0, floating:0, onworkspace:f[1]"
         "rounding 0, floating:0, onworkspace:f[1]"
 
+        "noscreenshare on, class:telegram"
         "noscreenshare on, class:vesktop"
         "noscreenshare on, class:ts3client"
         "noscreenshare on, class:thunderbird"

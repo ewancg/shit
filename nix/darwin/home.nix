@@ -1,7 +1,8 @@
-{ nixpkgs, mac-app-util, ... }: {
+{ nixpkgs, mac-app-util, ... }:
+{
   home-manager = {
 
-    backupFileExtension = "backup.darwin";
+    # backupFileExtension = "backup.darwin";
     useGlobalPkgs = false;
     useUserPackages = true;
     sharedModules = [
@@ -9,7 +10,7 @@
     ];
 
     users.egreen = nixpkgs.lib.mkMerge [
-      # These must be matched inside of where they're used    
+      # These must be matched inside of where they're used
       ../home/base.nix
       ./aerospace.nix
       ./zed.nix
