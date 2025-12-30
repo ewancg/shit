@@ -25,10 +25,10 @@ in
   stylix.enable = true;
   stylix.icons.enable = false;
   gtk = {
-    theme = {
-      name = "adw-gtk3";
-      package = pkgs.adw-gtk3;
-    };
+    # theme = {
+    #   name = "adw-gtk3";
+    #   package = pkgs.adw-gtk3;
+    # };
     iconTheme = {
       name = "Arc";
       package = pkgs.arc-icon-theme;
@@ -41,11 +41,13 @@ in
 
   stylix.targets.hyprland.enable = false;
   stylix.targets.qt.enable = false;
-  stylix.targets.gtk.enable = false;
+  stylix.targets.gtk.enable = true;
+  stylix.targets.zed.enable = true;
   stylix.targets.gnome-text-editor.enable = false;
   #stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
   # https://github.com/ada-lovecraft/base16-nord-scheme/raw/refs/heads/master/nord.yaml
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/framer.yaml";
   # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
   stylix.fonts = {
     serif = {
@@ -65,7 +67,7 @@ in
       name = "JetBrainsMono NerdFont";
     };
     emoji = {
-      package = pkgs.noto-fonts-emoji;
+      package = pkgs.noto-fonts-color-emoji;
       name = "Noto Color Emoji";
     };
 
@@ -86,7 +88,7 @@ in
       gruvbox-material-gtk-theme
       # catppuccin-gtk
       # catppuccin-kvantum
-      gradience
+      #gradience
       kdePackages.breeze
       kdePackages.qtstyleplugin-kvantum
       libsForQt5.qtstyleplugin-kvantum
@@ -108,7 +110,7 @@ in
       nvtopPackages.full
 
       ## Wine
-      proton-caller
+      # proton-caller
       vkd3d-proton
       #wine-wayland
       #wine64

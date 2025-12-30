@@ -2,24 +2,13 @@
 
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 with pkgs;
-#let
-# they published a fix https://github.com/pure-fish/pure/releases/tag/v4.11.3
-#  pure = pkgs.fishPlugins.pure.overrideAttrs (old: rec {
-#    name = "pure-${version}";
-#    version = "4.11.2";
-#    src = fetchFromGitHub {
-#      owner = "pure-fish";
-#      repo = "pure";
-#      rev = "v${version}";
-#      hash = "sha1-+Mt5rTeyRP4yTstOuc+yJZwTVJs=";
-#    };
-#  });
-#in
+let
+  col = config.lib.stylix.colors;
+in
 {
   xdg.configFile.alacritty = {
     source = ../../dot/config/alacritty;
@@ -56,6 +45,7 @@ with pkgs;
 
       # Essential libraries and utilities
       git
+      github-cli
       gnupg
       wget
 
@@ -78,9 +68,9 @@ with pkgs;
       noto-fonts
       open-sans
       ubuntu-sans-mono
-      ubuntu_font_family
+      ubuntu-classic
       ucs-fonts
-      vistafonts
+      vista-fonts
       zilla-slab
 
       nerd-fonts.jetbrains-mono
@@ -212,28 +202,28 @@ with pkgs;
     interactiveShellInit = ''
       direnv hook fish | source
 
-      set -gx pure_enable_nixdevshell true
-      set -gx pure_symbol_nixdevshell_prefix '󱄅 '
+      set -x pure_enable_nixdevshell true
+      set -x pure_symbol_nixdevshell_prefix '󱄅 '
 
       # too clunky
-      set -gx pure_enable_k8s false
-      set -gx pure_symbol_k8s_prefix ' '
+      set -x pure_enable_k8s false
+      set -x pure_symbol_k8s_prefix ' '
 
-      set -gx pure_enable_aws_profile true
+      set -x pure_enable_aws_profile true
 
-      set -gx pure_symbol_git_stash 'stash'
-      set -gx PURE_GIT_DOWN_ARROW '↓'
-      set -gx PURE_GIT_UP_ARROW '↑'
-      set -gx pure_symbol_reverse_prompt '<><'
-      set -gx pure_symbol_prompt '><>'
-      set -gx pure_enable_single_line_prompt true
+      set -x pure_symbol_git_stash 'stash'
+      set -x PURE_GIT_DOWN_ARROW '↓'
+      set -x PURE_GIT_UP_ARROW '↑'
+      set -x pure_symbol_reverse_prompt '<><'
+      set -x pure_symbol_prompt '><>'
+      set -x pure_enable_single_line_prompt true
       set --universal pure_check_for_new_release false
 
-      set -gx pure_shorten_prompt_current_directory_length 1
+      set -x pure_shorten_prompt_current_directory_length 1
 
-      set -gx FZF_DEFAULT_COMMAND "fdfind . $HOME"
-      set -gx FZF_LEGACY_KEYBINDS 0
-      set -gx FZF_COMPLETE 1
+      set -x FZF_DEFAULT_COMMAND "fdfind . $HOME"
+      set -x FZF_LEGACY_KEYBINDS 0
+      set -x FZF_COMPLETE 1
 
       set -U fish_greeting
 
@@ -261,7 +251,7 @@ with pkgs;
       alias gc "git commit"
       alias ga "git add"
       alias grm "git rm"
-      alias grmf "poll "Force remove $argv?" git rm -rf"
+      alias grmf 'poll "Force remove $argv?" git rm -rf'
       alias gcam "git commit -am"
       alias gri "git rebase -i"
       alias grh 'poll "Hard reset?" && git reset --hard'
@@ -348,67 +338,53 @@ with pkgs;
 
   programs.tmux = {
     enable = true;
-    #    extraConfig = with config.scheme.withHashtag; ''
-    #      # COLOUR (base16)
-    #
-    #      # base00: " #282828 "
-    #      # base01: " #3c3836 "
-    #      # base02: " #504945 "
-    #      # base03: " #665c54 "
-    #      # base04: " #928374 "
-    #      # base05: " #ebdbb2 "
-    #      # base06: " #fbf1c7 "
-    #      # base07: " #f9f5d7 "
-    #      # base08: " #cc241d "
-    #      # base09: " #d65d0e "
-    #      # base0A: " #d79921 "
-    #      # base0B: " #98971a "
-    #      # base0C: " #689d6a "
-    #      # base0D: " #458588 "
-    #      # base0E: " #b16286 "
-    #      # base0F: " #9d0006 "
-    #      # base10: " #2a2520 "
-    #      # base11: " #1d1d1d "
-    #      # base12: " #fb4934 "
-    #      # base13: " #fabd2f "
-    #      # base14: " #b8bb26 "
-    #      # base15: " #8ec07c "
-    #      # base16: " #83a598 "
-    #      # base17: " #d3869b "
-    #
-    #      # default statusbar colors
-    #      set-option -g status-style "fg=#${base04},bg=#${base00}"
-    #
-    #      # default window title colors
-    #      set-window-option -g window-status-style "fg=${base05},bg=${base02}"
-    #
-    #      # active window title colors
-    #      set-window-option -g window-status-current-style "fg= #${base14},bg=${base01}"
-    #
-    #      # pane border
-    ##      set-option -g pane-border-style "fg= #3c3836"
-    # #     set-option -g pane-active-border-style "fg= #504945"
-    #
-    #      # message text
-    #  #    set-option -g message-style "fg= #d5c4a1,bg= #3c3836"
-    #
-    #      # pane number display
-    # #     set-option -g display-panes-active-colour "#b8bb26"
-    #  #    set-option -g display-panes-colour "#fabd2f"
-    #
-    #      # clock
-    #  #    set-window-option -g clock-mode-colour "#b8bb26"
-    #
-    #      # copy mode highligh
-    #   #   set-window-option -g mode-style "fg= #bdae93,bg= #504945"
-    #
-    #      # bell
-    #   #   set-window-option -g window-status-bell-style "fg= #3c3836,bg= #fb4934"
-    #    '';
+    extraConfig = with col.withHashtag; ''
+      unbind C-b
+      set -g prefix 
+      set -g escape-time 1
+      set -g mouse on
+      set -ga terminal-features "*:hyperlinks".
+
+      bind h split-window -h
+      bind v split-window -v
+
+      bind r source-file ~/.config/tmux/tmux.conf
+
+      # default statusbar colors
+      set-option -g status-left "[#{session_id}/#{window_id}] "
+      set-option -g status-style "fg=${base04},bg=${base00}"
+
+      # default window title colors
+      set-window-option -g window-status-format "[#I:#W#{?window_flags,#{window_flags}, }]"
+      set-window-option -g window-status-style "fg=${base05},bg=${base02}"
+
+      # active window title colors
+      set-window-option -g window-status-current-format "[#I:#W#{?window_flags,#{window_flags}, }]"
+      set-window-option -g window-status-current-style "fg=${base14},bg=${base01}"
+
+      # pane border
+      set-option -g pane-border-style "fg=${base03}"
+      set-option -g pane-active-border-style "fg=${base05}"
+
+      # message text
+      set-option -g message-style "fg=${base07},bg=${base03}"
+
+      # pane number display
+      set-option -g display-panes-active-colour "${base0D}"
+      set-option -g display-panes-colour "${base05}"
+
+      # clock
+      set-window-option -g clock-mode-colour "${base0C}"
+
+      # copy mode highligh
+      # set-window-option -g mode-style "fg=#bdae93,bg=#504945"
+
+      # bell
+      # set-window-option -g window-status-bell-style "fg=#3c3836,bg=#fb4934"
+    '';
     plugins = with tmuxPlugins; [
       sensible
-      gruvbox
-      #catppuccin # colors
+      # gruvbox
       battery # seeing battery in remote session
       continuum # tmux session restore
       # vim-tmux-navigator

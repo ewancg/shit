@@ -10,12 +10,31 @@
 
     # File sync
     ../syncthing.nix
+
+    # Tailscale (direct communication with devices on my tailnet, and VPN access)
+    ../tailscale.nix
+
+    ../protonvpn.nix
   ];
 
   environment.systemPackages = with pkgs; [
     # wpa_supplicant_gui
     networkmanagerapplet
   ];
+
+  services.protonvpn = {
+    enable = true;
+    autostart = true;
+
+    interface = {
+      privateKeyFile = "/root/protonvpn-us-dc-31-desktop-key";
+    };
+    endpoint = {
+      ip = "185.247.68.50";
+      port = 51820;
+      publicKey = "3Lz5VpqnS7wfnOWVYFNCFHl+JuuanJ/hB2TqOKQZxVI=";
+    };
+  };
 
   networking = {
     hostName = "machine";
@@ -44,8 +63,7 @@
       dhcp = "dhcpcd";
       dispatcherScripts =
         let
-          script = (util.script "network-event");
-          source = (builtins.trace script script);
+          source = (util.script "network-event");
         in
         [
           {

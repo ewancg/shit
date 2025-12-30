@@ -22,6 +22,9 @@ in
     HYPRCURSOR_SIZE = "24";
     #HYPRCURSOR_SIZE = "192";
 
+    VK_DRIVER_FILES="/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+    VK_ICD_FILENAMES="/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+
     # How to do these only on XWayland?
     # QT_SCALE_FACTOR,1.5
     # GDK_SCALE,1.5
@@ -98,9 +101,6 @@ in
     #indicator = true;
   };
 
-  # for blueman-applet/dbus-update-activation-environment
-  #services.dbus.socketActivated = true;
-
   # Brightness control
   hardware.brillo.enable = true;
 
@@ -136,7 +136,8 @@ in
       wofi
       xsel
       slurp
-      hyprshot
+      grimblast
+      #      hyprshot
       dunst
       #  fnott
 
@@ -147,7 +148,7 @@ in
       pwvucontrol
       #    xdg-desktop-portal-hyprland
       xdg-desktop-portal-gnome
-      gradience
+      #gradience
       adw-gtk3
       arc-icon-theme
     ]

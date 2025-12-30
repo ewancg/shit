@@ -1,19 +1,14 @@
 #!/usr/bin/env bash
 
-#REMOTE="https://john2143.com/uf"
-REMOTE="https://john2143.com/uf"
-#CLIPBOARD=xclip -selection clipboard
+REMOTE="https://m.ewan.green/uf"
 CLIPBOARD=wl-copy
 NOTIFY=notify-send
-KEYFILE="$HOME/.ssh/juushkey"
-
 
 usage(){
     echo "Usage juush [-r URL] [-k key | -a] [-m mime] file"
     echo "This script allows you to upload to juush via commandline"
     echo ""
     echo "  -r REMOTE URL  Change remote url (default https://john2143.com/uf)"
-    echo "  -k key         Use this upload key. By default the key"
     echo "                 \$HOME/.ssh/juushkey is used."
     echo "  -a             Upload as anonymous"
     echo "  -m mime        Use this mimetype instead"
@@ -29,7 +24,6 @@ while test $# != 0
 do
     case "$1" in
     -a) ANON_UPLOAD=1;;
-    -k) JUUSH_KEY=$2; shift;;
     -r) REMOTE=$2; shift;;
     -m) MIME_TYPE=$2; shift;;
     -x) XCLIP=1;;
@@ -40,6 +34,7 @@ do
     shift
 done
 
+JUUSH_KEY=$(cat $HOME/.juushkey)
 
 if [[ -z $JUUSH_KEY ]]; then
     if [[ -z $ANON_UPLOAD ]] && [[ -e $KEYFILE ]]; then
@@ -65,4 +60,4 @@ echoerr "Starting upload"
 $NOTIFY "Starting upload"
 URL=`curl -X POST --limit-rate 5M -F "$JUUSH_KEY=@$FILE;type=$MIME_TYPE" $REMOTE`
 echo -n "$URL" | $CLIPBOARD
-$NOTIFY "Got Url: $URL"
+$NOTIFY "File upload complete" "$URL"

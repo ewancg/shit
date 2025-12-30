@@ -8,13 +8,18 @@ let
       name = "my-discord";
       paths = [ vesktop ];
       postBuild = ''
+        name="vesktop.png"
         for size in 32 64 128 256 512 1024; do
           dim="$size"x"$size"
-          rm $out/share/icons/hicolor/"$dim"/apps/vesktop.png
-          ${lib.getExe imagemagick} ${../misc/discord.png} -resize "$dim" $out/share/icons/hicolor/"$dim"/apps/vesktop.png
+          icondir="$out/share/icons/hicolor/$dim/apps"
+          iconpath="$icondir/$name"
+          mkdir -p "$icondir"
+          [ -f "$iconpath" ] && rm "$iconpath"
+          ${lib.getExe imagemagick} "${../misc/discord.png}" -resize "$dim" "$iconpath"
         done
-        rm $out/share/applications/vesktop.desktop
-        cp ${../misc/discord.desktop} $out/share/applications/vesktop.desktop
+        desktoppath="$out/share/applications/vesktop.desktop"
+        [ -f "$desktoppath" ] && rm "$desktoppath"
+        cp "${../misc/discord.desktop}" "$desktoppath"
       '';
     }
   );
@@ -22,15 +27,18 @@ let
   my-ts3client = (
     symlinkJoin {
       name = "my-ts3client";
-      paths = [ teamspeak_client ];
+      paths = [
+        teamspeak3
+      ];
       buildInputs = [
         makeWrapper
         pkgs.libsForQt5.qt5.qtwayland
+        egl-wayland
       ];
       postBuild = ''
         wrapProgram $out/bin/ts3client \
           --add-flags "-platform wayland" \
-          --set QT_WAYLAND_CLIENT_BUFFER_INTEGRATION "wayland-xcomposite-egl"
+          --set QT_WAYLAND_CLIENT_BUFFER_INTEGRATION " "
       '';
     }
   );
@@ -42,17 +50,17 @@ let
   );
 
   # for Wayland
-  # my-vlc = (
-  #   symlinkJoin {
-  #     name = "my-vlc";
-  #     paths = [ vlc ];
-  #     buildInputs = [ makeWrapper ];
-  #     postBuild = ''
-  #       wrapProgram $out/bin/vlc \
-  #         --unset DISPLAY
-  #     '';
-  #   }
-  # );
+  my-vlc = (
+    symlinkJoin {
+      name = "my-vlc";
+      paths = [ vlc ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/vlc \
+          --unset DISPLAY
+      '';
+    }
+  );
 
   my-minecraft-glfw = callPackage ../misc/minecraft-glfw/default.nix {
     withMinecraftPatch = true;
@@ -83,7 +91,7 @@ in
   home.packages = with pkgs; [
     # Communication
     my-discord
-    ripcord
+    # ripcord
     my-ts3client
     telegram-desktop
     #teamspeak_client
@@ -96,8 +104,8 @@ in
     fceux
     my-prismlauncher
     my-minecraft-glfw
-    openrct2
-    path-of-building
+    #openrct2
+    rusty-path-of-building
     rpcs3
 
     # Multimedia
@@ -106,8 +114,8 @@ in
     strawberry
     nicotine-plus
     spotifyd
-    transmission_4
-    transmission-remote-gtk
+    transmission_4-qt6
+    my-vlc
 
     reaper
     bitwig-studio
@@ -120,7 +128,10 @@ in
     protonmail-bridge
     protonmail-desktop
 
+    zed-editor
     dbeaver-bin
+    cutter
+    pkgs.cutterPlugins.rz-ghidra
 
     gnome-boxes
 
@@ -129,8 +140,6 @@ in
     sysprof
 
     qdirstat
-
-    zed-editor
   ];
 
   # xdg.configFile = {

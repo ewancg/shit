@@ -47,6 +47,21 @@ in
       )
     )
 
+    (defwindow overlay [screen]
+      :id "overlay"
+      :monitor screen
+      :geometry (geometry :x "0px"
+                          :y "0px"
+                          :width "100%"
+                          :height "100%"
+                          :anchor "bottom center")
+      :namespace "overlay"
+      :wm-ignore true
+      :exclusive false
+      :focusable false
+      (box)
+    )
+
     (defwindow calendar [screen]
       :id "calendar"
       :monitor screen
@@ -66,14 +81,14 @@ in
       :id "backdrop"
       :monitor screen
       :geometry (geometry :x "0px"
-                          :y "-28px"
+                          :y "0px"
                           :width "100%"
-                          :height "130%"
-                          :anchor "top center")
+                          :height "100%"
+                          :anchor "bottom center")
       :stacking "overlay"
-      :wm-ignore true
-      :exclusive false
+      :namespace "overlay"
       :focusable false
+      :exclusive false
       :wm-ignore false
       (eventbox :onclick "${eww} close-all")
     )
@@ -145,6 +160,10 @@ in
   xdg.configFile."eww/eww.scss".text = ''
     .backdrop {
         background-color: rgba(0,0,0,0.25);
+    }
+
+    .overlay {
+        background-color: rgba(0,0,0,1);
     }
 
     .prompt, .volume, .power-menu {

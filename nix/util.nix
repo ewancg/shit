@@ -58,6 +58,7 @@ rec {
 
   ## `with util.commands;` to refer to executables absolutely without typing it or using lib.getExe
   commands = {
+    sh = "${dash}/bin/sh";
     awk = "${gawk}/bin/awk";
     cat = "${coreutils-full}/bin/cat";
     cut = "${coreutils-full}/bin/cut";
@@ -67,14 +68,20 @@ rec {
     eww = "${eww}/bin/eww";
     expr = "${coreutils-full}/bin/expr";
     grep = "${gnugrep}/bin/grep";
+    grimblast = "${grimblast}/bin/grimblast";
     hyprctl = "${hyprland}/bin/hyprctl";
+    pgrep = "${procps}/bin/pgrep";
+    playerctl = "${playerctl}/bin/playerctl";
     gojq = "${gojq}/bin/gojq";
     notify-send = "${libnotify}/bin/notify-send";
     nohup = "${coreutils-full}/bin/nohup";
     rm = "${coreutils-full}/bin/rm";
     sleep = "${coreutils-full}/bin/sleep";
+    tee = "${coreutils-full}/bin/tee";
+    tesseract = "${tesseract}/bin/tesseract";
     uuidgen = "${util-linux}/bin/uuidgen";
     wpctl = "${wireplumber}/bin/wpctl";
+    wl-copy = "${wl-clipboard-rs}/bin/wl-copy";
   };
 
   ## Special script definition area. Paths to these scripts should be retrieved with util.script "name"
@@ -249,8 +256,24 @@ rec {
         hyprctl dispatch workspace 6
         hyprctl dispatch workspace 1
       '';
+      capture-image = ''
+        SLURP_ARGS="-w 2 -B #00000066 -b #00000066 -s #00000000 -c #$_SLURP_HIGHLIGHT" ${commands.grimblast} "$@"
+      '';
+      capture-text = ''
+        FILENAME="ocr-$(uuidgen)"
+        IMG="$FILENAME.png"
+        SLURP_ARGS="-w 2 -B #00000066 -b #00000066 -s #00000000 -c #$_SLURP_HIGHLIGHT" ${commands.grimblast} save -o "$1/$IMG"
+        OUTPUT="$(${tesseract} "$1/$IMG" - -l eng -psm 3)"
+        printf "$OUTPUT" | ${tee} "$1/FILENAME.txt" | ${wl-copy}
+      '';
+      capture-video = ''
+        SLURP_ARGS="-w 2 -B #00000044 -b #00000044 -s #00000011 -c #$_SLURP_HIGHLIGHT"
+        hyprcap record "$@"
+        notify-send "hyprcap record \"$@\""
+        notify-send -t 1000 "Recording started" "Capturing active $(printf "$1" | cut -d: -f1)"
+      '';
     };
-  utilScriptStorePrefix = "__util-script-";
+  utilScriptStorePrefix = "util-script-";
   graalvm-ce = pkgs.graalvm-ce;
 
   jdks =
@@ -266,10 +289,13 @@ rec {
     [
       (override openjdk)
       # (override jdk24)
+      # (override jdk25)
       (override jdk17)
-      (override jdk24_headless)
-      graalvm-ce
-      temurin-bin-24
+      # (override jdk24_headless)
+      # (override jdk25_headless)
+      graalvmPackages.graalvm-ce
+      # temurin-bin-24
+      temurin-bin-25
       temurin-bin-21
       temurin-bin-8
       temurin-bin-17

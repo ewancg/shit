@@ -6,6 +6,7 @@
 }:
 let
   col = config.lib.stylix.colors;
+  mediaDir = "$HOME/media/";
   samsungLF32TU87 = {
     desc = "Samsung Electric Company LF32TU87 HCPRA08903";
     mode = "903.40 3840 4168 4592 5344 2160 2161 2164 2254 +hsync -vsync";
@@ -193,18 +194,18 @@ in
         "rounding 0, floating:0, onworkspace:f[1]"
 
         "noscreenshare on, class:telegram"
-        "noscreenshare on, class:vesktop"
+        "noscreenshare off, class:vesktop"
         "noscreenshare on, class:ts3client"
         "noscreenshare on, class:thunderbird"
 
         "suppressevent maximize, class:.*" # You'll probably like this.
         "bordercolor rgba(${col.base0D}bb), floating:1" # Blue
-        "bordercolor rgba(${col.base0B}ff), initialtitle:^(Spotify Premium)" # Green
-        "bordercolor rgba(${col.base0B}bb), initialtitle:^(Spotify Premium),floating:1" # Green
-        "bordercolor rgba(${col.base0B}ff), initialclass:^(dev.alextren.Spot)" # Green
-        "bordercolor rgba(${col.base0B}bb), initialclass:^(dev.alextren.Spot),floating:1" # Green
-        "bordercolor rgba(${col.base0E}ff), initialclass:^(obsidian|Alacritty)" # Purple
-        "bordercolor rgba(${col.base0E}bb), initialclass:^(obsidian|Alacritty),floating:1" # Purple
+        "bordercolor rgba(${col.base0B}ff), title:^(Spotify Premium)" # Green
+        "bordercolor rgba(${col.base0B}bb), title:^(Spotify Premium),floating:1" # Green
+        "bordercolor rgba(${col.base0B}ff), class:^(dev.alextren.Spot)" # Green
+        "bordercolor rgba(${col.base0B}bb), class:^(dev.alextren.Spot),floating:1" # Green
+        "bordercolor rgba(${col.base0E}ff), class:^(obsidian|Alacritty)" # Purple
+        "bordercolor rgba(${col.base0E}bb), class:^(obsidian|Alacritty),floating:1" # Purple
         "bordercolor rgba(${col.base0A}ff), xwayland:1" # Yellow f9e2afff
         "bordercolor rgba(${col.base0A}bb), xwayland:1,floating:1" # Yellow f9e2afbb
         "bordercolor rgba(${col.base08}ff), fullscreen:1" # Red
@@ -244,7 +245,6 @@ in
         vrr = false;
         focus_on_activate = true;
         allow_session_lock_restore = true;
-        new_window_takes_over_fullscreen = 2;
         initial_workspace_tracking = 2;
         enable_anr_dialog = false;
       };
@@ -277,19 +277,63 @@ in
       "$fileSearch" = "fsearch";
       "$menu" = "wofi --show drun --hide-scroll true --width 640 --height 360 --allow-images true";
 
-      bind = [
-        "$mod SHIFT, C, exec, hyprpicker -nra"
-        "$mod SHIFT, S, exec, hyprshot -m region -o ~/Pictures/Screenshots/"
+      bind = with util.commands; [
+        # Black overlay for monitor (focus)
+        "$mod SHIFT, B, exec,  ${util.script "eww-toggle-window"} overlay \"\" default"
+
+        # Toggle mic mutes
+        "$mod, F12, pass, class:^(ts3client|TeamSpeak 3)$"
+        "$mod,Alt_R,sendshortcut,CTRL SHIFT,M,class:^(ts3client|TeamSpeak 3)"
+        "$mod,Control_R,sendshortcut,CTRL SHIFT,M,class:vesktop"
+
+        # Enforce window/workspace mappings
         "$mod SHIFT, R, exec, ${util.script "reset-window-positions"}"
+
+        # Media controls
+        ",XF86AudioRaiseVolume, exec, ${util.script "dunst-status-change"} volume up"
+        ",XF86AudioLowerVolume, exec, ${util.script "dunst-status-change"} volume down"
+        ",XF86AudioMute, exec, ${util.script "dunst-status-change"} volume mute"
+        ",XF86AudioPlay, exec, ${playerctl} play-pause"
+        ",XF86AudioNext, exec, ${playerctl} next"
+        ",XF86AudioPrev, exec, ${playerctl} previous"
+
+        # Color picker
+        "$mod SHIFT, C, exec, hyprpicker -nra"
+
+        # Screenshot
+        "$mod SHIFT, S, exec, _SLURP_HIGHLIGHT=${col.base0D} ${util.script "capture-image"} copysave area -o '${mediaDir}/screenshots/'"
+        "ALT, Print, exec, ${grimblast} copysave active -o '${mediaDir}/window-screenshots/'"
+        ", Print, exec, ${grimblast} copysave output -o '${mediaDir}/monitor-screenshots/'"
+
+        # Video capture
+        "CTRL $mod SHIFT, S, exec, _SLURP_HIGHLIGHT=${col.base0E} ${util.script "capture-video"} region -o '${mediaDir}/recordings/'"
+        "CTRL ALT, Print, exec, ${util.script "capture-video"} window:active -o '${mediaDir}/window-recordings/'"
+        "CTRL , Print, exec, ${util.script "capture-video"} monitor:active -o '${mediaDir}/screen-recordings/'"
+
+        # Text capture
+        "$mod SHIFT, T, exec, _SLURP_HIGHLIGHT=${col.base0F} ${util.script "capture-text"} '${mediaDir}/ocr-screenshots'"
+
+        # Upload newest media file
+        ''$mod SHIFT, U, exec, _JUUSH_FILE="$(find "${mediaDir}" -type f -printf "%T@ %p\n" | sort -n | cut -d' ' -f 2- | tail -n 1)" juush "$_JUUSH_FILE"''
+
+        # Launchers
         "$mod, Q, exec, [float; size 873 427] $terminal"
+        "$mod, R, exec, $menu"
         "$mod, F, exec, $fileManager"
         "$mod SHIFT, F, exec, $fileSearch"
         ", pause, exec, $fileSearch"
-        "$mod, C, killactive,"
-        "$mod CTRL, C, exec, kill -9 \"$(hyprctl -j activewindow | gojq -r '.pid')\""
+
+        # Exit hyprland
         "$mod CTRL, M, exit,"
+
+        # Close window
+        "$mod, C, killactive,"
+
+        # Force close window
+        ''$mod CTRL, C, exec, kill -9 "$(${hyprctl} -j activewindow | ${gojq} -r '.pid')"''
+
+        # Tiling shortcuts
         "$mod, V, togglefloating,"
-        "$mod, R, exec, $menu"
         "$mod, P, pseudo,"
         "$mod, A, pin,"
         "$mod, J, togglesplit,"
@@ -297,25 +341,23 @@ in
         "$mod, right, movefocus, r"
         "$mod, up, movefocus, u"
         "$mod, down, movefocus, d"
-        "$mod SHIFT, up, fullscreen, 1"
-        "$mod, F11, fullscreen, 0"
-        "$mod ALT, F11, fullscreenstate, 0, 3,"
-        "$mod, grave, togglespecialworkspace, magic"
-        "$mod SHIFT, grave, movetoworkspace, special:magic"
-        "$mod, mouse_down, workspace, e+1"
-        "$mod, mouse_up, workspace, e-1"
         "$mod, G, togglegroup"
         "$mod, L, lockactivegroup"
-        "$mod, 1, moveworkspacetomonitor, 1  monitor:desc:${m1.desc}"
-        "$mod, 2, moveworkspacetomonitor, 2  monitor:desc:${m1.desc}"
-        "$mod, 3, moveworkspacetomonitor, 3  monitor:desc:${m1.desc}"
-        "$mod, 4, moveworkspacetomonitor, 4  monitor:desc:${m1.desc}"
-        "$mod, 5, moveworkspacetomonitor, 5  monitor:desc:${m1.desc}"
-        "$mod, 6, moveworkspacetomonitor, 6  monitor:desc:${m2.desc}"
-        "$mod, 7, moveworkspacetomonitor, 7  monitor:desc:${m2.desc}"
-        "$mod, 8, moveworkspacetomonitor, 8  monitor:desc:${m2.desc}"
-        "$mod, 9, moveworkspacetomonitor, 9  monitor:desc:${m2.desc}"
-        "$mod, 0, moveworkspacetomonitor, 10 monitor:desc:${m2.desc}"
+
+        # Workspace fullscreen
+        "$mod SHIFT, up, fullscreen, 1"
+        # Complete fullscreen (over bar)
+        "$mod, F11, fullscreen, 0"
+        # Fake fullscreen (app is tiled but behaves as if it was in fullscreen)
+        "$mod ALT, F11, fullscreenstate, 0, 3,"
+
+        # Special workspace
+        "$mod, grave, togglespecialworkspace, magic"
+        "$mod SHIFT, grave, movetoworkspace, special:magic"
+
+        # Navigate across numbered workspaces
+        "$mod, mouse_down, workspace, e+1"
+        "$mod, mouse_up, workspace, e-1"
         "$mod, 1, workspace, 1"
         "$mod, 2, workspace, 2"
         "$mod, 3, workspace, 3"
@@ -326,6 +368,23 @@ in
         "$mod, 8, workspace, 8"
         "$mod, 9, workspace, 9"
         "$mod, 0, workspace, 10"
+        "$mod ALT, 1, workspace, 6"
+        "$mod ALT, 2, workspace, 7"
+        "$mod ALT, 3, workspace, 8"
+        "$mod ALT, 4, workspace, 9"
+        "$mod ALT, 5, workspace, 10"
+
+        # Move window to numbered workspace
+        "$mod, 1, moveworkspacetomonitor, 1  monitor:desc:${m1.desc}"
+        "$mod, 2, moveworkspacetomonitor, 2  monitor:desc:${m1.desc}"
+        "$mod, 3, moveworkspacetomonitor, 3  monitor:desc:${m1.desc}"
+        "$mod, 4, moveworkspacetomonitor, 4  monitor:desc:${m1.desc}"
+        "$mod, 5, moveworkspacetomonitor, 5  monitor:desc:${m1.desc}"
+        "$mod, 6, moveworkspacetomonitor, 6  monitor:desc:${m2.desc}"
+        "$mod, 7, moveworkspacetomonitor, 7  monitor:desc:${m2.desc}"
+        "$mod, 8, moveworkspacetomonitor, 8  monitor:desc:${m2.desc}"
+        "$mod, 9, moveworkspacetomonitor, 9  monitor:desc:${m2.desc}"
+        "$mod, 0, moveworkspacetomonitor, 10 monitor:desc:${m2.desc}"
         "$mod SHIFT, 1, movetoworkspace, 1"
         "$mod SHIFT, 2, movetoworkspace, 2"
         "$mod SHIFT, 3, movetoworkspace, 3"
@@ -336,46 +395,24 @@ in
         "$mod SHIFT, 8, movetoworkspace, 8"
         "$mod SHIFT, 9, movetoworkspace, 9"
         "$mod SHIFT, 0, movetoworkspace, 10"
-        "$mod ALT, 1, workspace, 6"
-        "$mod ALT, 2, workspace, 7"
-        "$mod ALT, 3, workspace, 8"
-        "$mod ALT, 4, workspace, 9"
-        "$mod ALT, 5, workspace, 10"
         "$mod ALT SHIFT, 1, movetoworkspace, 6"
         "$mod ALT SHIFT, 2, movetoworkspace, 7"
         "$mod ALT SHIFT, 3, movetoworkspace, 8"
         "$mod ALT SHIFT, 4, movetoworkspace, 9"
         "$mod ALT SHIFT, 5, movetoworkspace, 10"
-        "$mod ALT SHIFT, 1, movetoworkspace, 6"
-        "$mod ALT SHIFT, 2, movetoworkspace, 7"
-        "$mod ALT SHIFT, 3, movetoworkspace, 8"
-        "$mod ALT SHIFT, 4, movetoworkspace, 9"
-        "$mod ALT SHIFT, 5, movetoworkspace, 10"
-        "$mod, F12, pass, ^(TeamSpeak 3)$"
-        "$mod CTRL, F12, pass, ^(TeamSpeak 3)$"
-        "$mod, F13, sendshortcut, CTRL SHIFT, M,[^(vesktop)$]"
-        ",XF86AudioRaiseVolume, exec, ${util.script "dunst-status-change"} volume up"
-        ",XF86AudioLowerVolume, exec, ${util.script "dunst-status-change"} volume down"
-        ",XF86AudioMute, exec, ${util.script "dunst-status-change"} volume mute"
-        ",XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
-        ",XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next"
-        ",XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous"
       ];
 
       bindm = [
+        # Pick up & drag
         "$mod, mouse:272, movewindow"
+        # Resize
         "$mod, mouse:273, resizewindow"
       ];
 
-      #bindn = [
-      #];
-
       monitor = [
-        # 10 will break Vesktop screen share
+        # 10 bit breaks Vesktop screen share
         "desc:${m1.desc}, modeline ${m1.mode}, ${m1.pos}, ${m1.scale}, bitdepth,8"
         "desc:${m2.desc}, modeline ${m2.mode}, ${m2.pos}, ${m2.scale}, bitdepth,8"
-        #"desc:LG Electronics LG TV 0x01010101, 3840x2160@60, auto-right, 2"
-        #"preferred,auto,1"
       ];
 
       workspace = [
@@ -396,13 +433,14 @@ in
       ];
 
       exec-once = [
-        "[workspace 1 silent] firefox & steam -silent & easyeffects -w"
+        "[workspace 1 silent] firefox & steam -silent & easyeffects --gapplication-service &"
         "dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "blueman-applet & nm-applet"
         "PATH=${pkgs.bash}/bin:$PATH waybar & eww daemon --no-daemonize & dunst"
         "[workspace m silent] spotify"
         "[workspace 2 silent] obsidian"
-        "[workspace m silent] pgrep easyeffects && sleep 2 && vesktop; ts3client"
+        # wait up to 10 seconds for easyeffects before starting apps which depend on its pipewire input
+        "[workspace m silent] i=10; while [ ! $(${util.commands.pgrep} easyeffects) ] && [ $i -gt 0 ]; do sleep 1; ((i--)); done; vesktop & ts3client & disown"
         "[workspace 7 silent] hydroxide serve; sleep 2; thunderbird"
       ];
     };

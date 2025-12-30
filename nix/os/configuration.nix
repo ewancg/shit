@@ -47,6 +47,7 @@ in
   environment.systemPackages = with pkgs; [
     # nixos
     nh
+    git
 
     # linux/system
     libnotify
@@ -99,6 +100,10 @@ in
   services.xserver.xkb = {
     layout = "us";
     variant = "colemak";
+  };
+
+  services.dbus = {
+    implementation = "broker";
   };
 
   services.seatd = {
@@ -191,8 +196,17 @@ in
 
     defaultSession = "hyprland-uwsm";
   };
+
+  services.xserver = {
+    desktopManager = {
+      xfce.enable = true;
+    };
+  };
   services.displayManager = {
-    gdm.enable = true;
+    gdm = {
+      enable = true;
+      wayland = true;
+    };
   };
 
   systemd = {
@@ -225,6 +239,7 @@ in
     '';
   };
 
+  security.sudo.enable = true;
   security.pam.services = {
     login.enableGnomeKeyring = true;
     sudo.enableGnomeKeyring = true;

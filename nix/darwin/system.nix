@@ -1,15 +1,12 @@
 {
   pkgs,
-<<<<<<< HEAD
   awsctx,
   homebrew-core,
   homebrew-cask,
   vfkit-tap,
-=======
   inputs,
   config,
   lib,
->>>>>>> origin/main
   ...
 }:
 let
@@ -41,15 +38,7 @@ in
   nixpkgs.config.allowUnfree = true;
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-<<<<<<< HEAD
   services.nix-daemon.enable = true;
-
-  # Required for home-manager.users.* to work
-  users.users.egreen = {
-    description = "Ewan Green";
-    home = "/Users/egreen";
-    name = "egreen";
-  };
 
   home-manager = {
     users.egreen = {
@@ -59,8 +48,6 @@ in
       };
     };
   };
-=======
->>>>>>> origin/main
   nix = {
     # package = pkgs.nix;
     # idk
@@ -80,50 +67,34 @@ in
       options = "--delete-older-than 10d";
     };
   };
-<<<<<<< HEAD
 
   environment.systemPackages =
     with pkgs;
     [
       ## gui
       vscode
+      jetbrains.rust-rover
+      zed-editor
+      bruno
 
       # Clouds
-      lens
-=======
-  environment.systemPackages = with pkgs; [
-    ## gui
-    vscode
-    jetbrains.rust-rover
-    zed-editor
-    bruno
-
-    # Clouds
-    # lens
->>>>>>> origin/main
+      # lens
 
       # depends on vfkit which i cant get
       #podman
 
-<<<<<<< HEAD
       ## the rest
       git
       github-cli
-      awscli
-=======
-    ## the rest
-    git
-    github-cli
-    # awscli
-    awscli2
+      # awscli
+      awscli2
 
-    # Docker runtime
-    colima
-    # Docker compose plugin
-    docker-compose
-    # Docker build plugin (default is legacy)
-    docker-buildx
->>>>>>> origin/main
+      # Docker runtime
+      colima
+      # Docker compose plugin
+      docker-compose
+      # Docker build plugin (default is legacy)
+      docker-buildx
 
       # Shell
       #tmux
@@ -134,48 +105,34 @@ in
       dasel
       jq
 
-<<<<<<< HEAD
       fzf
       tree
       alacritty
       nixpkgs-fmt
       nil
       direnv
-=======
-    fzf
-    tree
-    nixpkgs-fmt
-    nil
-    direnv
->>>>>>> origin/main
-
       #nodePackages.nodejs
       nodejs_22
       # nodePackages.npm
-
-<<<<<<< HEAD
       python311Packages.python-lsp-server
 
       # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
       # gimme-aws-creds
       # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
       awsctx.defaultPackage.${pkgs.system}
+      k9s
+
+      # python311Packages.python-lsp-server
+
+      # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
+      # gimme-aws-creds
+      # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
+      inputs.awsctx.defaultPackage.${pkgs.system}
+
+      # timezones broken by default...
+      tzdata
     ]
     ++ rust;
-=======
-    k9s
-
-    # python311Packages.python-lsp-server
-
-    # Both the flake and nixpkgs versions of this are broken as of 10/24/24; using brew
-    # gimme-aws-creds
-    # inputs.gimme-aws-creds.defaultPackage."aarch64-darwin"
-    inputs.awsctx.defaultPackage.${pkgs.system}
-
-    # timezones broken by default...
-    tzdata
-  ];
->>>>>>> origin/main
 
   environment.shells = [
     pkgs.fish

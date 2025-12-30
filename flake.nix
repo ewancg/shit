@@ -43,15 +43,9 @@
       secrets = (inputs.secrets.secrets);
     in
     {
-      nixosConfigurations.machine =
-        let
-          system = "x86_64-linux";
-        in
-        nixpkgs.lib.nixosSystem {
-          system = system;
+      nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit
-              system
               secrets
 
               nixvirt
@@ -61,7 +55,7 @@
               hyprland
               stylix
               ;
-            util = (util (pkgs system));
+            util = (util (pkgs "x86_64-linux"));
           };
 
           modules = [
