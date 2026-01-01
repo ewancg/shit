@@ -132,6 +132,9 @@ in
       waybar
       eww
 
+      # hyprcap
+      wf-recorder
+
       wl-clipboard
       wofi
       xsel

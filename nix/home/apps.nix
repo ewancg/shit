@@ -138,6 +138,8 @@ in
     alacritty
 
     sysprof
+    btop
+
 
     qdirstat
   ];

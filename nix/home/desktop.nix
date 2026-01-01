@@ -43,12 +43,17 @@ in
   stylix.targets.qt.enable = false;
   stylix.targets.gtk.enable = true;
   stylix.targets.zed.enable = true;
+  stylix.targets.btop.enable = true;
+  stylix.targets.firefox = {
+    enable = true;
+    colorTheme.enable = true;
+  };
   stylix.targets.gnome-text-editor.enable = false;
   #stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
   # https://github.com/ada-lovecraft/base16-nord-scheme/raw/refs/heads/master/nord.yaml
-  # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/framer.yaml";
-  # stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-hard.yaml";
+  # stylix.base16Scheme = "${fetchurl { url = "https://github.com/tinted-theming/schemes/raw/refs/heads/spec-0.11/base24/arthur.yaml"; hash = "sha256-WwxZ239HbQ1wdIYERXbOPaDoHbmvJUBN+KFe3yLzsEk="; }}";
+  # stylix.base16Scheme = "${repkgs.base16-schemes}/share/themes/nord.yaml";
   stylix.fonts = {
     serif = {
       package = san-francisco-fonts;

@@ -139,7 +139,6 @@ rec {
             ;;
         esac
       '';
-
       eww-timeout-event = ''
         # $1 verb (suspend, reboot, poweroff), $2 timeout
         _id="$(${eww} active-windows | ${grep} prompt | ${awk} '{print $1-1}')"
@@ -270,7 +269,7 @@ rec {
         SLURP_ARGS="-w 2 -B #00000044 -b #00000044 -s #00000011 -c #$_SLURP_HIGHLIGHT"
         hyprcap record "$@"
         notify-send "hyprcap record \"$@\""
-        notify-send -t 1000 "Recording started" "Capturing active $(printf "$1" | cut -d: -f1)"
+        # notify-send -t 1000 "Recording started" "Capturing active $(printf "$1" | cut -d: -f1)"
       '';
     };
   utilScriptStorePrefix = "util-script-";
