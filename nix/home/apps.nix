@@ -24,24 +24,32 @@ let
     }
   );
 
-  my-ts3client = (
-    symlinkJoin {
-      name = "my-ts3client";
-      paths = [
-        teamspeak3
-      ];
-      buildInputs = [
-        makeWrapper
-        pkgs.libsForQt5.qt5.qtwayland
-        egl-wayland
-      ];
-      postBuild = ''
-        wrapProgram $out/bin/ts3client \
-          --add-flags "-platform wayland" \
-          --set QT_WAYLAND_CLIENT_BUFFER_INTEGRATION " "
-      '';
-    }
-  );
+  # my-ts3client = let webengine = pkgs.libsForQt5.qt5.qtwebengine; ts3 = pkgs.teamspeak3.override {
+  #   libsForQt5 = (lib.updateManyAttrsByPath [
+  #                 {
+  #                   path = webengine;
+  #                   update = old:
+  #                     lib.filterAttrs (n: v: n != webengine) old;
+  #                  }
+  #                ] pkgs.libsForQt5);
+  # }; in (
+  #   symlinkJoin {
+  #     name = "my-ts3client";
+  #     paths = [
+  #       ts3
+  #     ];
+  #     buildInputs = [
+  #       makeWrapper
+  #       pkgs.libsForQt5.qt5.qtwayland
+  #       egl-wayland
+  #     ];
+  #     postBuild = ''
+  #       wrapProgram $out/bin/ts3client \
+  #         --add-flags "-platform wayland" \
+  #         --set QT_WAYLAND_CLIENT_BUFFER_INTEGRATION " "
+  #     '';
+  #   }
+  # );
 
   my-prismlauncher = (
     prismlauncher.override {
@@ -90,9 +98,10 @@ in
   # VLC plugin path
   home.packages = with pkgs; [
     # Communication
-    my-discord
+    # my-discord
+    equicord
     # ripcord
-    my-ts3client
+    # my-ts3client
     telegram-desktop
     #teamspeak_client
 
@@ -100,7 +109,6 @@ in
     taterclient-ddnet
     ares
     dolphin-emu
-    snes9x-gtk
     fceux
     my-prismlauncher
     my-minecraft-glfw

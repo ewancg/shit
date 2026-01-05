@@ -67,25 +67,35 @@ rec {
     dunstify = "${dunst}/bin/dunstify";
     eww = "${eww}/bin/eww";
     expr = "${coreutils-full}/bin/expr";
+    ffprobe = "${ffmpeg}/bin/ffprobe";
+    find = "${findutils}/bin/find";
     grep = "${gnugrep}/bin/grep";
     grimblast = "${grimblast}/bin/grimblast";
+    head = "${coreutils-full}/bin/head";
     hyprctl = "${hyprland}/bin/hyprctl";
     pgrep = "${procps}/bin/pgrep";
     playerctl = "${playerctl}/bin/playerctl";
     gojq = "${gojq}/bin/gojq";
     notify-send = "${libnotify}/bin/notify-send";
     nohup = "${coreutils-full}/bin/nohup";
+    numfmt = "${coreutils-full}/bin/numfmt";
+    realpath = "${coreutils-full}/bin/realpath";
     rm = "${coreutils-full}/bin/rm";
     sleep = "${coreutils-full}/bin/sleep";
+    sort = "${coreutils-full}/bin/sort";
+    tail = "${coreutils-full}/bin/tail";
     tee = "${coreutils-full}/bin/tee";
     tesseract = "${tesseract}/bin/tesseract";
+    tr = "${coreutils-full}/bin/tr";
     uuidgen = "${util-linux}/bin/uuidgen";
     wpctl = "${wireplumber}/bin/wpctl";
     wl-copy = "${wl-clipboard-rs}/bin/wl-copy";
+    xxhsum = "${xxHash}/bin/xxhsum";
   };
 
   ## Special script definition area. Paths to these scripts should be retrieved with util.script "name"
   scripts =
+    let declare_slurp_args = ''export SLURP_ARGS="-d -w 2 -B #00000044 -b #00000044 -s #00000011 -c #$_SLURP_HIGHLIGHT"''; in
     with commands;
     builtins.mapAttrs (name: value: pkgs.writeShellScriptBin "${utilScriptStorePrefix}${name}" value) {
       network-event = ''
@@ -95,7 +105,7 @@ rec {
         # expects envvar start with timestamp in the future
         # e.g. start=$(expr $(date +%s) + 5)
         if [ "$1" == "-c" ]; then # current time only
-          echo "$(${date} -u -d @$(( $start - `${date} +%s` )) +%H:%M:%S)"
+          printf "$(${date} -u -d @$(( $start - `${date} +%s` )) +%H:%M:%S)"
           exit
         fi
         while (( "$start" >= "`${date} +%s`" )); do # show time until timeout
@@ -184,11 +194,15 @@ rec {
             # $1 volume
             display_volume="$(${gojq} -n "$1 * 100" | ${awk} '{printf "%.0f", $1}')"
 
-            ${dunstify} -a "changeVolume" -u low -i audio-volume-high -h string:x-dunst-stack-tag:"$msg_tag" \
-            -h string:hlcolor:"$(get-color 07)" \
-            -h int:value:"$display_volume" "vol: $display_volume% $2"
-            exitreturn
-        }
+            args=
+            if [ ! -z "$1" ] && [ $1 -eq 0 ]; then
+              args="-i audio-volume-muted muted"
+            else
+              args="-i audio-volume-high -h string:hlcolor:\"$(get-color 07)\" -h int:value:\"$display_volume\" \"vol: $display_volume% $2\"]"
+            fi
+            ${dunstify} -h string:x-canonical-private-synchronous:volume -h string:x-dunst-stack-tag:\"$msg_tag\" -a "changeVolume" -u low $_args
+            exit
+          }
 
         case "$1" in
           "volume")
@@ -209,7 +223,6 @@ rec {
                     ${wpctl} set-volume "$audio_device" "$expected_volume"
                 fi
                 volume-notify "$expected_volume"
-                exit
             else
                 if [ "$2" == "mute" ]; then
                     ${wpctl} set-mute "$audio_device" "$is_unmuted"
@@ -218,7 +231,7 @@ rec {
                         exit
                     fi
                 fi
-                ${dunstify} -a "changeVolume" -u low -i audio-volume-muted -h string:x-dunst-stack-tag:"$msgTag" "muted"
+                volume-notify 0
             fi
             ;;
           "brightness")
@@ -252,24 +265,143 @@ rec {
         ${script "reset-window-position"} "firefox" 1
         ${script "reset-window-position"} "thunderbird" 2
 
-        hyprctl dispatch workspace 6
-        hyprctl dispatch workspace 1
+        ${hyprctl} dispatch workspace 6
+        ${hyprctl} dispatch workspace 1
       '';
+      # $1; source directory
+      # $2; list of extensions to filter by
+      # $3; list of patterns to exclude by
+      # $4; maximum lines (default 1)
+      get-newest-media = ''
+        extensions="''${2:+( $(for i in $2; do s="-name *.$i"; [ "$i" != "$(printf "$2" | ${awk} '{print $1;}')" ] && printf "%s %s " -o $s || printf "%s " $s; done) )}"
+        exclusions="''${3:+( $(for i in $3; do s="! -wholename *$i*"; printf "%s " $s; done))}"
+        args="`${realpath} $1` -type f $extensions $exclusions -exec ls -1t "{}" +"
+        ${find} $args | ${commands.sort} -n | ${cut} -d' ' -f 2- | ${commands.tail} -n ''${4:-1}
+      '';
+      # $1; source directory
+      upload-newest-media = ''
+        juush_in="$(${script "get-newest-media"} "$1")"
+        [ -z "$juush_in" ] && ${notify-send} "Media upload error" "No files in '$1' to upload" && exit
+        media_id=$(basename $juush_in)
+        ${dunstify} -h string:x-canonical-private-synchronous:"$media_id" "Uploading media..." "\n$media_id" -t 0
+        juush_out="$(${../dot/local/bin/juush} "$juush_in")"
+        status=$?
+        [ -z "$juush_out" ] && ${notify-send} -h string:x-canonical-private-synchronous:"$media_id" "Media upload error" "juush exited with code $status and did not return a link" && exit
+        result=$(${dunstify} -h string:x-canonical-private-synchronous:"$media_id" "Media upload complete (click to copy)" "$(printf "%s\n%s" "$juush_out" "$media_id")" -A copy,Copy)
+        [ ! -z "$result" ] && [ $result -eq 2 ] && printf "$juush_out" | ${wl-copy}
+      '';
+      # $1; capture type
+      # $2; file type (optional)
+      media-filename = ''
+        td="$(${date} "+%d.%m.%y-%H.%M.%S")"
+        # time-based short uid which is more granular than 1 second
+        uid="$(${uuidgen} -7 | ${xxhsum} -H0 --binary --quiet | ${awk} '{print $1}')"
+        printf "%s_%s_%s%s" "$1" "$td" "$uid" "''${2:+.$2}"
+      '';
+      # $1; select type
+      # $2; output directory
       capture-image = ''
-        SLURP_ARGS="-w 2 -B #00000066 -b #00000066 -s #00000000 -c #$_SLURP_HIGHLIGHT" ${commands.grimblast} "$@"
+        fname="$(${script "media-filename"} "$1" "png")"
+        ${declare_slurp_args}
+        ${commands.grimblast} -t png -f copysave $1 -o "$2/$fname" && ${notify-send} -t 2000 "Screenshot saved" "$fname"
       '';
-      capture-text = ''
-        FILENAME="ocr-$(uuidgen)"
-        IMG="$FILENAME.png"
-        SLURP_ARGS="-w 2 -B #00000066 -b #00000066 -s #00000000 -c #$_SLURP_HIGHLIGHT" ${commands.grimblast} save -o "$1/$IMG"
-        OUTPUT="$(${tesseract} "$1/$IMG" - -l eng -psm 3)"
-        printf "$OUTPUT" | ${tee} "$1/FILENAME.txt" | ${wl-copy}
+      begin-video-capture = ''
+        # remove ":active" and such from recording subjects
+        prefix="$(printf "$1" | ${cut} -d: -f1)"
+        fname="$(${script "media-filename"} "$prefix")"
+
+        printf "$fname" > "$video_id_path"
+        printf "$2/$fname.mp4" > "$video_out_path"
+
+        ${notify-send} -t 750 "Recording started" "Capturing active $prefix"
+
+        ${declare_slurp_args}
+        ${../dot/local/bin/hyprcap} record -s "$1" -o "$2" -f "$fname.mp4" -N
       '';
+      end-video-capture = ''
+        [ -z "$video_id_path" ] || [ -z "$video_out_path" ] && notify-send "Recording error" "No current recording to stop" && exit
+        video_id="$(< "$video_id_path")"
+        video_path="$(< "$video_out_path")"
+
+        notify-send -h string:x-canonical-private-synchronous:"$video_id" "Stopping recording..." -t 0
+
+        ${../dot/local/bin/hyprcap} record-stop
+
+        function iter_probe {
+          # ${ffprobe} -v quiet -of default=noprint_wrappers=1 "$@" | ${tr} "=" " "
+          output="$(''${ffprobe} -v error -of default=noprint_wrappers=1 "$@" | ${tr} "=" " ")"
+          notify-send "ffprobe" "$output"
+          exit_code=$?
+          [ $exit_code -ne 0 ] && echo "ffprobe failed with exit code $exit_code" >&2
+          echo "$output"
+        }
+
+        function readable_size {
+          ${numfmt} --to=iec-i --suffix=B --format="%.1f" "$1"
+        }
+
+        function read_probe {
+          _key=
+          for i in $1; do
+            if [ -z "$_key" ]; then
+              _key="$i"
+            else
+              export "$2_''${_key}"="$i"
+              _key=
+            fi
+          done
+        }
+
+        notify-send "probin" "$(${ffprobe} -version)"
+
+        read_probe "$(iter_probe -i "$video_path" -show_entries format=duration,size,bit_rate -sexagecimal)" "file"
+        read_probe "$(iter_probe -i "$video_path" -select_streams v:0 -show_entries stream=codec_name,bit_rate)" "video"
+        read_probe "$(iter_probe -i "$video_path" -select_streams a:0 -show_entries stream=codec_name,bit_rate)" "audio"
+
+        if [ -z "$video_codec_name" ]; then
+          video_info="Unable to get video info"
+        else
+          video_info="$(printf \
+            "%s\n%s | %s | %s/%s \n%s (%s/%s)" \
+            "$(printf "$file_duration" | ${awk} -F. '{ after=substr($2,1,2); print $1 "." after }')" "$(readable_size "$file_size")" "$video_codec_name" "$audio_codec_name" \
+            "$(readable_size "$file_bit_rate")/s" \
+            "$(readable_size "$video_bit_rate")" \
+            "$(readable_size "$audio_bit_rate")"
+          )"
+        fi
+
+        ${notify-send} -h string:x-canonical-private-synchronous:"$video_id" "Recording stopped" "$(basename "$video_path")\n$video_info"
+
+        for i in "$video_id_path" "$video_out_path"; do
+          [ -e "$i" ] && rm "$i"
+        done
+      '';
+      # $1; select type
+      # $2; output directory
       capture-video = ''
-        SLURP_ARGS="-w 2 -B #00000044 -b #00000044 -s #00000011 -c #$_SLURP_HIGHLIGHT"
-        hyprcap record "$@"
-        notify-send "hyprcap record \"$@\""
-        # notify-send -t 1000 "Recording started" "Capturing active $(printf "$1" | cut -d: -f1)"
+        export hyprcap_pid_file="''${XDG_RUNTIME_DIR:-/run}/hyprcap_rec.pid"
+        export video_id_path="''${XDG_RUNTIME_DIR:-/run}/hyprcap_rec_id"
+        export video_out_path="''${XDG_RUNTIME_DIR:-/run}/hyprcap_rec_out"
+
+        # A recording is in-progress
+        if [ -r "$hyprcap_pid_file" ]; then
+          ${script "end-video-capture"}
+        else
+          export WFR_ACODEC"aac"
+          export WFR_VCODEC="av1_nvenc"
+          export WFR_CODEC_OPTS="preset=17 tune=ll multipass=2 highbitdepth=true"
+          ${declare_slurp_args}
+          ${script "begin-video-capture"} "$@"
+        fi
+      '';
+      # $1; output directory
+      capture-text = ''
+        fname=$(${script "media-filename"} "ocr")
+        imgname="$fname.png"
+        ${declare_slurp_args}
+        ${commands.grimblast} save area -o "$1/$imgname" -f
+        OUTPUT="$(${tesseract} "$1/$imgname" - -l eng)"
+        printf "$OUTPUT" | ${tee} "$1/$fname.txt" | ${wl-copy} && ${notify-send} -t 2000 "Text capture saved" "$(printf "%s\nText copied to clipboard" "$fname")"
       '';
     };
   utilScriptStorePrefix = "util-script-";

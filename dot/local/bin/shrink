@@ -1,60 +1,257 @@
 #!/usr/bin/env bash
-SIZE=8
-OUTDIR="$HOME/Videos"
-ENCODER=hevc_nvenc
-# ENCODER=libx265
-# ENCODER=h264_nvenc
-# ENCODER=libx264
 
-shrink() {
-    TARGET_KBPS=$(\
-        awk \
-        -v size="$SIZE" \
-        -v duration="$(ffprobe -v error -show_streams -select_streams a "$1" | grep -Po "(?<=^duration\=)\d*\.\d*")" \
-        -v audio_rate="$(ffprobe -v error -pretty -show_streams -select_streams a "$1" | grep -Po "(?<=^bit_rate\=)\d*\.\d*")" \
-        'BEGIN { print  ( ( size * 8192.0 ) / ( 1.048576 * duration ) - audio_rate ) }')
-
-    ffmpeg \
-        -y \
-        -i "$1" \
-	-s "$2" \
-        -c:v "$ENCODER" \
-        -b:v "$TARGET_KBPS"k \
-	-b_ref_mode 0 \
-        -pass 1 \
-        -an \
-        -f mp4 \
-        /dev/null \
-    && \
-    ffmpeg \
-        -i "$1" \
-	-s "$2" \
-        -c:v "$ENCODER" \
-        -b:v "$TARGET_KBPS"k \
-	-b_ref_mode 0 \
-        -pass 2 \
-        -c:a aac \
-        -b:a "$TARGET_KBPS"k \
-        "${1%.*}-$SIZE-$ENCODER-$2.mp4"
+function error {
+    printf "\033[31m%s\033[0m: %s\n" "error" "${@:2}"
+    exit $1
 }
 
-DIR="`pwd`"
-cd $OUTDIR
-if [ ! -z "$1" ]
-    then
-    SIZE=${1//[!0-9]/}
-else
-    printf "No arguments provided\n"
-	exit
+function assert_int {
+    case "$1" in
+        ''|*[!0-9]*) return 0;;
+        *) return 1;;
+    esac
+}
+
+## Input related functions
+
+## Environment variable validation:
+# $1; env var name
+# $2; default value
+
+# Canonicalized path (real or not) or default
+function canon_env_path {
+    local val="${!1:+$(realpath ${!1})}"
+    export "$1"="${val:-$2}"
+}
+
+# Valid integer or default
+function assert_env_int {
+    assert_int "${!1}" && export "$1"=$2 || export "$1"=${!1}
+}
+
+## Argument validation:
+
+# Prompt for missing required inputs
+# $1; header/query
+# $2; semicolon-separated options; first is default, add \t after each to put a description)
+# $3; placeholder text
+function prompt {
+    local output="$(echo -e "$2" | tr ';' '\n' | fzf --ansi \
+        --header "$1" \
+        --header-first \
+        --ghost "$3" \
+        --print-query \
+        --bind 'tab:transform-query(echo {1})' \
+        --delimiter=$'\t'\
+        --preview 'awk -F "\t" "{ if (NR==FNR) print \$2 }" <<< {}' \
+        --tabstop 12 \
+        --preview-window=hidden \
+    )"
+    export code=$?
+
+    local query="$(head -n1 <<< "$output")"
+    local selection="$(tail -n1 <<< "$output" | cut -f1)"
+
+    if [ ! -z "$query" ]; then
+        output="$query"
+    else
+        output="$selection"
+    fi
+
+    [ -n "$output" ] && printf "%s" "$output" || return $code
+}
+
+function help() {
+    cat <<EOF
+Usage: shrink [in] [out] [res] [size] [area]
+
+  positional arguments (all optional; <value>, "default", or "prompt"):
+    in:   input path
+    out;  output path
+    res:  target resolution
+    size: target file size
+    area: target pixel area, for calculating resolution across aspect ratios
+
+  generic arguments:
+    -h, --help: show this message
+
+  environment variables:
+    SHRINK_MEDIA_DIR:           for default infile; directory containing source videos
+    SHRINK_INPUT_EXTENSION:     for default infile; input video file extension
+    SHRINK_OUTPUT_DIR:          for default outfile; directory to place shrunken videos
+    SHRINK_OUTPUT_EXTENSION:    for default outfile; output video file extension
+
+    SHRINK_VIDEO_CODEC:         ffmpeg video encoder name
+    SHRINK_TARGET_SIZE_MiB:     target file size (default value)
+    SHRINK_TARGET_PIXEL_AREA:   target pixel area (default value)
+
+    SHRINK_AUDIO_CODEC:         ffmpeg audio encoder name
+    SHRINK_AUDIO_BITRATE_Kbps:  audio bitrate, in Kbps (it only changes for video)
+EOF
+}
+case "$1" in
+    "-h") ;&
+    "--help")
+        help
+        exit
+   ;;
+esac
+# $1; Output envvar name
+# $2; Given value
+# $3; Default value
+function get_arg {
+    [ -z "$2" ] || [ "$2" == "default" ] && export "$1"="$3" || export "$1"="$2"
+}
+
+function get_video_resolution_json {
+    ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of json "$1"
+}
+
+# Calculates a resolution for a video given a target pixel count, respecting its aspect ratio
+# $1; target area
+# $2; only downsize (true or false)
+function get_adjusted_resolution {
+  local target_area="$1"
+  jq -r --arg target "$target_area" --arg use "${2:-false}" '
+    .streams[0] as $s |
+    ($target | tonumber) as $t |
+    ($s.width * $s.height) as $area |
+    if ($use == "true") and ($area <= $t) then
+      "\($s.width)x\($s.height)"
+    else
+      ($t / $area) as $ratio |
+      ($ratio | sqrt) as $scale |
+      ($s.width * $scale | round) as $nw |
+      ($s.height * $scale | round) as $nh |
+      ($nw + (if $nw % 2 == 1 then 1 else 0 end)) as $new_w |
+      ($nh + (if $nh % 2 == 1 then 1 else 0 end)) as $new_h |
+      "\($new_w)x\($new_h)"
+    end
+  ' < /dev/stdin
+}
+
+### Input definitions
+## Environment
+
+# 2 pass size targets
+assert_env_int SHRINK_TARGET_SIZE_MiB 10
+assert_env_int SHRINK_TARGET_PIXEL_AREA $(jq -n "2560 * 1440")
+VIDEO_CODEC="${SHRINK_VIDEO_CODEC:-av1_nvenc}"
+AUDIO_CODEC="${SHRINK_AUDIO_CODEC:-libopus}"
+assert_env_int SHRINK_AUDIO_BITRATE_Kbps 512
+
+# Input inference parameters
+# Get the latest video with these filters if none was specified
+canon_env_path SHRINK_MEDIA_DIR "$HOME/media"
+INPUT_EXTENSION="${SHRINK_INPUT_EXTENSION:-mp4}"
+
+# Output inference parameters
+canon_env_path SHRINK_OUTPUT_DIR "$SHRINK_MEDIA_DIR/shrunken"
+OUTPUT_EXTENSION="${SHRINK_OUTPUT_EXTENSION:-$INPUT_EXTENSION}"
+
+## Command line
+## $1; Input path (optional)
+## $2; Output path (optional)
+## $3; Target resolution (optional)
+## $4; Target file size (optional)
+## $5; Target pixel area (optional)
+
+PROMPT_OPTS="$(util-script-get-newest-media "$SHRINK_MEDIA_DIR" "$INPUT_EXTENSION" "$(basename $(realpath $SHRINK_OUTPUT_DIR))" 20)"
+get_arg VIDEO_INPUT_PATH "$1" $PROMPT_OPTS[1]
+if [ "$VIDEO_INPUT_PATH" == "prompt" ]; then
+    VIDEO_INPUT_PATH="$(prompt "Input video path" "$PROMPT_OPTS" "Enter input path")"
+    [ $? -ne 0 ] || [ -z "$VIDEO_INPUT_PATH" ] && error 1 "Cancelled"
+fi
+[ ! -f "$VIDEO_INPUT_PATH" ] && error 1 "Video '$VIDEO_INPUT_PATH' does not exist"
+
+get_arg TARGET_PIXEL_AREA "$5" "$SHRINK_TARGET_PIXEL_AREA"
+if [ "$TARGET_PIXEL_AREA" == "prompt" ]; then
+        OUTPUT="$(prompt "Target pixel area" "$SHRINK_TARGET_PIXEL_AREA" "Enter a number or simple multiplication expression (e.g. 1920 * 1080) denoting target pixel area")"
+        TARGET_PIXEL_AREA="$(jq -n "$OUTPUT")"
+        [ $? -ne 0 ] && TARGET_PIXEL_AREA="$SHRINK_TARGET_PIXEL_AREA"
+fi
+assert_int "$TARGET_PIXEL_AREA" && error 1 "Target pixel area is not a valid integer ($TARGET_PIXEL_AREA)"
+
+# $3
+RESOLUTION_JSON="$(get_video_resolution_json "$VIDEO_INPUT_PATH")"
+RESOLUTION_DEFAULT="$(printf "%s" $RESOLUTION_JSON | get_adjusted_resolution "$TARGET_PIXEL_AREA" true)"
+get_arg VIDEO_RESOLUTION "$3" "$RESOLUTION_DEFAULT"
+if [ "$VIDEO_RESOLUTION" == "prompt" ]; then
+    RESOLUTION_ORIGINAL="$(printf "%s" $RESOLUTION_JSON | jq -r '.streams[0] as $s | "\($s.width)x\($s.height)"')"
+    RESOLUTION_TARGET="$(printf "%s" $RESOLUTION_JSON | get_adjusted_resolution "$TARGET_PIXEL_AREA" false)"
+
+    PROMPT_OPTS="${RESOLUTION_DEFAULT}\tRecommended (smaller)"
+    PROMPT_OPTS+=";${RESOLUTION_ORIGINAL}\tOriginal video resolution"
+    PROMPT_OPTS+=";${RESOLUTION_TARGET}\tAdjusted to fit target pixel area (${TARGET_PIXEL_AREA}px)"
+
+    VIDEO_RESOLUTION="$(prompt "Resolution" "$PROMPT_OPTS" "Select or type video resolution")"
+fi
+[ -z "$VIDEO_RESOLUTION" ] && error 1 "Cancelled"
+
+# $4
+get_arg TARGET_SIZE_MiB "$4" "$SHRINK_TARGET_SIZE_MiB"
+if [ "$TARGET_SIZE_MiB" == "prompt" ]; then
+    TARGET_SIZE_MiB="$(prompt "Target filesize (MiB)" "$SHRINK_TARGET_SIZE_MiB" "Enter target filesize")"
+    [ $? -ne 0 ] || [ -z "$TARGET_SIZE_MiB" ] && error 1 "Cancelled"
+fi
+assert_int "$TARGET_SIZE_MiB" && error 1 "Target filesize is not a valid integer ($TARGET_SIZE_MiB)"
+
+# $2
+# tag denoting which video (of ours) earlier in the filename than our timestamp, (so sorting by name groups videos of the same source)
+MEDIA_ID=$(basename ${VIDEO_INPUT_PATH%.*} | awk -F_ '{print $NF}')
+[ ${#MEDIA_ID} -eq 8 ] || unset MEDIA_ID
+DEFAULT_OUTPUT_PATH="$SHRINK_OUTPUT_DIR/$(util-script-media-filename "${MEDIA_ID:+$MEDIA_ID-}shrunk" "$OUTPUT_EXTENSION")"
+get_arg VIDEO_OUTPUT_PATH "$2" "$DEFAULT_OUTPUT_PATH"
+if [ "$VIDEO_OUTPUT_PATH" == "prompt" ]; then
+    VIDEO_OUTPUT_PATH="$(prompt "Output path" "$DEFAULT_OUTPUT_PATH" "Enter output path")"
+    [ $? -ne 0 ] || [ -z "$VIDEO_OUTPUT_PATH" ] && error 1 "Cancelled"
 fi
 
-if [ ! -z "$2" ]
-	then
-	RESOLUTION="$2"
-else
-	RESOLUTION="1920x1080"
-fi
-shrink "`zsh -c 'print -lr -- **/*.mp4(.om[1])'`" $RESOLUTION
-# shrink $(realpath `find . -name "**.mp4" -maxdepth 1 -type f -exec stat -c '%X %n' {} \; | sort -nr | awk 'NR==1 {print $2}'`)
-rm "./ffmpeg2pass-0.log"
-cd $DIR
+VIDEO_OUTPUT_DIR="$(dirname $VIDEO_OUTPUT_PATH)"
+[ ! -d "$VIDEO_OUTPUT_DIR" ] && mkdir -p "$VIDEO_OUTPUT_DIR"
+[ ! -d "$VIDEO_OUTPUT_DIR" ] && error 1 "Output path does not exist and you don't have permissions to create it."
+
+### Transcoding
+
+printf "Starting transcode (%s, %sMiB target)
+  options:
+    %s (%s / %s)
+  input:
+    %s
+  output:
+    %s
+" "$VIDEO_RESOLUTION" "$TARGET_SIZE_MiB" \
+"$OUTPUT_EXTENSION" "$VIDEO_CODEC" "$AUDIO_CODEC" \
+"$VIDEO_INPUT_PATH" \
+"$VIDEO_OUTPUT_PATH"
+
+TARGET_Kbps=$(awk \
+    -v size="$TARGET_SIZE_MiB" \
+    -v duration="$(ffprobe -i "$VIDEO_INPUT_PATH" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1)" \
+    -v audio_rate="$(ffprobe -i "$VIDEO_INPUT_PATH" -v error -show_entries format=bit_rate -select_streams a:0 -of json | jq -r '.format.bit_rate | tonumber / 1000 | @sh')" \
+    'BEGIN { print  ( ( size * 8192.0 ) / ( 1.048576 * duration ) - audio_rate ) }'
+)
+
+COMMON_ARGS="\
+    -i $VIDEO_INPUT_PATH \
+    -s $VIDEO_RESOLUTION \
+    -c:v $VIDEO_CODEC \
+    -b:v ${TARGET_Kbps}k \
+    -b_ref_mode 0 \
+"
+
+ffmpeg \
+    $COMMON_ARGS \
+    -y \
+    -pass 1 \
+    -an \
+    -f mp4 \
+    /dev/null > /dev/null
+[ $? -ne 0 ] && error 1 "ffmpeg exited with code $? on pass 1"
+ffmpeg \
+    $COMMON_ARGS \
+    -pass 2 \
+    -c:a "$AUDIO_CODEC" \
+    -b:a "$SHRINK_AUDIO_BITRATE_Kbps"k \
+    "$VIDEO_OUTPUT_PATH" > /dev/null
+[ $? -ne 0 ] && error 1 "ffmpeg exited with code $? on pass 2"

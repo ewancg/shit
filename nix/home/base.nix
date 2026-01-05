@@ -3,6 +3,7 @@
 {
   config,
   pkgs,
+  util,
   ...
 }:
 with pkgs;
@@ -22,7 +23,7 @@ in
       # cli tools
       atuin
       python3
-      ffmpeg
+      (pkgs.ffmpeg-full.override { withUnfree = true; })
       bchunk
       choose
       datamash
@@ -88,7 +89,7 @@ in
       autopair # add/remove paired delimeters automatically; e.g. (), [], {}, "", ''
       clownfish # "mock" command
       pure # prompt
-    ]);
+    ]) ++ (builtins.attrValues util.scripts);
 
     sessionVariables = {
       EDITOR = "zeditor --new";

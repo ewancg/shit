@@ -133,7 +133,10 @@ in
       eww
 
       # hyprcap
-      wf-recorder
+      (wf-recorder.override {
+        ffmpeg = (ffmpeg-full.override { withUnfree = true; });
+      })
+      jq
 
       wl-clipboard
       wofi

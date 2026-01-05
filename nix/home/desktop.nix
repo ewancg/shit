@@ -46,7 +46,9 @@ in
   stylix.targets.btop.enable = true;
   stylix.targets.firefox = {
     enable = true;
-    colorTheme.enable = true;
+    colors.enable = true;
+    firefoxGnomeTheme.enable = false;
+    fonts.enable = true;
   };
   stylix.targets.gnome-text-editor.enable = false;
   #stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";

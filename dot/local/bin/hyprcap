@@ -123,6 +123,10 @@ Examples:
 EOF
 }
 
+function slurpin() {
+    slurp "$@" "${SLURP_ARGS[@]}"
+}
+
 function Version() {
     echo "HyprCap version $VERSION"
 }
@@ -189,7 +193,7 @@ function record_start() {
     # We send this to the background so we can store its PID in a file.
     # Otherwise, we wouldn't be able to gracefully stop it from the outside.
     # Also, the filetype is determined by the filename ($CAPTURE_PATH).
-    wf-recorder -g "$GEOMETRY" -f "$CAPTURE_PATH" --overwrite --audio &
+    wf-recorder ${WFR_VCODEC:+"-c$WFR_VCODEC"} ${WFR_ACODEC:+"-C$WFR_ACODEC"} ${WFR_CODEC_OPTS:+$(for i in $WFR_CODEC_OPTS; do printf "%s " "-p $i"; done)} -g "$GEOMETRY" -f "$CAPTURE_PATH" --overwrite --audio &
     local rec_pid=$!
     echo "$rec_pid" > "$REC_PID_PATH"
 
@@ -227,7 +231,7 @@ function record_stop() {
         return 1
     fi
 
-    local rec_pid=$(cat "$REC_PID_PATH")
+    local rec_pid=$(< "$REC_PID_PATH")
 
     if ! kill -INT "$rec_pid"; then
         Print -E "Error: Failed to send a stop signal.\n"
@@ -277,11 +281,11 @@ function get_geometry() {
 }
 
 function grab_region() {
-    slurp -d -w "$SLURP_BORDER_WEIGHT"
+    slurpin -w "$SLURP_BORDER_WEIGHT"
 }
 
 function grab_monitor() {
-    slurp -or
+    slurpin -or
 }
 
 function grab_monitor_active() {
@@ -324,7 +328,7 @@ function grab_window() {
 
     Print -1 "Window boxes:\n$boxes\n"
 
-    echo "$boxes" | slurp -r
+    echo "$boxes" | slurpin -r
 }
 
 function grab_window_active() {
@@ -905,6 +909,8 @@ fi
 
 # ---- Init ----
 
+IFS=' ' read -ra SLURP_ARGS <<<"$SLURP_ARGS"
+
 # Set terminal title. This prevents self-matching when selecting windows
 # by name
 [ $DISABLE_TITLE -ne 1 ] && [ -t 1 ] && echo -ne "\033]0;HyprCap\007"
@@ -977,7 +983,7 @@ esac
 [ $COPY -eq 1 ] && copy_capture
 
 if [ $RAW -eq 1 ]; then
-    cat "$CAPTURE_PATH"
+    printf "%s" "(< "$CAPTURE_PATH")"
 # If output isn't raw and --quiet isn't set, print the path to the capture
 elif [ $VERBOSE -ge 0 ]; then
     # Prints the save path if saving is on, otherwise a path to the transient

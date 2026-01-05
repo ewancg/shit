@@ -34,7 +34,7 @@ do
     shift
 done
 
-JUUSH_KEY=$(cat $HOME/.juushkey)
+JUUSH_KEY=$(< "$HOME/.juushkey")
 
 if [[ -z $JUUSH_KEY ]]; then
     if [[ -z $ANON_UPLOAD ]] && [[ -e $KEYFILE ]]; then
@@ -46,18 +46,25 @@ if [[ -z $JUUSH_KEY ]]; then
     fi
 fi
 
-if [[ ! -f "$FILE" ]]; then
-    echoerr "File does not exist"
+unset payload
+if [ -z "$FILE" ]; then
+    echoerr "No file path provided, using stdin"
+    export payload="$(< /dev/stdin)"
+    MIME_TYPE='text/plain'
+    unset FILE
+elif [[ ! -f "$FILE" ]]; then
+    echoerr "File '$FILE' does not exist"
     exit 1
 fi
 
-echoerr "Getting MIME"
 if [[ -z $MIME_TYPE ]]; then
+    echoerr "Getting MIME"
     MIME_TYPE=$(file --mime-type $FILE | awk '{print $2}')
 fi
 
 echoerr "Starting upload"
-$NOTIFY "Starting upload"
-URL=`curl -X POST --limit-rate 5M -F "$JUUSH_KEY=@$FILE;type=$MIME_TYPE" $REMOTE`
-echo -n "$URL" | $CLIPBOARD
-$NOTIFY "File upload complete" "$URL"
+
+unset filename
+[ ! -z "$FILE" ] && [[ "$(basename $FILE)" =~ "." ]] || filename="filename=none.txt;"
+URL=`printf "%s" "$payload" | curl -X POST --limit-rate 5M -F "$JUUSH_KEY=@${FILE:-"/dev/fd/0"};${filename}type=$MIME_TYPE" $REMOTE`
+printf "$URL"

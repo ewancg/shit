@@ -110,7 +110,7 @@ in
     enable = true;
   };
 
-  services.cachix-agent.enable = true;
+  services.cachix-agent.enable = false;
 
   nix = {
     package = pkgs.lixPackageSets.stable.lix;
@@ -313,9 +313,6 @@ in
     };
   };
 
-  nixpkgs.config.permittedInsecurePackages = [
-    "qtwebengine-5.15.19"
-  ];
 
   # Apps
   # Fishy

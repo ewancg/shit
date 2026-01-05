@@ -6,28 +6,31 @@
 }:
 let
   col = config.lib.stylix.colors;
-  mediaDir = "$HOME/media/";
+  mediaDir = "${config.home.homeDirectory}/media";
   samsungLF32TU87 = {
     desc = "Samsung Electric Company LF32TU87 HCPRA08903";
     mode = "903.40 3840 4168 4592 5344 2160 2161 2164 2254 +hsync -vsync";
     pos = "0x0";
     scale = "1.33";
+    bitdepth = "8";
   };
   xymMNN = {
     desc = "XYM MNN 0x00000055";
     mode = "921.87 2560 2792 3080 3600 1600 1601 1604 1742 +hsync -vsync";
     pos = "auto-center-down";
     scale = "1.33";
+    bitdepth = "10";
   };
   _acerB326HK = {
     desc = "Acer Technologies B326HK T1NAA0038522";
     mode = "903.40 3840 4168 4592 5344 2160 2161 2164 2254 -hsync -vsync";
     pos = "auto-right";
     scale = "1.33";
+    bitdepth = "8";
   };
   m1 = samsungLF32TU87;
   m2 = xymMNN;
-  # m2 = _acerB326HK;
+  # m2 = _acerB326HK;hy
 in
 {
   home.sessionVariables = {
@@ -186,29 +189,32 @@ in
       };
 
       windowrulev2 = [
-        "immediate, focus:1"
-        "immediate, onworkspace:w[t1]"
-        "bordersize 0, floating:0, onworkspace:w[t1]"
-        "rounding 0, floating:0, onworkspace:w[t1]"
-        "bordersize 0, floating:0, onworkspace:f[1]"
-        "rounding 0, floating:0, onworkspace:f[1]"
+        "immediate, match:focus true"
+        "immediate, match:workspace w[t1]"
+        "border_size 0, match:float false, match:workspace w[t1]"
+        "rounding 0, match:float false, match:workspace w[t1]"
+        "border_size 0, match:float false, match:workspace f[1]"
+        "rounding 0, match:float false, match:workspace f[1]"
 
-        "noscreenshare on, class:telegram"
-        "noscreenshare off, class:vesktop"
-        "noscreenshare on, class:ts3client"
-        "noscreenshare on, class:thunderbird"
+        "border_size 0, match:workspace f[1]"
 
-        "suppressevent maximize, class:.*" # You'll probably like this.
-        "bordercolor rgba(${col.base0D}bb), floating:1" # Blue
-        "bordercolor rgba(${col.base0B}ff), title:^(Spotify Premium)" # Green
-        "bordercolor rgba(${col.base0B}bb), title:^(Spotify Premium),floating:1" # Green
-        "bordercolor rgba(${col.base0B}ff), class:^(dev.alextren.Spot)" # Green
-        "bordercolor rgba(${col.base0B}bb), class:^(dev.alextren.Spot),floating:1" # Green
-        "bordercolor rgba(${col.base0E}ff), class:^(obsidian|Alacritty)" # Purple
-        "bordercolor rgba(${col.base0E}bb), class:^(obsidian|Alacritty),floating:1" # Purple
-        "bordercolor rgba(${col.base0A}ff), xwayland:1" # Yellow f9e2afff
-        "bordercolor rgba(${col.base0A}bb), xwayland:1,floating:1" # Yellow f9e2afbb
-        "bordercolor rgba(${col.base08}ff), fullscreen:1" # Red
+        "no_screen_share on, match:class telegram"
+        "no_screen_share off, match:class vesktop"
+        "no_screen_share on, match:class ts3client"
+        "no_screen_share on, match:class thunderbird"
+
+        "suppressevent maximize, match:class:.*" # You'll probably like this.
+        "border_color rgba(${col.base0D}bb), match:float true" # Blue
+        "border_color rgba(${col.base0B}ff), match:title ^(Spotify Premium)" # Green
+        "border_color rgba(${col.base0B}bb), match:title ^(Spotify Premium), match:float true" # Green
+        "border_color rgba(${col.base0B}ff), match:class ^(dev.alextren.Spot)" # Green
+        "border_color rgba(${col.base0B}bb), match:class ^(dev.alextren.Spot), match:float true" # Green
+        "border_color rgba(${col.base0E}ff), match:class ^(obsidian|Alacritty)" # Purple
+        "border_color rgba(${col.base0E}bb), match:class ^(obsidian|Alacritty), match:float true" # Purple
+        "border_color rgba(${col.base0A}ff), match:xwayland true" # Yellow f9e2afff
+        "border_color rgba(${col.base0A}bb), match:xwayland true, match:floating true" # Yellow f9e2afbb
+        "border_color rgba(${col.base08}ff), match:fullscreen true" # Red
+
       ];
 
       dwindle = {
@@ -229,6 +235,10 @@ in
         # explicit_sync = 1
         # explicit_sync_kms = 1
         direct_scanout = 1;
+      };
+
+      quirks = {
+        prefer_hdr = 1;
       };
 
       misc = {
@@ -301,20 +311,20 @@ in
         "$mod SHIFT, C, exec, hyprpicker -nra"
 
         # Screenshot
-        "$mod SHIFT, S, exec, _SLURP_HIGHLIGHT=${col.base0D} ${util.script "capture-image"} copysave area -o '${mediaDir}/screenshots/'"
-        "ALT, Print, exec, ${grimblast} copysave active -o '${mediaDir}/window-screenshots/'"
-        ", Print, exec, ${grimblast} copysave output -o '${mediaDir}/monitor-screenshots/'"
+        "$mod SHIFT, S, exec, _SLURP_HIGHLIGHT=${col.base0D} ${util.script "capture-image"} area '${mediaDir}/screenshots'"
+        "ALT, Print, exec,    ${util.script "capture-image"} active '${mediaDir}/window-screenshots'"
+        ", Print, exec,       ${util.script "capture-image"} output '${mediaDir}/monitor-screenshots'"
 
         # Video capture
-        "CTRL $mod SHIFT, S, exec, _SLURP_HIGHLIGHT=${col.base0E} ${util.script "capture-video"} region -o '${mediaDir}/recordings/'"
-        "CTRL ALT, Print, exec, ${util.script "capture-video"} window:active -o '${mediaDir}/window-recordings/'"
-        "CTRL , Print, exec, ${util.script "capture-video"} monitor:active -o '${mediaDir}/screen-recordings/'"
+        "CTRL $mod SHIFT, S, exec, _SLURP_HIGHLIGHT=${col.base0E} ${util.script "capture-video"} region '${mediaDir}/recordings'"
+        "CTRL ALT, Print, exec,    ${util.script "capture-video"} window:active '${mediaDir}/recordings'"
+        "CTRL , Print, exec,       ${util.script "capture-video"} monitor:active '${mediaDir}/recordings'"
 
         # Text capture
         "$mod SHIFT, T, exec, _SLURP_HIGHLIGHT=${col.base0F} ${util.script "capture-text"} '${mediaDir}/ocr-screenshots'"
 
         # Upload newest media file
-        ''$mod SHIFT, U, exec, _JUUSH_FILE="$(find "${mediaDir}" -type f -printf "%T@ %p\n" | sort -n | cut -d' ' -f 2- | tail -n 1)" juush "$_JUUSH_FILE"''
+        ''$mod SHIFT, U, exec, ${util.script "upload-newest-media"} "${mediaDir}"''
 
         # Launchers
         "$mod, Q, exec, [float; size 873 427] $terminal"
@@ -411,15 +421,14 @@ in
 
       monitor = [
         # 10 bit breaks Vesktop screen share
-        "desc:${m1.desc}, modeline ${m1.mode}, ${m1.pos}, ${m1.scale}, bitdepth,8"
-        "desc:${m2.desc}, modeline ${m2.mode}, ${m2.pos}, ${m2.scale}, bitdepth,8"
+        "desc:${m1.desc}, modeline ${m1.mode}, ${m1.pos}, ${m1.scale}, bitdepth,${m1.bitdepth}"
+        "desc:${m2.desc}, modeline ${m2.mode}, ${m2.pos}, ${m2.scale}, bitdepth,${m2.bitdepth}"
       ];
 
       workspace = [
-        "w[t1], gapsout:0, gapsin:0"
-        #"w[tg1], gapsout:0, gapsin:0"
-        "w[tg1], gapsout:4, gapsin:2"
-        "f[1], gapsout:0, gapsin:0"
+        "w[t1], gapsout:0, gapsin:0, bordersize:0"
+        "f[1], gapsout:0, gapsin:0, bordersize:0"
+
         "1, persistent:true, monitor:desc:${m1.desc}, default:true"
         "2, persistent:true, monitor:desc:${m1.desc}"
         "3, persistent:true, monitor:desc:${m1.desc}"
