@@ -1,6 +1,6 @@
 # shit
 This repository contains the Nix configurations for all of my use cases. The main branch contains
-the configuration for my personal computers, and [this](https://github.com/ewancg/shit/tree/newpaperidk/README.md) branch contains my Minecraft server config
+the configuration for my personal computers, and [this](https://github.com/ewancg/shit/tree/newpaperidk/README.md) branch contains my VPS config.
 (with tools for administration of the host VM and the Minecraft instances it runs).
 
 ## Nix flake, NixOS/nix-darwin configurations
@@ -8,13 +8,13 @@ The main Nix configuration contains a unique output for each computer. It is wri
 both NixOS and nix-darwin, to whatever extent makes sense.
   - `machine`: the NixOS config for my main desktop (Ryzen 9 7900X/RTX 4070 Ti SUPER/64GB DDR5).
   - `elbozo`: the NixOS config my personal laptop (Lenovo IdeaPad Flex 5, Ryzen 5 5500U/16GB DDR4).
-  - `D430N0H49X`: the config for a MacBook Pro I used at a previous job (M3 Pro/18GB shm/14x GPU).
+  - `D430N0H49X`: you may find references to a config for a MacBook Pro I used at a previous job (M3 Pro/18GB shm/14x GPU). this is not a functional config
 
 All of these configurations require some minor setup; sensitive things like passwords, private keys
 and U2F keys are perfectly safe to keep on disk, but cannot be kept in version control as my config
 is public. They are stored in a flake that lives in the `secrets` directory, which is consumed by
 the main flake as an input in order to provide a namespace for such constants that will be imported
-into the configuration derivations. This flake should follow [secrets/flake-schema.md](secrets/flake-schema.md).
+into the configuration derivations. See [SECRETS.md](SECRETS.md).
 
 
 Much of the behavior could be could be adapted to be enabled with attributes from the secrets, but

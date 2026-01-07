@@ -14,103 +14,42 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "github:hyprwm/Hyprland";
+
     nixvirt.url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+
     stylix = {
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     secrets.url = "path:/home/ewan/shit/secrets";
   };
-
   outputs =
-    {
-      secrets,
-      self,
-
-      disko,
-      firefox,
-      flake-utils,
-      home-manager,
-      hyprland,
-      nixpkgs,
-      nixvirt,
-      stylix,
-      ...
-    }@inputs:
-    let
-      util = (pkgs: (import ./nix/util.nix) { inherit pkgs secrets; });
-      pkgs = (system: nixpkgs.legacyPackages.${system});
-      secrets = (inputs.secrets.secrets);
-    in
-    {
-      nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-            inherit
-              secrets
-
-              nixvirt
-              firefox
-
-              home-manager
-              hyprland
-              stylix
-              ;
-            util = (util (pkgs "x86_64-linux"));
-          };
-
-          modules = [
-            disko.nixosModules.disko
-            home-manager.nixosModules.home-manager
-            ./nix/os/configuration.nix
-            ./nix/os/machine/system.nix
-            ./nix/os/home.nix
-          ];
+    { self, flake-utils, nixpkgs, ... }@inputs:
+    import ./systems.nix inputs
+    // flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = (import nixpkgs { inherit system; });
+        pkglist = with pkgs; [
+          fish
+          (writeShellScriptBin "update" ''
+            nix flake update secrets
+            alias sudo='printf "\n%s\n" "waiting for authentication..." > /dev/stdout; sudo'
+            nixos-rebuild switch \
+              --flake .#$hostname \
+              --max-jobs $REBUILD_JOBS \
+              --cores $REBUILD_CORES \
+              --sudo \
+              --show-trace
+          '')
+        ];
+      in
+      {
+        devShell = pkgs.mkShell {
+          nativeBuildInputs = pkglist;
+          buildInputs = pkglist;
+          packages = pkglist;
         };
-      nixosConfigurations.elbozo =
-        let
-          system = "x86_64-linux";
-        in
-        nixpkgs.lib.nixosSystem {
-          system = system;
-          specialArgs = {
-            inherit
-              secrets
-
-              firefox
-
-              home-manager
-              stylix
-              ;
-            util = (util (pkgs system));
-          };
-          modules = [
-            home-manager.nixosModules.home-manager
-            ./nix/os/configuration.nix
-            ./nix/os/elbozo/system.nix
-            ./nix/os/home.nix
-          ];
-        };
-      # darwinConfigurations.D430N0H49X =
-      #   let
-      #     system = "aarch64-darwin";
-      #   in
-      #   nix-darwin.lib.darwinSystem {
-      #     system = system;
-      #     specialArgs = {
-      #       inherit (secrets)
-      #         secrets
-      #         mac-app-util
-      #       ;
-      #       pkgs = (pkgs system);
-      #       util = (util (pkgs system));
-      #     };
-      #     modules = [
-      #       nix-homebrew.darwinModules.nix-homebrew
-      #       home-manager.darwinModules.home-manager
-      #       mac-app-util.darwinModules.default
-      #       ./nix/darwin/system.nix
-      #       ./nix/darwin/home.nix
-      #     ];
-      #   };
-    };
+      }
+    );
 }

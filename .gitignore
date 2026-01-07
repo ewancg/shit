@@ -1,24 +1,18 @@
-# yep
-.DS_Store
+# macOS
+.DS_Store/
+
+# direnv
+.direnv/
 
 # Secrets
-secrets/flake.nix
+secrets/
 
 # NixOS (nixos-rebuild)
 result/
 result
 *.qcow2
 
-# Qt Creator
-.qtc_clangd
-*.cflags
-*.config
-*.creator
-*.creator.user
-*.cxxflags
-*.files
-*.includes
-!qtcreator/styles/
-!qtcreator/themes/
+# --------------------
 
+ffmpeg2pass-0.log
 *.z64

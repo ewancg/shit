@@ -6,7 +6,7 @@
 }:
 let
   col = config.lib.stylix.colors;
-  h2d = util.hexColorToDecimalTriplet;
+  h2d = util.style.hexColorToDecimalTriplet;
 in
 {
   home.packages = with pkgs; [

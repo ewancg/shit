@@ -63,7 +63,9 @@ function prompt {
 
 function help() {
     cat <<EOF
-Usage: shrink [in] [out] [res] [size] [area]
+shrink: leverage ffmpeg & two-pass encoding to transcode videos to a target filesize
+
+usage: shrink [in] [out] [res] [size] [area]
 
   positional arguments (all optional; <value>, "default", or "prompt"):
     in:   input path
@@ -87,6 +89,9 @@ Usage: shrink [in] [out] [res] [size] [area]
 
     SHRINK_AUDIO_CODEC:         ffmpeg audio encoder name
     SHRINK_AUDIO_BITRATE_Kbps:  audio bitrate, in Kbps (it only changes for video)
+
+    SHRINK_FFMPEG_ARGS:         extra arguments for ffmpeg (e.g. codec options)
+
 EOF
 }
 case "$1" in
@@ -149,6 +154,7 @@ INPUT_EXTENSION="${SHRINK_INPUT_EXTENSION:-mp4}"
 canon_env_path SHRINK_OUTPUT_DIR "$SHRINK_MEDIA_DIR/shrunken"
 OUTPUT_EXTENSION="${SHRINK_OUTPUT_EXTENSION:-$INPUT_EXTENSION}"
 
+FFMPEG_ARGS="${SHRINK_FFMPEG_ARGS:"-preset 18 -tune hq -multipass 2"}"
 ## Command line
 ## $1; Input path (optional)
 ## $2; Output path (optional)
@@ -206,6 +212,7 @@ if [ "$VIDEO_OUTPUT_PATH" == "prompt" ]; then
     VIDEO_OUTPUT_PATH="$(prompt "Output path" "$DEFAULT_OUTPUT_PATH" "Enter output path")"
     [ $? -ne 0 ] || [ -z "$VIDEO_OUTPUT_PATH" ] && error 1 "Cancelled"
 fi
+[ -z "$VIDEO_OUTPUT_PATH" ] && error 1 "You must provide a video output path"
 
 VIDEO_OUTPUT_DIR="$(dirname $VIDEO_OUTPUT_PATH)"
 [ ! -d "$VIDEO_OUTPUT_DIR" ] && mkdir -p "$VIDEO_OUTPUT_DIR"
@@ -227,8 +234,8 @@ printf "Starting transcode (%s, %sMiB target)
 
 TARGET_Kbps=$(awk \
     -v size="$TARGET_SIZE_MiB" \
-    -v duration="$(ffprobe -i "$VIDEO_INPUT_PATH" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1)" \
-    -v audio_rate="$(ffprobe -i "$VIDEO_INPUT_PATH" -v error -show_entries format=bit_rate -select_streams a:0 -of json | jq -r '.format.bit_rate | tonumber / 1000 | @sh')" \
+    -v duration="$(ffprobe -v error -show_streams -select_streams a "$VIDEO_INPUT_PATH" | grep -Po "(?<=^duration\=)\d*\.\d*")" \
+    -v audio_rate="$(ffprobe -v error -pretty -show_streams -select_streams a "$VIDEO_INPUT_PATH" | grep -Po "(?<=^bit_rate\=)\d*\.\d*")" \
     'BEGIN { print  ( ( size * 8192.0 ) / ( 1.048576 * duration ) - audio_rate ) }'
 )
 
@@ -238,6 +245,7 @@ COMMON_ARGS="\
     -c:v $VIDEO_CODEC \
     -b:v ${TARGET_Kbps}k \
     -b_ref_mode 0 \
+    $FFMPEG_ARGS \
 "
 
 ffmpeg \
@@ -246,12 +254,15 @@ ffmpeg \
     -pass 1 \
     -an \
     -f mp4 \
-    /dev/null > /dev/null
+    /dev/null
 [ $? -ne 0 ] && error 1 "ffmpeg exited with code $? on pass 1"
 ffmpeg \
     $COMMON_ARGS \
     -pass 2 \
     -c:a "$AUDIO_CODEC" \
     -b:a "$SHRINK_AUDIO_BITRATE_Kbps"k \
-    "$VIDEO_OUTPUT_PATH" > /dev/null
+    "$VIDEO_OUTPUT_PATH"
 [ $? -ne 0 ] && error 1 "ffmpeg exited with code $? on pass 2"
+
+FILESIZE=$(util-script-get-readable-filesize $(wc -c < "$VIDEO_OUTPUT_PATH"))
+[ ! -z "$FILESIZE" ] && printf "Shrinking finished; result is %s\n" "$FILESIZE"

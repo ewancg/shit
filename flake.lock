@@ -819,8 +819,8 @@
     },
     "secrets": {
       "locked": {
-        "lastModified": 1758690545,
-        "narHash": "sha256-z/aFOvssmIDLQfIvIF/JN7qQlXWNVpr6d8lsbkPrm1Q=",
+        "lastModified": 1767750657,
+        "narHash": "sha256-L6Flc9Dc86+vybrxAd12X5nOZAlaVKr1sfShNs0f4s0=",
         "path": "/home/ewan/shit/secrets",
         "type": "path"
       },

@@ -1,22 +1,18 @@
 {
   lib,
   stylix,
-  util,
   ...
-}:
-{
+}: {
   home-manager = {
-    extraSpecialArgs = { inherit util; };
-    # backupFileExtension = "backup";
-    useGlobalPkgs = false;
-    useUserPackages = true;
+    sharedModules = [
+      ../home/base.nix
+    ];
 
     users.ewan = lib.mkMerge [
-      stylix.homeModules.stylix
       ../home/desktop.nix
       ../home/apps.nix
       ../home/office.nix
-      ../home/base.nix
+      stylix.homeModules.stylix
       {
         home = {
           homeDirectory = lib.mkForce "/home/ewan";

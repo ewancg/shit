@@ -4,6 +4,7 @@
   secrets,
   firefox,
   util,
+  hostname,
   ...
 }:
 
@@ -169,19 +170,18 @@ in
   security.pam.u2f.enable = true;
   #security.pam.u2f.authFile = /etc/u2f_mappings;
 
+
   security.pam.u2f.settings.authfile = "${
     let
-      m = secrets.u2fMappings;
-      text =
-        if builtins.isString m then
-          m
+      mappings = lib.forEach secrets.s.${hostname}.u2fUsers
+      (user: let m = secrets.u.${user}.u2fMapping; in
+        if builtins.isString m then m
         else if builtins.isAttrs m then
-          (lib.concatMapAttrsStringSep "\n" (
-            name: value: with value; "${name}:${keyHandle},${userKey},${coseType},${options}"
-          ) secrets.u2fMappings)
-          + "\n"
+          let z = "${user}:${m.keyHandle},${m.userKey},${m.coseType},${m.options}"; in builtins.trace z z
         else
-          throw "secrets.u2fMappings was neither a string or attribute set.";
+          throw "secrets: u2fMapping for ${user} was neither a string or attribute set."
+      );
+      text = lib.concatStringsSep "\n" mappings;
     in
     pkgs.writeText "u2f_mappings" text
   }";
@@ -258,33 +258,19 @@ in
     mutableUsers = false;
     groups.ewan = { };
 
-    users.root.hashedPasswordFile = (util.password "root");
+    users.root.hashedPasswordFile = (util.etc.password "root");
 
     users.ewan = {
       group = "ewan";
       home = "/home/ewan";
       isNormalUser = true;
-      hashedPasswordFile = (util.password "ewan");
+      hashedPasswordFile = (util.etc.password "ewan");
       description = "Ewan Green";
       extraGroups = [
         "networkmanager"
         "wheel"
         "video"
         "ewan"
-      ];
-    };
-    groups.egreen = { };
-    users.egreen = {
-      group = "egreen";
-      home = "/home/egreen";
-      isNormalUser = true;
-      hashedPasswordFile = (util.password "egreen");
-      description = "Ewan Green (Office)";
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "video"
-        "egreen"
       ];
     };
   };
