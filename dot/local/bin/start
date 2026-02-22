@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-2>/dev/null 1>&2 nohup xdg-open "$*" & disown
+2>/dev/null 1>&2 nohup xdg-open "$*" & disown 2>1

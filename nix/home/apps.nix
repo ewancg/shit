@@ -357,6 +357,7 @@ in
 
     reaper
     bitwig-studio
+    renoise
     guitarix
     ptcollab
     vmpk

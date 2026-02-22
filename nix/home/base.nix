@@ -1,10 +1,9 @@
 # home/base.nix; home config for all users (terminal, cli utilities, dev env...)
 
-{
-  config,
-  pkgs,
-  util,
-  ...
+{ config
+, pkgs
+, util
+, ...
 }:
 with pkgs;
 let
@@ -96,9 +95,9 @@ in
     };
 
     file = {
-      # todo: link scripts
       ".local/bin" = {
         recursive = true;
+        executable = true;
         source = ../../dot/local/bin;
       };
       ".config/alacritty/_active.toml" = {
@@ -298,13 +297,6 @@ in
 
       bk.body = ''
         mv "$1" "$1.old"
-      '';
-
-      start.body = ''
-        set _dist_start "$([ $(uname) = 'Darwin' ] &&
-          printf open ||
-          printf xdg-open)";
-        $_dist_start $argv
       '';
 
       kc.body = ''

@@ -1,6 +1,5 @@
-{
-  self,
-  ...
+{ self
+, ...
 }@inputs:
 let
   inherit (inputs)
@@ -12,7 +11,7 @@ let
   secrets = (inputs.secrets.secrets);
   mkUtil = import ./nix/util.nix;
 in
-with (mkUtil {inherit secrets inputs;}).systems; {
+with (mkUtil { inherit secrets inputs; }).systems; {
   nixosConfigurations = mkConfigs ./. mkUtil {
     machine = mkNixosModuleWithUser "x86_64-linux" { inherit nixvirt firefox hyprland; } [ disko.nixosModules.disko ];
     elbozo = mkNixosModuleWithUser "x86_64-linux" { inherit nixvirt firefox; } [ ];

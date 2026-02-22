@@ -10,22 +10,22 @@
     networkmanager.dns = "none";
   };
 
-  # Check!
   services.resolved.enable = false;
 
+  # This conflicts with Tailscale, can't use it
   # To enable network-discovery; required for *.local, AirPlay, etc.
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true; # printing; *.local
-    openFirewall = true; # ensuring that firewall ports are open as needed
-    publish = {
-      enable = true;
-      addresses = true;
-      workstation = true;
-      userServices = true;
-      domain = true;
-    };
-  };
+  # services.avahi = {
+  #   enable = true;
+  #   nssmdns4 = true; # printing; *.local
+  #   openFirewall = true; # ensuring that firewall ports are open as needed
+  #   publish = {
+  #     enable = true;
+  #     addresses = true;
+  #     workstation = true;
+  #     userServices = true;
+  #     domain = true;
+  #   };
+  # };
 
   # IPs subject to change. should use hostname.local from Avahi instead
   # hosts = {

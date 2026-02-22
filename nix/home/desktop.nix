@@ -1,9 +1,8 @@
 # desktop.nix; home config for items specific to the NixOS user
 
-{
-  config,
-  pkgs,
-  ...
+{ config
+, pkgs
+, ...
 }:
 with pkgs;
 let

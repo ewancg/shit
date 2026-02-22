@@ -1,7 +1,6 @@
-{
-  lib,
-  stylix,
-  ...
+{ lib
+, stylix
+, ...
 }: {
   home-manager = {
     sharedModules = [

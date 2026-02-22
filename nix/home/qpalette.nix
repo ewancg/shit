@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  util,
-  ...
+{ config
+, pkgs
+, util
+, ...
 }:
 let
   col = config.lib.stylix.colors;
@@ -74,7 +73,7 @@ in
 
     [Colors:Complementary]
     BackgroundAlternate=${dummy}
-    BackgroundNormal=${dummy}
+    BackgroundNormal=${h2d col.base0E}
     DecorationFocus=${h2d col.base0D}
     DecorationHover=${h2d col.base0D}
     ForegroundActive=${dummy}
@@ -88,10 +87,10 @@ in
 
     [Colors:Selection]
     BackgroundAlternate=${dummy}
-    BackgroundNormal=${dummy}
+    BackgroundNormal=${h2d col.base0D}
     DecorationFocus=${h2d col.base0D}
     DecorationHover=${h2d col.base0D}
-    ForegroundActive=${dummy}
+    ForegroundActive=${h2d col.base05}
     ForegroundInactive=${dummy}
     ForegroundLink=${dummy}
     ForegroundNegative=${dummy}
@@ -116,7 +115,7 @@ in
 
     [Colors:View]
     BackgroundAlternate=${dummy}
-    BackgroundNormal=${dummy}
+    BackgroundNormal=${h2d col.base00}
     DecorationFocus=${h2d col.base0D}
     DecorationHover=${h2d col.base0D}
     ForegroundActive=${dummy}

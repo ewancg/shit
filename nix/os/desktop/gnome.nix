@@ -29,7 +29,7 @@
   services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.nautilus.preferences]
     default-folder-viewer='list-view'
-    
+
     [org.gnome.mutter]
     experimental-features="['scale-monitor-framebuffer']"
   '';
@@ -50,6 +50,8 @@
       LIBVA_DRIVER_NAME = "nvidia";
       GBM_BACKEND = "nvidia-drm";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+
+      MOZ_DISABLE_RDD_SANDBOX = "1"; # Required for VA-API in Firefox's RDD process
 
       # Wayland
       XDG_SESSION_TYPE = "wayland";

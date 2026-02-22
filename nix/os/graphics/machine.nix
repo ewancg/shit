@@ -33,7 +33,7 @@
     # Enable this if you have graphical corruption issues or application crashes after waking
     # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
     # of just the bare essentials.
-    powerManagement.enable = false;
+    powerManagement.enable = true;
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -60,30 +60,29 @@
   };
 
   #  Optimus causes some issues
-  #  hardware.nvidia.prime = {
-  #    # Offload mode
-  #    offload = {
-  #      enable = true;
-  #      enableOffloadCmd = true;
-  #    };
-  #    # Sync mode
-  #    # sync.enable = true;
-  #
-  #    # Getting PCI IDs of GPUs
-  #    # sudo lshw -c display; "bus info"
-  #    #   pci@0000:0d:00.0
-  #    # take last 7 characters
-  #    #   0d:00.0
-  #    # convert hex to decimal
-  #    #   13:00.0
-  #    # replace '.' with ':'
-  #    #   13:00:0
-  #    # prepend "PCI:"
-  #    #   PCI:13:00:0
-  #
-  #    amdgpuBusId = "PCI:13:00:0";
-  #    nvidiaBusId = "PCI:01:00:0";
-  #  };
+  hardware.nvidia.prime = {
+    # Offload mode
+    offload = {
+      # using reverse sync instead
+      enable = false;
+      enableOffloadCmd = true;
+    };
+
+    reverseSync.enable = true;
+    # Getting PCI IDs of GPUs
+    # sudo lshw -c display; "bus info"
+    #   pci@0000:0d:00.0
+    # take last 7 characters
+    #   0d:00.0
+    # convert hex to decimal
+    #   13:00.0
+    # replace '.' with ':'
+    #   13:00:0
+    # prepend "PCI:"
+    #   PCI:13:00:0
+    amdgpuBusId = "PCI:13:00:0";
+    nvidiaBusId = "PCI:01:00:0";
+  };
 
   #
   boot.initrd.kernelModules = [
@@ -96,9 +95,22 @@
     nvidia_x11
   ];
 
+  environment.systemPackages = with pkgs; [
+    egl-wayland
+    mesa
+    mesa-demos
+    mesa-gl-headers
+
+    libGLU
+    libGL
+
+    glm
+
+  ];
+
   environment.variables = {
-    MOZ_DISABLE_RDD_SANDBOX=1;
-    PROTON_ENABLE_NGX_UPDATER=1;
+    MOZ_DISABLE_RDD_SANDBOX = 1;
+    PROTON_ENABLE_NGX_UPDATER = 1;
     GBM_BACKEND = "nvidia-drm";
     GSK_RENDERER = "ngl";
     NVD_BACKEND = "direct";
@@ -109,7 +121,7 @@
     __GL_VRR_ALLOWED = 1; # Change if problematic; should work on 555
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
 
-    __VK_LAYER_NV_optimus="NVIDIA_only";
+    __VK_LAYER_NV_optimus = "NVIDIA_only";
     VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
   };
   boot.blacklistedKernelModules = [

@@ -68,7 +68,7 @@ in {
           description = "The path to a file containing the private key for this interface/peer. Only root should have access to the file. See your Wireguard certificate.";
         };
 
-        dns =  {
+        dns = {
           enable = mkOption {
             default = true;
             example = "true";
@@ -117,8 +117,9 @@ in {
       listenPort = cfg.interface.port;
 
       peers = [
-        { publicKey = cfg.endpoint.publicKey;
-          allowedIPs = [ "0.0.0.0/0" "::/0"];
+        {
+          publicKey = cfg.endpoint.publicKey;
+          allowedIPs = [ "0.0.0.0/0" "::/0" ];
           endpoint = "${cfg.endpoint.ip}:${builtins.toString cfg.endpoint.port}";
         }
       ];

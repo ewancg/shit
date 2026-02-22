@@ -12,14 +12,14 @@
       reattach = true;
     };
   };
-    
-    environment.systemPackages = [
-      pkgs.pam-reattach
-    ];
-    #environment.etc."pam.d/sudo_local" = {
-    #  text = ''
-    #    # auth       optional       ${pam-reattach}/lib/pam/pam_reattach.so ignore_ssh
-    #    auth       sufficient     pam_tid.so
-    #  '';
-    #};
+
+  environment.systemPackages = [
+    pkgs.pam-reattach
+  ];
+  #environment.etc."pam.d/sudo_local" = {
+  #  text = ''
+  #    # auth       optional       ${pam-reattach}/lib/pam/pam_reattach.so ignore_ssh
+  #    auth       sufficient     pam_tid.so
+  #  '';
+  #};
 }

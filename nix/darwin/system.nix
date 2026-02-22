@@ -1,13 +1,12 @@
-{
-  pkgs,
-  awsctx,
-  homebrew-core,
-  homebrew-cask,
-  vfkit-tap,
-  inputs,
-  config,
-  lib,
-  ...
+{ pkgs
+, awsctx
+, homebrew-core
+, homebrew-cask
+, vfkit-tap
+, inputs
+, config
+, lib
+, ...
 }:
 let
   rust = with pkgs; [

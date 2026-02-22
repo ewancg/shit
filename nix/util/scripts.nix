@@ -1,10 +1,9 @@
-{
-  config,
-  pkgs,
-  commands,
-  root,
-  style,
-  ...
+{ config
+, pkgs
+, commands
+, root
+, style
+, ...
 }:
 let
   prefix = "util-script-";
@@ -16,7 +15,40 @@ let
     with commands;
     mkScripts rec {
       network-event = ''
-        echo todo
+        printf "%s" "network event idk" $@
+      '';
+      teamspeak-toggle-mute = let ts3conn = "localhost 25639"; auth = "auth apikey=UNT2-9P4L-LD9K-CHSZ-IIM4-RK2P"; in ''
+        PROBE_CMDS="
+        ${auth}
+        whoami"
+
+        RESPONSE=$(echo -e "$PROBE_CMDS" | ${nc} -w 2 ${ts3conn} 2>&1)
+        if [ $? -ne 0 ]; then
+            echo "Error: Cannot connect to TeamSpeak" >&2
+            echo "Make sure TeamSpeak is running and ClientQuery plugin is enabled" >&2
+            exit 1
+        fi
+
+        CURRENT_MUTE=$(echo "$RESPONSE" | grep -oP 'client_input_muted=\K[0-9]+' | head -1)
+        if [ -z "$CURRENT_MUTE" ]; then
+            echo "Error: Could not determine current mute status" >&2
+            echo "$RESPONSE" >&2
+            exit 1
+        fi
+
+        NEW_MUTE=$(["$CURRENT_MUTE" = "1"] && return 0 || return 1)
+        TOGGLE_CMDS="
+        ${auth}
+        clientupdate client_input_muted=$NEW_MUTE
+        quit"
+
+        RESPONSE=$(echo -e "$PROBE_CMDS" | ${nc} -w 2 ${ts3conn} 2>&1)
+        if echo "$RESPONSE" | grep -q "error id=0"; then
+            exit 0
+        else
+            echo "$RESPONSE" >&2
+            exit 1
+        fi
       '';
       eww-display-countdown = ''
         # expects envvar start with timestamp in the future
@@ -314,7 +346,7 @@ let
         ${declare_slurp_args}
         ${commands.grimblast} save area -o "$1/$imgname" -f
         OUTPUT="$(${tesseract} "$1/$imgname" - -l eng)"
-        printf "$OUTPUT" | ${tee} "$1/$fname.txt" | ${wl-copy} && ${notify-send} -t 2000 "Text capture saved" "$(printf "%s\nText copied to clipboard" "$fname")"
+        printf "%s" "$OUTPUT" | ${tee} "$1/$fname.txt" | ${wl-copy} && ${notify-send} -t 2000 "Text capture saved" "$(printf "%s\nText copied to clipboard" "$fname")"
       '';
     };
   script = (name: "${(scripts.${name}.out)}/bin/${prefix}${name}");

@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  util,
-  ...
+{ config
+, pkgs
+, util
+, ...
 }:
 let
   col = config.lib.stylix.colors;

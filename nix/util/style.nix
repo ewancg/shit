@@ -33,15 +33,15 @@ let
     in
     16 * firstDigit + secondDigit;
 
-    # Convert 3 bytes of hex info denoting a 24 bit color into each value's decimal form (`r,g,b`)
-    hexColorToDecimalTriplet =
-      hex:
-      let
-        r = hexToDecimal (builtins.substring 0 2 hex);
-        g = hexToDecimal (builtins.substring 2 4 hex);
-        b = hexToDecimal (builtins.substring 4 6 hex);
-      in
-      "${toString r},${toString g},${toString b}";
+  # Convert 3 bytes of hex info denoting a 24 bit color into each value's decimal form (`r,g,b`)
+  hexColorToDecimalTriplet =
+    hex:
+    let
+      r = hexToDecimal (builtins.substring 0 2 hex);
+      g = hexToDecimal (builtins.substring 2 4 hex);
+      b = hexToDecimal (builtins.substring 4 6 hex);
+    in
+    "${toString r},${toString g},${toString b}";
 in
 {
   inherit hexToDecimal hexColorToDecimalTriplet;

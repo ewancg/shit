@@ -1,0 +1,27 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash -p bash micro
+
+cache_dir="$HOME/fuckcache/$PWD"
+function saves() {
+    find "$cache_dir" -type f -name "flake.nix.*" $@
+}
+
+function undo() {
+    last="$(saves -printf '%h\0%p\n' | sort | awk -F'\0' '{print $2}' | tail -n 1)"
+    mv flake.nix flake.nix.bad
+    mv $last flake.nix
+    exit
+}
+
+[ "$1" == "undo" ] && undo
+
+while [ ! -f "flake.nix" ]; do
+    case "$PWD" in
+    "$HOME" | "/") exit ;;
+    esac
+    cd ..
+done
+[ ! -d "$cache_dir" ] && mkdir -p "$cache_dir"
+count=$(saves | wc -l)
+cp flake.nix "$cache_dir/flake.nix.$(jq -n $count + 1)"
+micro flake.nix

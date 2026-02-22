@@ -19,24 +19,25 @@ in
   "tee"
   "tr"
 ])
-// (
+  // (
   with pkgs;
   mkCommandBindings {
-    # inherit (pkgs)
-    #   datamash
-    #   eww
-    #   grimblast
-    #   playerctl
-    #   gojq
-    #   tesseract
-    #   ;
+    inherit (pkgs)
+      datamash
+      eww
+      grimblast
+      playerctl
+      gojq
+      tailscale
+      tesseract
+      ;
 
-    datamash = datamash;
-    eww = eww;
-    grimblast = grimblast;
-    playerctl = playerctl;
-    gojq = gojq;
-    tesseract = tesseract;
+    # datamash = datamash;
+    # eww = eww;
+    # grimblast = grimblast;
+    # playerctl = playerctl;
+    # gojq = gojq;
+    # tesseract = tesseract;
 
     sh = dash;
     awk = gawk;
@@ -46,6 +47,7 @@ in
     grep = gnugrep;
     hyprctl = hyprland;
     pgrep = procps;
+    nc = busybox;
     notify-send = libnotify;
     uuidgen = util-linux;
     wpctl = wireplumber;

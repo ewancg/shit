@@ -1,8 +1,7 @@
 # Derived from https://github.com/rhasselbaum/nixos-config/blob/main/hosts/caprica/network-and-virt.nix
-{
-  pkgs,
-  nixvirt,
-  ...
+{ pkgs
+, nixvirt
+, ...
 }:
 
 let

@@ -5,6 +5,11 @@ in
 {
   services.xserver.enable = true;
 
+  # why shouldnt i let my compositor dictate the system-wide GL? :x
+  hardware.graphics = {
+    package = pkgs-unstable.mesa;
+    package32 = pkgs-unstable.pkgsi686Linux.mesa;
+  };
   programs.hyprland = {
     enable = true;
     withUWSM = true;
@@ -22,8 +27,8 @@ in
     HYPRCURSOR_SIZE = "24";
     #HYPRCURSOR_SIZE = "192";
 
-    VK_DRIVER_FILES="/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
-    VK_ICD_FILENAMES="/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+    VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
 
     # How to do these only on XWayland?
     # QT_SCALE_FACTOR,1.5
@@ -103,16 +108,6 @@ in
 
   # Brightness control
   hardware.brillo.enable = true;
-
-  hardware.graphics = {
-    # i want no video please
-    enable = true;
-    package = pkgs-unstable.mesa;
-    package32 = pkgs-unstable.pkgsi686Linux.mesa;
-
-    # if you also want 32-bit support (e.g for Steam)
-    enable32Bit = true;
-  };
 
   environment.systemPackages = (
     with pkgs;

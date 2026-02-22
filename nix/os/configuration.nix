@@ -1,11 +1,10 @@
-{
-  pkgs,
-  lib,
-  secrets,
-  firefox,
-  util,
-  hostname,
-  ...
+{ pkgs
+, lib
+, secrets
+, firefox
+, util
+, hostname
+, ...
 }:
 
 let
@@ -46,6 +45,9 @@ in
   # temp
   services.logrotate.checkConfig = false;
   environment.systemPackages = with pkgs; [
+    # pre-defined in util
+    util.new-dev-shell
+
     # nixos
     nh
     git
@@ -114,8 +116,8 @@ in
   services.cachix-agent.enable = false;
 
   nix = {
-    package = pkgs.lixPackageSets.stable.lix;
-    # package = pkgs.nixVersions.stable;
+    # package = pkgs.lixPackageSets.stable.lix;
+    package = pkgs.nixVersions.stable;
 
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -177,7 +179,7 @@ in
       (user: let m = secrets.u.${user}.u2fMapping; in
         if builtins.isString m then m
         else if builtins.isAttrs m then
-          let z = "${user}:${m.keyHandle},${m.userKey},${m.coseType},${m.options}"; in builtins.trace z z
+          "${user}:${m.keyHandle},${m.userKey},${m.coseType},${m.options}"
         else
           throw "secrets: u2fMapping for ${user} was neither a string or attribute set."
       );

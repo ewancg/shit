@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  util,
-  ...
+{ config
+, pkgs
+, util
+, ...
 }:
 let
   col = config.lib.stylix.colors;
@@ -188,34 +187,34 @@ in
         ];
       };
 
-      windowrulev2 = [
-        "immediate, match:focus true"
-        "immediate, match:workspace w[t1]"
-        "border_size 0, match:float false, match:workspace w[t1]"
-        "rounding 0, match:float false, match:workspace w[t1]"
-        "border_size 0, match:float false, match:workspace f[1]"
-        "rounding 0, match:float false, match:workspace f[1]"
-
-        "border_size 0, match:workspace f[1]"
-
-        "no_screen_share on, match:class telegram"
-        "no_screen_share off, match:class vesktop"
-        "no_screen_share on, match:class ts3client"
-        "no_screen_share on, match:class thunderbird"
-
-        "suppressevent maximize, match:class:.*" # You'll probably like this.
-        "border_color rgba(${col.base0D}bb), match:float true" # Blue
-        "border_color rgba(${col.base0B}ff), match:title ^(Spotify Premium)" # Green
-        "border_color rgba(${col.base0B}bb), match:title ^(Spotify Premium), match:float true" # Green
-        "border_color rgba(${col.base0B}ff), match:class ^(dev.alextren.Spot)" # Green
-        "border_color rgba(${col.base0B}bb), match:class ^(dev.alextren.Spot), match:float true" # Green
-        "border_color rgba(${col.base0E}ff), match:class ^(obsidian|Alacritty)" # Purple
-        "border_color rgba(${col.base0E}bb), match:class ^(obsidian|Alacritty), match:float true" # Purple
-        "border_color rgba(${col.base0A}ff), match:xwayland true" # Yellow f9e2afff
-        "border_color rgba(${col.base0A}bb), match:xwayland true, match:floating true" # Yellow f9e2afbb
-        "border_color rgba(${col.base08}ff), match:fullscreen true" # Red
-
-      ];
+      # windowrulev2 = [
+      #   "immediate, match:focus true"
+      #   "immediate, match:workspace w[t1]"
+      #   "border_size 0, match:float false, match:workspace w[t1]"
+      #   "rounding 0, match:float false, match:workspace w[t1]"
+      #   "border_size 0, match:float false, match:workspace f[1]"
+      #   "rounding 0, match:float false, match:workspace f[1]"
+      #
+      #   "border_size 0, match:workspace f[1]"
+      #
+      #   "no_screen_share on, match:class telegram"
+      #   "no_screen_share off, match:class vesktop"
+      #   "no_screen_share on, match:class ts3client"
+      #   "no_screen_share on, match:class thunderbird"
+      #
+      #   "suppressevent maximize, match:class:.*" # You'll probably like this.
+      #   "bordercolor rgba(${col.base0D}bb), match:float true" # Blue
+      #   "bordercolor rgba(${col.base0B}ff), match:title ^(Spotify Premium)" # Green
+      #   "bordercolor rgba(${col.base0B}bb), match:title ^(Spotify Premium), match:float true" # Green
+      #   "bordercolor rgba(${col.base0B}ff), match:class ^(dev.alextren.Spot)" # Green
+      #   "bordercolor rgba(${col.base0B}bb), match:class ^(dev.alextren.Spot), match:float true" # Green
+      #   "bordercolor rgba(${col.base0E}ff), match:class ^(obsidian|Alacritty)" # Purple
+      #   "bordercolor rgba(${col.base0E}bb), match:class ^(obsidian|Alacritty), match:float true" # Purple
+      #   "bordercolor rgba(${col.base0A}ff), match:xwayland true" # Yellow f9e2afff
+      #   "bordercolor rgba(${col.base0A}bb), match:xwayland true, match:floating true" # Yellow f9e2afbb
+      #   "bordercolor rgba(${col.base08}ff), match:fullscreen true" # Red
+      #
+      # ];
 
       dwindle = {
         smart_split = true;
@@ -292,9 +291,11 @@ in
         "$mod SHIFT, B, exec,  ${util.script "eww-toggle-window"} overlay \"\" default"
 
         # Toggle mic mutes
-        "$mod, F12, pass, class:^(ts3client|TeamSpeak 3)$"
-        "$mod,Alt_R,sendshortcut,CTRL SHIFT,M,class:^(ts3client|TeamSpeak 3)"
-        "$mod,Control_R,sendshortcut,CTRL SHIFT,M,class:vesktop"
+        # "$mod, F12, pass, class:^(ts3client|TeamSpeak 3)$"
+        "$mod, F12, exec, ${util.script "teamspeak-toggle-mute"}"
+        "$mod, XF86AudioMute, exec, ${util.script "teamspeak-toggle-mute"}"
+        "$mod,Alt_R, exec, ${util.script "teamspeak-toggle-mute"}"
+        #"$mod,Control_R,sendshortcut,CTRL SHIFT,M,class:vesktop"
 
         # Enforce window/workspace mappings
         "$mod SHIFT, R, exec, ${util.script "reset-window-positions"}"
